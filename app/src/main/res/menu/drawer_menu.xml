@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home"/>
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_user"
+            android:title="@string/profile"/>
+        <item
+            android:id="@+id/nav_instruments"
+            android:icon="@drawable/ic_instrument"
+            android:title="@string/instruments"/>
+        <item
+            android:id="@+id/nav_band"
+            android:icon="@drawable/ic_band"
+            android:title="@string/bands"/>
+        <item
+            android:id="@+id/nav_song"
+            android:icon="@drawable/ic_song"
+            android:title="@string/songs"/>
+        <item
+            android:id="@+id/nav_playlists"
+            android:icon="@drawable/ic_playlist"
+            android:title="@string/playlists"/>
+        <item
+            android:id="@+id/nav_rehearsals"
+            android:icon="@drawable/ic_rehearsal"
+            android:title="@string/rehearsals"/>
+        <item
+            android:id="@+id/nav_concerts"
+            android:icon="@drawable/ic_concert"
+            android:title="@string/concerts"/>
+
+    </group>
+
+    <item
+        android:title="@string/communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_share"
+                android:title="@string/share"/>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/settings"/>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/logout"/>
+
+        </menu>
+    </item>
+
+
+</menu>

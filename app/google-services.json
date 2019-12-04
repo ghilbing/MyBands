@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "721270516951",
+    "firebase_url": "https://mybands-d3428.firebaseio.com",
+    "project_id": "mybands-d3428",
+    "storage_bucket": "mybands-d3428.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721270516951:android:686bfc1ef2414b4e9fd492",
+        "android_client_info": {
+          "package_name": "com.hilbing.mybands"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "721270516951-a4rblnu2fnigilo15mre1noflcot248k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hilbing.mybands",
+            "certificate_hash": "ffa4cb8c29b9ed25cef2a2f064ad500b54e08f35"
+          }
+        },
+        {
+          "client_id": "721270516951-rki50thejm65m43jbko6aket1mufpl1t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWjEqiLz9z9ZBrd1mynjQnHPQdKiQYCno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "721270516951-rki50thejm65m43jbko6aket1mufpl1t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
