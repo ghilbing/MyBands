@@ -107,6 +107,9 @@
     <string name="please_wait_while_we_are_creating_your_new_account">Please wait, while we are creating your new account...</string>
     <string name="please_wait_while_we_are_loggin_you">Please wait, while we are loggin you</string>
     <string name="please_wait_while_we_are_allowing_you_into_your_account">Please wait, while we are allowing you into your account</string>
+    <string name="enter_your_full_name">Enter your full name</string>
+    <string name="your_user_account_is_created_succesfully">Your user account is created succesfully</string>
+    <string name="creating_user">Creating User</string>
 
     <array name="instruments">
         <item>Bass</item>

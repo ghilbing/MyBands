@@ -19,6 +19,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     ImageView googleLoginIV;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference usersReference;
     private ProgressDialog progressDialog;
 
 
@@ -54,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
+        usersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
         progressDialog = new ProgressDialog(this);
 
@@ -122,18 +130,30 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void sendUserToMainActivity() {
-
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
     private void sendUserToRegisterActivity() {
 
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            sendUserToMainActivity();
+        }
+
+    }
+
+
+    private void sendUserToMainActivity() {
+
+        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+    }
+
 }
