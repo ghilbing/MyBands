@@ -7,7 +7,7 @@
     <string name="deleted_image_failed">Deleted image failed</string>
     <string name="finished">Finished</string>
     <string name="authentication_failed">Authentication Failed</string>
-    <string name="enter_your_name">Enter your name</string>
+    <string name="enter_your_name">Enter your full name</string>
     <string name="enter_your_email">Enter your email</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="register">Register</string>
@@ -17,16 +17,16 @@
     <string name="you_have_an_error">You have an error</string>
     <string name="login_failed">Login failed</string>
     <string name="enter_email_address">Enter email address</string>
-    <string name="password">Enter password</string>
+    <string name="password">Enter your password</string>
     <string name="login">Login</string>
     <string name="not_registered">Not registered?</string>
     <string name="forgot">Forgot password?</string>
     <string name="you_are_logged_in">You are logged in</string>
     <string name="please_login">Please login</string>
-    <string name="prompt_password">Prompt password</string>
+    <string name="prompt_password">Enter your password</string>
     <string name="fields_are_empty">Fields are empty</string>
     <string name="error_occurred">Error occurred</string>
-    <string name="sign_up_now">Sign Up Now</string>
+    <string name="sign_up_now">Do not have an account? Sign Up Now</string>
     <string name="already_registered">Already registered?</string>
     <string name="please_enter_a_valid_email">Please enter e valid email</string>
     <string name="minimum_length_of_password_should_be_6">Minimum length of password should be 6</string>
@@ -48,6 +48,7 @@
     <string name="share">Share</string>
     <string name="settings">Settings</string>
     <string name="gretel_hilbing">Usuario</string>
+    <string name="passwords_are_not_equal">Passwords are not equal</string>
 
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
@@ -69,6 +70,8 @@
     <string name="create_band">Create Band</string>
     <string name="add_musician">Add musician</string>
     <string name="invite_musician">Invite musician</string>
+    <string name="account_created_succesfully">Account created succesfully</string>
+    <string name="you_are_authenticated_succesfully">You are authenticated succesfully</string>
 
     <string name="spotify_client_id">8a3367eb003649048f31515144e208b5</string>
     <string name="add_song">Add song</string>
@@ -95,6 +98,15 @@
     <string name="musician_updated_successfully">Musician updated successfully</string>
     <string name="musician_already_exists">Musician already exists</string>
     <string name="home">Home</string>
+    <string name="create_account">Create Account</string>
+    <string name="re_enter_your_password">Confirm your password</string>
+    <string name="or_login_with">or Login with:</string>
+    <string name="enter_your_country">Enter your country</string>
+    <string name="save">Save</string>
+    <string name="creating_account">Creating Account</string>
+    <string name="please_wait_while_we_are_creating_your_new_account">Please wait, while we are creating your new account...</string>
+    <string name="please_wait_while_we_are_loggin_you">Please wait, while we are loggin you</string>
+    <string name="please_wait_while_we_are_allowing_you_into_your_account">Please wait, while we are allowing you into your account</string>
 
     <array name="instruments">
         <item>Bass</item>

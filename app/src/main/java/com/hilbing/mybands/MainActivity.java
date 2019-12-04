@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     Toolbar mToolbar;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
+    private FirebaseAuth mAuth;
+
 
 
     @SuppressLint("WrongConstant")
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mToolbar = findViewById(R.id.main_page_toolbar);
+
+        mAuth = FirebaseAuth.getInstance();
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
@@ -122,8 +129,8 @@ public class MainActivity extends AppCompatActivity {
                 //    Toast.makeText(getApplicationContext(), "Settings option menu", Toast.LENGTH_LONG).show();
                 break;
             case R.id.nav_logout:
-                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
-                //    Toast.makeText(getApplicationContext(), "Settings option menu", Toast.LENGTH_LONG).show();
+                mAuth.signOut();
+                sendUserToLoginActivity();
                 break;
             }
          //   drawerLayout.closeDrawer(GravityCompat.START);
@@ -138,5 +145,23 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null){
+            sendUserToLoginActivity();
+        }
+    }
+
+    private void sendUserToLoginActivity() {
+
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+
     }
 }
