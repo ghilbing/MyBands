@@ -20,12 +20,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.hilbing.mybands.models.User;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -94,6 +98,21 @@ public class SetUpActivity extends AppCompatActivity {
             }
         });
 
+        usersReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                    Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(profileImageCIV);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void sendUserToGallery() {
@@ -133,7 +152,6 @@ public class SetUpActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri) {
                                 downloadUri = uri.toString();
-
                                 usersReference.child("mUserProfileImage").setValue(downloadUri).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -202,13 +220,12 @@ public class SetUpActivity extends AppCompatActivity {
             progressDialog.show();
             progressDialog.setCanceledOnTouchOutside(true);
 
-           // User user = new User(currentUserId, fullName, phone, profileUrl, country, status, available);
             HashMap userMap = new HashMap();
             userMap.put("mUserName", fullName);
             userMap.put("mUserPhone", phone);
             userMap.put("mUserCountry", country);
-            userMap.put("mUserStatus", "I am musician");
-            userMap.put("mUserAvailable", true);
+            userMap.put("mUserStatus", status);
+            userMap.put("mUserAvailable", available);
             usersReference.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
@@ -223,20 +240,7 @@ public class SetUpActivity extends AppCompatActivity {
                     }
                 }
             });
-           /* usersReference.setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        sendUserToMainActivity();
-                        Toast.makeText(SetUpActivity.this, getResources().getString(R.string.your_user_account_is_created_succesfully),Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
-                    } else {
-                        String message = task.getException().getMessage();
-                        Toast.makeText(SetUpActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
-                    }
-                }
-            });*/
+
 
         }
 
