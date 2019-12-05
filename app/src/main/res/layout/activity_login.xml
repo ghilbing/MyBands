@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity"
-    android:background="@drawable/login">
+    android:background="@drawable/rockimage">
 
     <ImageView
         android:id="@+id/login_logo_IV"
@@ -78,7 +78,7 @@
         android:text="@string/sign_up_now"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_login_BT" />
@@ -91,7 +91,7 @@
         android:text="@string/forgot"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.944"
         app:layout_constraintStart_toStartOf="parent"
@@ -107,7 +107,7 @@
         android:text="@string/or_login_with"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_sign_up_TV" />
@@ -121,6 +121,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toTopOf="@+id/login_or_login_with_TV">
 
         <ImageView
@@ -128,6 +129,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginTop="8dp"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/facebook"/>
         <ImageView
             android:id="@+id/login_twitter_IV"
@@ -140,6 +142,7 @@
             android:layout_marginTop="12dp"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_marginRight="10dp"
             android:src="@drawable/google"/>
 
 

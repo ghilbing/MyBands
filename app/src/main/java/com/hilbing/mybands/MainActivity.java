@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationViewNV;
     @BindView(R.id.drawerLayout_DL)
     DrawerLayout drawerLayout;
+    @BindView(R.id.main_search_BT)
+    ImageButton searchBT;
     @BindView(R.id.events_RV)
     RecyclerView recyclerView;
     Toolbar mToolbar;
@@ -82,13 +86,19 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
 
-                    String fullName = dataSnapshot.child("mUserName").getValue().toString();
-                    String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                    if(dataSnapshot.hasChild("mUserName")) {
+                        String fullName = dataSnapshot.child("mUserName").getValue().toString();
+                        navUserNameTV.setText(fullName);
+                    }
+                    if(dataSnapshot.hasChild("mUserProfileImage")) {
+                        String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                        Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(navProfileCIV);
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.profile_name_does_not_exist), Toast.LENGTH_LONG).show();
+                       // sendUserToSetUpActivity();
+                    }
 
-                    navUserNameTV.setText(fullName);
-                    Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(navProfileCIV);
-                } else {
-                    sendUserToSetUpActivity();
                 }
 
             }
@@ -135,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 //   getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
                 break;
             case R.id.nav_instruments:
-                Toast.makeText(this, "Instruments", Toast.LENGTH_SHORT).show();
+                sendUserToAddInstrumentActivity();
                 //    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InstrumentFragment()).commit();
                 break;
             case R.id.nav_band:
@@ -226,6 +236,12 @@ public class MainActivity extends AppCompatActivity {
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
         finish();
+    }
 
+    public void sendUserToAddInstrumentActivity(){
+        Intent addInstrumentIntent = new Intent(MainActivity.this, AddInstrumentActivity.class);
+        addInstrumentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(addInstrumentIntent);
+        finish();
     }
 }

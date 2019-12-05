@@ -31,6 +31,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
+        <ImageButton
+            android:id="@+id/main_search_BT"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_above="@+id/main_container_FL"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_search"/>
+
     </RelativeLayout>
 
         <com.google.android.material.navigation.NavigationView

@@ -11,8 +11,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +49,8 @@ public class SetUpActivity extends AppCompatActivity {
     EditText fullNameET;
     @BindView(R.id.setup_user_phone)
     EditText phoneET;
-    @BindView(R.id.setup_country_ET)
-    EditText countryET;
+    @BindView(R.id.setup_country_SP)
+    Spinner countrySP;
     @BindView(R.id.setup_save_BT)
     Button saveBT;
     private ProgressDialog progressDialog;
@@ -102,8 +104,14 @@ public class SetUpActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
-                    Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(profileImageCIV);
+                    if(dataSnapshot.hasChild("mUserProfileImage")) {
+                        String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                        Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(profileImageCIV);
+                    }
+                    else{
+                        Toast.makeText(SetUpActivity.this, getResources().getString(R.string.please_select_profile_image_first), Toast.LENGTH_LONG).show();
+                        profileImageCIV.requestFocus();
+                    }
                 }
             }
 
@@ -112,6 +120,11 @@ public class SetUpActivity extends AppCompatActivity {
 
             }
         });
+
+        ArrayAdapter<String> countriesAdapter = new ArrayAdapter<String>(SetUpActivity.this,
+                android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.countries_array));
+        countrySP.setAdapter(countriesAdapter);
+        countrySP.setSelection(222);
 
     }
 
@@ -191,7 +204,7 @@ public class SetUpActivity extends AppCompatActivity {
 
         String fullName = fullNameET.getText().toString();
         String phone = phoneET.getText().toString();
-        String country = countryET.getText().toString();
+        String country = countrySP.getSelectedItem().toString();
         String status = "I am musician";
         boolean available = true;
 
@@ -209,8 +222,7 @@ public class SetUpActivity extends AppCompatActivity {
         }
 
         if (TextUtils.isEmpty(country)) {
-            countryET.setError(getResources().getString(R.string.enter_your_country));
-            countryET.requestFocus();
+            countrySP.requestFocus();
             return;
         }
         else {
@@ -240,11 +252,10 @@ public class SetUpActivity extends AppCompatActivity {
                     }
                 }
             });
-
-
         }
-
     }
+
+
 
     private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(SetUpActivity.this, MainActivity.class);
