@@ -61,6 +61,21 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        alreadyRegisteredTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendUserToLoginActivity();
+            }
+        });
+
+    }
+
+    private void sendUserToLoginActivity() {
+
+        Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(loginIntent);
+        finish();
     }
 
     private void createNewUserAccount(){

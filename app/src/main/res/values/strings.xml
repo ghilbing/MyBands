@@ -110,6 +110,11 @@
     <string name="enter_your_full_name">Enter your full name</string>
     <string name="your_user_account_is_created_succesfully">Your user account is created succesfully</string>
     <string name="creating_user">Creating User</string>
+    <string name="profile_image_stored_successfully">Profile image stored successfully</string>
+    <string name="image_stored_in_database_successfully">Image stored in database successfully</string>
+    <string name="error_occurred_image_cannot_be_cropped_please_try_again">Error occurred: Image cannot be cropped, please, try again</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="please_wait_while_we_are_updating_your_profile_image">Please wait, while we are updating your profile image</string>
 
     <array name="instruments">
         <item>Bass</item>
