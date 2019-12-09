@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -31,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("WrongConstant")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -81,20 +85,26 @@ public class MainActivity extends AppCompatActivity {
         View navHeader = navigationViewNV.inflateHeaderView(R.layout.nav_header);
         navUserNameTV = navHeader.findViewById(R.id.nav_header_user_name_TV);
         navProfileCIV = navHeader.findViewById(R.id.nav_header_user_image_CIV);
-        usersReference.child(currentUserID).addValueEventListener(new ValueEventListener() {
+        usersReference.child(currentUserID).addValueEventListener(new ValueEventListener()
+        {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
 
-                    if(dataSnapshot.hasChild("mUserName")) {
+                    if(dataSnapshot.hasChild("mUserName"))
+                    {
                         String fullName = dataSnapshot.child("mUserName").getValue().toString();
                         navUserNameTV.setText(fullName);
                     }
-                    if(dataSnapshot.hasChild("mUserProfileImage")) {
+                    if(dataSnapshot.hasChild("mUserProfileImage"))
+                    {
                         String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
                         Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(navProfileCIV);
                     }
-                    else {
+                    else
+                        {
                         Toast.makeText(MainActivity.this, getResources().getString(R.string.profile_name_does_not_exist), Toast.LENGTH_LONG).show();
                        // sendUserToSetUpActivity();
                     }
@@ -104,16 +114,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
 
             }
         });
 
 
 
-        navigationViewNV.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        navigationViewNV.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener()
+        {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
+            {
                 userSelector(menuItem);
                 return false;
             }
@@ -122,18 +135,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+    public void onBackPressed()
+    {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START))
+        {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else
+            {
 
             super.onBackPressed();
         }
     }
 
-    private void userSelector(MenuItem menuItem) {
+    private void userSelector(MenuItem menuItem)
+    {
 
-        switch (menuItem.getItemId()){
+        switch (menuItem.getItemId())
+        {
             case R.id.nav_home:
                 Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
              //   getSupportActionBar().setTitle("Home");
@@ -185,31 +204,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
 
-        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+        if(actionBarDrawerToggle.onOptionsItemSelected(item))
+        {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser == null){
+        if(currentUser == null)
+        {
             sendUserToLoginActivity();
-        } else {
-            checkIfUserExists();
         }
+        else
+            {
+            checkIfUserExists();
+             }
 
     }
 
-    private void checkIfUserExists() {
+    private void checkIfUserExists()
+    {
         final String currentUserId = mAuth.getCurrentUser().getUid();
-        usersReference.addValueEventListener(new ValueEventListener() {
+        usersReference.addValueEventListener(new ValueEventListener()
+        {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
                 if(!dataSnapshot.hasChild(currentUserId)){
                     Log.e("", "ENTRA");
                     sendUserToSetUpActivity();
@@ -217,20 +245,23 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
 
             }
         });
     }
 
-    private void sendUserToSetUpActivity() {
+    private void sendUserToSetUpActivity()
+    {
         Intent setUpIntent = new Intent(MainActivity.this, SetUpActivity.class);
         setUpIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setUpIntent);
         finish();
     }
 
-    private void sendUserToLoginActivity() {
+    private void sendUserToLoginActivity()
+    {
 
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -238,10 +269,19 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    public void sendUserToAddInstrumentActivity(){
+    public void sendUserToAddInstrumentActivity()
+    {
         Intent addInstrumentIntent = new Intent(MainActivity.this, AddInstrumentActivity.class);
         addInstrumentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(addInstrumentIntent);
         finish();
     }
+
+    /*Calendar calForDate = Calendar.getInstance();
+    SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+    String saveCurrentDate = currentDate.format(calForDate.getTime());
+
+    Calendar calForTime = Calendar.getInstance();
+    SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+    String saveCurrentTime = currentDate.format(calForTime.getTime());*/
 }

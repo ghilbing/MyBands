@@ -3,22 +3,76 @@ package com.hilbing.mybands;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.hilbing.mybands.models.Instrument;
+import com.hilbing.mybands.models.UsersInstruments;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AddInstrumentActivity extends AppCompatActivity {
+public class AddInstrumentActivity extends AppCompatActivity
+{
 
     @BindView(R.id.update_instrument_toolbar)
     Toolbar toolbar;
+    @BindView(R.id.instruments_singer_CB)
+    CheckBox singerCB;
+    @BindView(R.id.instruments_composer_CB)
+    CheckBox composerCB;
+    @BindView(R.id.instruments_SP)
+    Spinner instrumentsSP;
+    @BindView(R.id.instruments_add_BT)
+    Button addBT;
+    @BindView(R.id.instruments_added_RV)
+    RecyclerView instrumentsAddedRV;
+    private String currentUserId;
+    private ProgressDialog progressDialog;
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference userDataReference;
+    private DatabaseReference singersReference;
+    private DatabaseReference composersReference;
+    private DatabaseReference usersInstrumentsReference;
+    private DatabaseReference instrumentsUsersReference;
+
+    private LinearLayoutManager linearLayoutManager;
+    private FirebaseRecyclerAdapter recyclerAdapter;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_instrument);
         ButterKnife.bind(this);
@@ -27,26 +81,317 @@ public class AddInstrumentActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.update_instrument));
 
+        mAuth = FirebaseAuth.getInstance();
+        currentUserId = mAuth.getCurrentUser().getUid();
+
+        userDataReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        singersReference = FirebaseDatabase.getInstance().getReference().child("Singers");
+        composersReference = FirebaseDatabase.getInstance().getReference().child("Composers");
+        usersInstrumentsReference = FirebaseDatabase.getInstance().getReference("users_instruments");
+        instrumentsUsersReference = FirebaseDatabase.getInstance().getReference("instruments_users");
+
+        progressDialog = new ProgressDialog(this);
+
+        instrumentsAddedRV.setHasFixedSize(true);
+        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        instrumentsAddedRV.setLayoutManager(linearLayoutManager);
+
+        singerCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b)
+            {
+                if(singerCB.isChecked())
+                {
+                    addUserToSingersDatabase();
+                }
+                else
+                {
+                    deleteSingerFromDataBase(currentUserId);
+
+                }
+            }
+        });
+
+        addBT.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+
+                progressDialog.setTitle(getResources().getString(R.string.add_instrument));
+                progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_updating_your_instruments));
+                progressDialog.show();
+                progressDialog.setCanceledOnTouchOutside(true);
+                addInstrumentsPlayedByUserToDataBase();
+                addUsersForInstrumentsToDataBase();
+
+            }
+        });
+
+        displayAllInstruments();
+
+    }
+
+    private void displayAllInstruments()
+    {
+        Query query = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId);
+
+        FirebaseRecyclerOptions<UsersInstruments> options = new FirebaseRecyclerOptions.Builder<UsersInstruments>().setQuery(query, new SnapshotParser<UsersInstruments>() {
+            @NonNull
+            @Override
+            public UsersInstruments parseSnapshot(@NonNull DataSnapshot snapshot) {
+                return new UsersInstruments(
+                        snapshot.child("mInstrumentName").getValue().toString(),
+                        snapshot.child("mUserId").getValue().toString(),
+                        snapshot.child("mUserName").getValue().toString());
+            }
+        }).build();
+
+
+        recyclerAdapter = new FirebaseRecyclerAdapter<UsersInstruments, InstrumentViewHolder>(options){
+
+            @NonNull
+            @Override
+            public InstrumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_instruments_per_user, parent, false);
+                return new InstrumentViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull InstrumentViewHolder holder, int position, @NonNull UsersInstruments model) {
+                holder.instrumentNameTV.setText(model.getmUserInstrument());
+            }
+
+
+        };
+
+
+    }
+
+    public static class InstrumentViewHolder extends RecyclerView.ViewHolder
+    {
+        View mView;
+        @BindView(R.id.instrument_item_TV)
+        TextView instrumentNameTV;
+
+        public InstrumentViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mView = itemView;
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+
+    private void addUsersForInstrumentsToDataBase()
+    {
+        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
+                    if(dataSnapshot.hasChild("mUserName"))
+                    {
+                        String name = dataSnapshot.child("mUserName").getValue().toString();
+                        String instrument = instrumentsSP.getSelectedItem().toString();
+
+                        HashMap instrumentMap = new HashMap();
+                        instrumentMap.put("mUserId", currentUserId);
+                        instrumentMap.put("mUserName", name);
+                        instrumentMap.put("mInstrumentName", instrument);
+
+                        instrumentsUsersReference.child(instrument).child(currentUserId).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener()
+                        {
+                            @Override
+                            public void onComplete(@NonNull Task task)
+                            {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.instrument_added_successfully), Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
+                                }
+                                else
+                                {
+                                    String message = task.getException().getMessage();
+                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+
+
+    }
+
+    private void addInstrumentsPlayedByUserToDataBase()
+    {
+        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
+                    if(dataSnapshot.hasChild("mUserName"))
+                    {
+                        String name = dataSnapshot.child("mUserName").getValue().toString();
+                        String instrument = instrumentsSP.getSelectedItem().toString();
+
+                        HashMap instrumentMap = new HashMap();
+                        instrumentMap.put("mUserId", currentUserId);
+                        instrumentMap.put("mUserName", name);
+                        instrumentMap.put("mInstrumentName", instrument);
+
+                        usersInstrumentsReference.child(currentUserId).child(instrument).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener()
+                        {
+                            @Override
+                            public void onComplete(@NonNull Task task)
+                            {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.instrument_added_successfully), Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
+                                }
+                                else
+                                {
+                                    String message = task.getException().getMessage();
+                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+
+
+    }
+
+
+    private void deleteSingerFromDataBase(String userId)
+    {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Singers").child(userId);
+        databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        {
+            @Override
+            public void onComplete(@NonNull Task<Void> task)
+            {
+                if(task.isSuccessful()) {
+                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.singer_deleted_from_singers), Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    String message = task.getException().getMessage();
+                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
+    private void addUserToSingersDatabase() {
+        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
+                    String fullName = dataSnapshot.child("mUserName").getValue().toString();
+                    boolean available = (boolean) dataSnapshot.child("mUserAvailable").getValue();
+
+                    HashMap singerMap = new HashMap();
+                    singerMap.put("mUserId", currentUserId);
+                    singerMap.put("mUserName", fullName);
+                    singerMap.put("mUserAvailable", available);
+
+                    singersReference.child(currentUserId).updateChildren(singerMap).addOnCompleteListener(new OnCompleteListener()
+                    {
+                        @Override
+                        public void onComplete(@NonNull Task task)
+                        {
+                            if(task.isSuccessful())
+                            {
+                                Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.singer_database_updated), Toast.LENGTH_LONG).show();
+                            }
+                            else
+                            {
+                                String message = task.getException().getMessage();
+                                Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+
     }
 
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home){
+        if(id == android.R.id.home)
+        {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToMainActivity() {
+    private void sendUserToMainActivity()
+    {
         Intent mainIntent = new Intent(AddInstrumentActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
 
+    }
+
+    private void saveUserSingerToDataBase()
+    {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        recyclerAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        recyclerAdapter.stopListening();
     }
 }

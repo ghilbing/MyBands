@@ -119,6 +119,13 @@
     <string name="please_select_profile_image_first">Please, select profile image first</string>
     <string name="update_instrument">Update instrument</string>
     <string name="where_do_you_live">Where do you live?</string>
+    <string name="are_you_a_singer">Are you a singer?</string>
+    <string name="are_you_a_composer">Are you a composer?</string>
+    <string name="singer_database_updated">Singer Database updated successfully</string>
+    <string name="singer_deleted_from_singers">Singer deleted from singers</string>
+    <string name="user_name_error">User name error</string>
+    <string name="instrument_added_successfully">Instrument added successfully</string>
+    <string name="please_wait_while_we_are_updating_your_instruments">Please wait, while we are updating your instruments</string>
 
     <array name="instruments">
         <item>Bass</item>

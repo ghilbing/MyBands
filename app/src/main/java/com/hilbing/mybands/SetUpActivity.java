@@ -41,7 +41,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SetUpActivity extends AppCompatActivity {
+public class SetUpActivity extends AppCompatActivity
+{
 
     @BindView(R.id.setup_user_image_CIV)
     CircleImageView profileImageCIV;
@@ -66,7 +67,8 @@ public class SetUpActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up);
 
@@ -74,7 +76,8 @@ public class SetUpActivity extends AppCompatActivity {
 
         Intent intentGetData = getIntent();
         Bundle bundle = intentGetData.getExtras();
-        if(bundle != null){
+        if(bundle != null)
+        {
             intentString = bundle.getString("downloadUri");
         }
 
@@ -85,26 +88,33 @@ public class SetUpActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
 
-        profileImageCIV.setOnClickListener(new View.OnClickListener() {
+        profileImageCIV.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 sendUserToGallery();
             }
         });
 
 
-        saveBT.setOnClickListener(new View.OnClickListener() {
+        saveBT.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 saveUserInformation();
             }
         });
 
-        usersReference.addValueEventListener(new ValueEventListener() {
+        usersReference.addValueEventListener(new ValueEventListener()
+        {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
                 if(dataSnapshot.exists()){
-                    if(dataSnapshot.hasChild("mUserProfileImage")) {
+                    if(dataSnapshot.hasChild("mUserProfileImage"))
+                    {
                         String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
                         Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(profileImageCIV);
                     }
@@ -116,7 +126,8 @@ public class SetUpActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
 
             }
         });
@@ -128,7 +139,8 @@ public class SetUpActivity extends AppCompatActivity {
 
     }
 
-    private void sendUserToGallery() {
+    private void sendUserToGallery()
+    {
 
         Intent galleryIntent = new Intent();
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -137,13 +149,16 @@ public class SetUpActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == GALLERY && resultCode == RESULT_OK && data != null){
+        if(requestCode == GALLERY && resultCode == RESULT_OK && data != null)
+        {
             Uri imageUri = data.getData();
             CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(this);
         }
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
             if(resultCode == RESULT_OK){
@@ -184,14 +199,16 @@ public class SetUpActivity extends AppCompatActivity {
                     }
                 });
 
-            } else {
+            } else
+                {
                 progressDialog.dismiss();
                 Toast.makeText(SetUpActivity.this, getResources().getString(R.string.error_occurred_image_cannot_be_cropped_please_try_again),Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private void sendUserToSetUpActivity() {
+    private void sendUserToSetUpActivity()
+    {
 
         Intent selfIntent = new Intent(SetUpActivity.this, SetUpActivity.class);
         selfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -200,7 +217,8 @@ public class SetUpActivity extends AppCompatActivity {
 
     }
 
-    private void saveUserInformation() {
+    private void saveUserInformation()
+    {
 
         String fullName = fullNameET.getText().toString();
         String phone = phoneET.getText().toString();
@@ -209,23 +227,27 @@ public class SetUpActivity extends AppCompatActivity {
         boolean available = true;
 
 
-        if (TextUtils.isEmpty(fullName)) {
+        if (TextUtils.isEmpty(fullName))
+        {
             fullNameET.setError(getResources().getString(R.string.enter_your_full_name));
             fullNameET.requestFocus();
             return;
         }
 
-        if (TextUtils.isEmpty(phone)) {
+        if (TextUtils.isEmpty(phone))
+        {
             phoneET.setError(getResources().getString(R.string.enter_your_phone));
             phoneET.requestFocus();
             return;
         }
 
-        if (TextUtils.isEmpty(country)) {
+        if (TextUtils.isEmpty(country))
+        {
             countrySP.requestFocus();
             return;
         }
-        else {
+        else
+            {
 
             progressDialog.setTitle(getResources().getString(R.string.creating_user));
             progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_creating_your_new_account));
@@ -238,14 +260,18 @@ public class SetUpActivity extends AppCompatActivity {
             userMap.put("mUserCountry", country);
             userMap.put("mUserStatus", status);
             userMap.put("mUserAvailable", available);
-            usersReference.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+            usersReference.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener()
+            {
                 @Override
-                public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful()){
+                public void onComplete(@NonNull Task task)
+                {
+                    if(task.isSuccessful())
+                    {
                         sendUserToMainActivity();
                         Toast.makeText(SetUpActivity.this, getResources().getString(R.string.your_user_account_is_created_succesfully),Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
-                    } else {
+                    } else
+                        {
                         String message = task.getException().getMessage();
                         Toast.makeText(SetUpActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
@@ -257,7 +283,8 @@ public class SetUpActivity extends AppCompatActivity {
 
 
 
-    private void sendUserToMainActivity() {
+    private void sendUserToMainActivity()
+    {
         Intent mainIntent = new Intent(SetUpActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);

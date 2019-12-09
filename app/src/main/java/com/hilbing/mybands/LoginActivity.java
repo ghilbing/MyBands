@@ -29,7 +29,8 @@ import com.google.firebase.database.ValueEventListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity
+{
 
     @BindView(R.id.login_email_ET)
     EditText emailET;
@@ -54,7 +55,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -83,7 +85,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void loginVerification() {
+    private void loginVerification()
+    {
 
         String email = emailET.getText().toString();
         String password = passwordET.getText().toString();
@@ -93,13 +96,15 @@ public class LoginActivity extends AppCompatActivity {
             emailET.requestFocus();
             return;
         }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        {
             emailET.setError(getResources().getString(R.string.please_enter_a_valid_email));
             emailET.requestFocus();
             return;
         }
 
-        else if (TextUtils.isEmpty(password)) {
+        else if (TextUtils.isEmpty(password))
+        {
             passwordET.setError(getResources().getString(R.string.prompt_password));
             passwordET.requestFocus();
             return;
@@ -111,15 +116,19 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.show();
             progressDialog.setCanceledOnTouchOutside(true);
 
-            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>()
+            {
                 @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()){
+                public void onComplete(@NonNull Task<AuthResult> task)
+                {
+                    if(task.isSuccessful())
+                    {
                         sendUserToMainActivity();
                         progressDialog.dismiss();
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.you_are_logged_in), Toast.LENGTH_SHORT).show();
                     }
-                    else {
+                    else
+                        {
                         progressDialog.dismiss();
                         String message = task.getException().getMessage();
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
@@ -130,7 +139,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void sendUserToRegisterActivity() {
+    private void sendUserToRegisterActivity()
+    {
 
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
@@ -138,7 +148,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
@@ -148,7 +159,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void sendUserToMainActivity() {
+    private void sendUserToMainActivity()
+    {
 
         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
