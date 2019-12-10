@@ -1,12 +1,17 @@
 package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,16 +25,18 @@ public class ClickInstrumentActivity extends AppCompatActivity {
 
     @BindView(R.id.spinner_instrument_SP)
     Spinner instrumentSP;
-    @BindView(R.id.click_instrument_update_BT)
-    Button updateBT;
     @BindView(R.id.click_instrument_delete_BT)
     Button deleteBT;
 
     private String instrumentKey;
-    private String userKey;
+    private String currentUserId;
+    private String databaseUserId;
 
     private DatabaseReference instrumentsUsersReference;
     private DatabaseReference usersInstrumentsReference;
+    private DatabaseReference deleteUpdateInstrumentUserReference;
+    private DatabaseReference deleteUpdateUserInstrumentReference;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,20 +45,32 @@ public class ClickInstrumentActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        instrumentKey = getIntent().getExtras().get("InstrumentKey").toString();
-        userKey = getIntent().getExtras().get("UserKey").toString();
+        mAuth = FirebaseAuth.getInstance();
 
+        instrumentKey = getIntent().getExtras().get("InstrumentKey").toString();
+        currentUserId = mAuth.getCurrentUser().getUid();
+
+        deleteBT.setVisibility(View.INVISIBLE);
 
         instrumentsUsersReference = FirebaseDatabase.getInstance().getReference().child("instruments_users").child(instrumentKey);
-        usersInstrumentsReference = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(userKey);
+        usersInstrumentsReference = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId);
+        deleteUpdateInstrumentUserReference = FirebaseDatabase.getInstance().getReference().child("instruments_users").child(instrumentKey).child(currentUserId);
+        deleteUpdateUserInstrumentReference = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId).child(instrumentKey);
 
         usersInstrumentsReference.addValueEventListener(new ValueEventListener()
         {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                String instrument = dataSnapshot.child(instrumentKey).getValue().toString();
-                instrumentSP.setSelection(getIndexSpinner(instrumentSP, instrument));
+                if(dataSnapshot.exists()) {
+                    instrumentSP.setSelection(getIndexSpinner(instrumentSP, instrumentKey));
+                    databaseUserId = dataSnapshot.child(currentUserId).getKey();
+
+                    if (currentUserId.equals(databaseUserId)) {
+                        deleteBT.setVisibility(View.VISIBLE);
+
+                    }
+                }
 
             }
 
@@ -61,6 +80,27 @@ public class ClickInstrumentActivity extends AppCompatActivity {
 
             }
         });
+
+        deleteBT.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                deleteInstrument();
+            }
+        });
+
+
+    }
+
+
+    private void deleteInstrument()
+    {
+
+        deleteUpdateUserInstrumentReference.removeValue();
+        deleteUpdateInstrumentUserReference.removeValue();
+        sendUserToMainActivity();
+        Toast.makeText(ClickInstrumentActivity.this, getResources().getString(R.string.instrument_deleted), Toast.LENGTH_LONG).show();
 
     }
 
@@ -75,5 +115,14 @@ public class ClickInstrumentActivity extends AppCompatActivity {
         }
 
         return 0;
+    }
+
+    private void sendUserToMainActivity()
+    {
+
+        Intent mainIntent = new Intent(ClickInstrumentActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
     }
 }

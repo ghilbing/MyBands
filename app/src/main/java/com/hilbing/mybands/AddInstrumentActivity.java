@@ -181,6 +181,7 @@ public class AddInstrumentActivity extends AppCompatActivity
                     @Override
                     public void onClick(View view) {
                         sendUserToClickInstrumentActivity(instrumentKey, currentUserId);
+                        Toast.makeText(AddInstrumentActivity.this, instrumentKey + " " + currentUserId, Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -193,7 +194,6 @@ public class AddInstrumentActivity extends AppCompatActivity
 
         Intent clickInstrumentIntent = new Intent(AddInstrumentActivity.this, ClickInstrumentActivity.class);
         clickInstrumentIntent.putExtra("InstrumentKey", instrumentKey);
-        clickInstrumentIntent.putExtra("UserKey", userKey);
         startActivity(clickInstrumentIntent);
 
     }
