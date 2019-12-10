@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -139,49 +141,172 @@ public class AddInstrumentActivity extends AppCompatActivity
     {
         Query query = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId);
 
-        FirebaseRecyclerOptions<UsersInstruments> options = new FirebaseRecyclerOptions.Builder<UsersInstruments>().setQuery(query, new SnapshotParser<UsersInstruments>() {
+        FirebaseRecyclerOptions<UsersInstruments> options = new FirebaseRecyclerOptions.Builder<UsersInstruments>().setQuery(query,
+                new SnapshotParser<UsersInstruments>()
+                {
             @NonNull
             @Override
-            public UsersInstruments parseSnapshot(@NonNull DataSnapshot snapshot) {
+            public UsersInstruments parseSnapshot(@NonNull DataSnapshot snapshot)
+            {
                 return new UsersInstruments(
-                        snapshot.child("mInstrumentName").getValue().toString(),
                         snapshot.child("mUserId").getValue().toString(),
-                        snapshot.child("mUserName").getValue().toString());
+                        snapshot.child("mUserName").getValue().toString(),
+                        snapshot.child("mInstrumentName").getValue().toString());
+
             }
         }).build();
 
 
-        recyclerAdapter = new FirebaseRecyclerAdapter<UsersInstruments, InstrumentViewHolder>(options){
+        recyclerAdapter = new FirebaseRecyclerAdapter<UsersInstruments, InstrumentViewHolder>(options)
+        {
 
             @NonNull
             @Override
-            public InstrumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            public InstrumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+            {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_instruments_per_user, parent, false);
                 return new InstrumentViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull InstrumentViewHolder holder, int position, @NonNull UsersInstruments model) {
+            protected void onBindViewHolder(@NonNull InstrumentViewHolder holder, int position, @NonNull final UsersInstruments model)
+            {
+                final String instrumentKey = getRef(position).getKey();
+
                 holder.instrumentNameTV.setText(model.getmUserInstrument());
+                holder.userIdTV.setText(model.getmUserId());
+                holder.userNameTV.setText(model.getmUserName());
+
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sendUserToClickInstrumentActivity(instrumentKey, currentUserId);
+                    }
+                });
             }
-
-
         };
 
+        instrumentsAddedRV.setAdapter(recyclerAdapter);
+    }
+
+    private void sendUserToClickInstrumentActivity(String instrumentKey, String userKey) {
+
+        Intent clickInstrumentIntent = new Intent(AddInstrumentActivity.this, ClickInstrumentActivity.class);
+        clickInstrumentIntent.putExtra("InstrumentKey", instrumentKey);
+        clickInstrumentIntent.putExtra("UserKey", userKey);
+        startActivity(clickInstrumentIntent);
 
     }
 
-    public static class InstrumentViewHolder extends RecyclerView.ViewHolder
+    public class InstrumentViewHolder extends RecyclerView.ViewHolder
     {
         View mView;
         @BindView(R.id.instrument_item_TV)
         TextView instrumentNameTV;
+        @BindView(R.id.instrument_userIdTV)
+        TextView userIdTV;
+        @BindView(R.id.instrument_userNameTV)
+        TextView userNameTV;
 
-        public InstrumentViewHolder(@NonNull View itemView) {
+        public InstrumentViewHolder(@NonNull final View itemView)
+        {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    //get data
+
+
+                    int itemClicked = getAdapterPosition();
+                  //  showUpdateDialog(itemClicked, instrument);
+                    return false;
+                }
+            });
+
         }
+    }
+
+    private void showUpdateDialog(final int itemClicked, final String instrument){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getApplicationContext());
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.update_dialog_instrument, null);
+        dialogBuilder.setView(dialogView);
+
+        final Spinner newInstrumentSP = dialogView.findViewById(R.id.new_instrument_SP);
+      //  final Spinner newExperienceSP = dialogView.findViewById(R.id.new_experience_SP);
+        final Button updateBT = dialogView.findViewById(R.id.update_BT);
+        final Button deleteBT = dialogView.findViewById(R.id.delete_BT);
+
+        newInstrumentSP.setSelection(getIndexSpinner(newInstrumentSP, instrument));
+    //    newExperienceSP.setSelection(getIndexSpinner(newExperienceSP, experience));
+
+
+
+        dialogBuilder.setTitle(getResources().getString(R.string.updating_instruments) + ": " + instrument);
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+        updateBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String newInstrument = newInstrumentSP.getSelectedItem().toString();
+           //     String newExperience = newExperienceSP.getSelectedItem().toString();
+
+             //   updateInstrument(instrument, currentUserId);
+
+                alertDialog.dismiss();
+
+
+            }
+        });
+
+        deleteBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteInstrument(instrument, currentUserId);
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+
+    private void deleteInstrument(String instrument, String userId)
+    {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user_instruments").child(currentUserId);
+        databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.instrument_deleted), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private boolean updateInstrument(String instrument, String userId, String userName)
+    {
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user_instruments").child(currentUserId);
+        UsersInstruments usersInstruments = new UsersInstruments(instrument, userId, userName);
+        databaseReference.setValue(usersInstruments);
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.instrument_updated_successfully), Toast.LENGTH_LONG).show();
+        return true;
+
+    }
+
+    private int getIndexSpinner(Spinner spinner, String string)
+    {
+        for (int i = 0; i < spinner.getCount() ; i++)
+        {
+            if(spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string))
+            {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
 

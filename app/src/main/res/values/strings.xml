@@ -126,6 +126,12 @@
     <string name="user_name_error">User name error</string>
     <string name="instrument_added_successfully">Instrument added successfully</string>
     <string name="please_wait_while_we_are_updating_your_instruments">Please wait, while we are updating your instruments</string>
+    <string name="connection_to_google_sign_in_failed">Connection to Google Sign In Failed</string>
+    <string name="please_wait_while_we_are_getting_your_google_auth_result">Please wait, while we are getting your Google Auth Result</string>
+    <string name="cannot_get_google_auth_result">Cannot get Google Auth Result</string>
+    <string name="not_authenticated">Not authenticated. Try again.</string>
+    <string name="google_sign_in">Google Sign In</string>
+    <string name="please_wait_while_we_are_allowing_you_to_login_to_your_google_account">Please wait, while we are allowing you to login using your Google Account...</string>
 
     <array name="instruments">
         <item>Bass</item>
