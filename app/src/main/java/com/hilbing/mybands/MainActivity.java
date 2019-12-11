@@ -159,9 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
                 break;
             case R.id.nav_profile:
-                Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
-            //    getSupportActionBar().setTitle("Profile");
-                //   getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
+                sendUserToProfileActivity();
                 break;
             case R.id.nav_instruments:
                 sendUserToAddInstrumentActivity();
@@ -282,6 +280,14 @@ public class MainActivity extends AppCompatActivity {
     {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(settingsIntent);
+    }
+
+    public void sendUserToProfileActivity()
+    {
+        Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+        profileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(profileIntent);
+        finish();
     }
 
     /*Calendar calForDate = Calendar.getInstance();
