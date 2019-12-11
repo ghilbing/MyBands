@@ -132,6 +132,16 @@
     <string name="not_authenticated">Not authenticated. Try again.</string>
     <string name="google_sign_in">Google Sign In</string>
     <string name="please_wait_while_we_are_allowing_you_to_login_to_your_google_account">Please wait, while we are allowing you to login using your Google Account...</string>
+    <string name="available">Available</string>
+    <string name="no_available">Not available</string>
+    <string name="singer">Singer</string>
+    <string name="composer">Composer</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="please_enter_your_full_name">Please, enter your full name</string>
+    <string name="please_enter_your_phone">Please, enter your phone</string>
+    <string name="please_enter_the_country_where_you_live">Please, enter ther country where you live</string>
+    <string name="please_enter_your_status">Please, enter your status</string>
+    <string name="account_settings_updated_successfully">Account settings updated succesfully</string>
 
     <array name="instruments">
         <item>Bass</item>

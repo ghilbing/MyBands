@@ -9,10 +9,12 @@ public class User {
     String mUserCountry;
     String mStatus;
     boolean mAvailable;
+    boolean mSinger;
+    boolean mComposer;
 
     public User(){}
 
-    public User(String mUserId, String mUserFullName, String mUserPhone, String mUserProfileImage, String mUserCountry, String mStatus, boolean mAvailable) {
+    public User(String mUserId, String mUserFullName, String mUserPhone, String mUserProfileImage, String mUserCountry, String mStatus, boolean mAvailable, boolean mSinger, boolean mComposer) {
         this.mUserId = mUserId;
         this.mUserFullName = mUserFullName;
         this.mUserPhone = mUserPhone;
@@ -20,6 +22,8 @@ public class User {
         this.mUserCountry = mUserCountry;
         this.mStatus = mStatus;
         this.mAvailable = mAvailable;
+        this.mSinger = mSinger;
+        this.mComposer = mComposer;
     }
 
     public String getmUserId() {
@@ -76,5 +80,21 @@ public class User {
 
     public void setmAvailable(boolean mAvailable) {
         this.mAvailable = mAvailable;
+    }
+
+    public boolean ismSinger() {
+        return mSinger;
+    }
+
+    public void setmSinger(boolean mSinger) {
+        this.mSinger = mSinger;
+    }
+
+    public boolean ismComposer() {
+        return mComposer;
+    }
+
+    public void setmComposer(boolean mComposer) {
+        this.mComposer = mComposer;
     }
 }

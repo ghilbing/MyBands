@@ -225,6 +225,8 @@ public class SetUpActivity extends AppCompatActivity
         String country = countrySP.getSelectedItem().toString();
         String status = "I am musician";
         boolean available = true;
+        boolean singer = true;
+        boolean composer = true;
 
 
         if (TextUtils.isEmpty(fullName))
@@ -260,6 +262,8 @@ public class SetUpActivity extends AppCompatActivity
             userMap.put("mUserCountry", country);
             userMap.put("mUserStatus", status);
             userMap.put("mUserAvailable", available);
+            userMap.put("mUserSinger", singer);
+            userMap.put("mUserComposer", composer);
             usersReference.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener()
             {
                 @Override

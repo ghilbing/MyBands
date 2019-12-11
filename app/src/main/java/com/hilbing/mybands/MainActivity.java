@@ -192,8 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 //    Toast.makeText(getApplicationContext(), "Share option menu", Toast.LENGTH_LONG).show();
                 break;
             case R.id.nav_settings:
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-                //    Toast.makeText(getApplicationContext(), "Settings option menu", Toast.LENGTH_LONG).show();
+               sendUserToSettingsActivity();
                 break;
             case R.id.nav_logout:
                 mAuth.signOut();
@@ -202,6 +201,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
@@ -275,6 +276,12 @@ public class MainActivity extends AppCompatActivity {
         addInstrumentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(addInstrumentIntent);
         finish();
+    }
+
+    private void sendUserToSettingsActivity()
+    {
+        Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(settingsIntent);
     }
 
     /*Calendar calForDate = Calendar.getInstance();
