@@ -166,8 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 //    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InstrumentFragment()).commit();
                 break;
             case R.id.nav_band:
-                Toast.makeText(this, "Bands", Toast.LENGTH_SHORT).show();
-                //    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new BandFragment()).commit();
+               sendUserToAddBandActivity();
                 break;
             case R.id.nav_song:
                 Toast.makeText(this, "Songs", Toast.LENGTH_SHORT).show();
@@ -287,6 +286,14 @@ public class MainActivity extends AppCompatActivity {
         Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
         profileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(profileIntent);
+        finish();
+    }
+
+    public void sendUserToAddBandActivity()
+    {
+        Intent addBandIntent = new Intent(MainActivity.this, AddBandActivity.class);
+        addBandIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(addBandIntent);
         finish();
     }
 

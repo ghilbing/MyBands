@@ -48,10 +48,6 @@ public class AddInstrumentActivity extends AppCompatActivity
 
     @BindView(R.id.update_instrument_toolbar)
     Toolbar toolbar;
-    @BindView(R.id.instruments_singer_CB)
-    CheckBox singerCB;
-    @BindView(R.id.instruments_composer_CB)
-    CheckBox composerCB;
     @BindView(R.id.instruments_SP)
     Spinner instrumentsSP;
     @BindView(R.id.instruments_add_BT)
@@ -99,23 +95,6 @@ public class AddInstrumentActivity extends AppCompatActivity
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         instrumentsAddedRV.setLayoutManager(linearLayoutManager);
-
-        singerCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b)
-            {
-                if(singerCB.isChecked())
-                {
-                    addUserToSingersDatabase();
-                }
-                else
-                {
-                    deleteSingerFromDataBase(currentUserId);
-
-                }
-            }
-        });
 
         addBT.setOnClickListener(new View.OnClickListener()
         {
@@ -230,49 +209,6 @@ public class AddInstrumentActivity extends AppCompatActivity
         }
     }
 
-    private void showUpdateDialog(final int itemClicked, final String instrument){
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getApplicationContext());
-        LayoutInflater inflater = getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.update_dialog_instrument, null);
-        dialogBuilder.setView(dialogView);
-
-        final Spinner newInstrumentSP = dialogView.findViewById(R.id.new_instrument_SP);
-      //  final Spinner newExperienceSP = dialogView.findViewById(R.id.new_experience_SP);
-        final Button updateBT = dialogView.findViewById(R.id.update_BT);
-        final Button deleteBT = dialogView.findViewById(R.id.delete_BT);
-
-        newInstrumentSP.setSelection(getIndexSpinner(newInstrumentSP, instrument));
-    //    newExperienceSP.setSelection(getIndexSpinner(newExperienceSP, experience));
-
-
-
-        dialogBuilder.setTitle(getResources().getString(R.string.updating_instruments) + ": " + instrument);
-        final AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
-
-        updateBT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String newInstrument = newInstrumentSP.getSelectedItem().toString();
-           //     String newExperience = newExperienceSP.getSelectedItem().toString();
-
-             //   updateInstrument(instrument, currentUserId);
-
-                alertDialog.dismiss();
-
-
-            }
-        });
-
-        deleteBT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteInstrument(instrument, currentUserId);
-                alertDialog.dismiss();
-            }
-        });
-
-    }
 
     private void deleteInstrument(String instrument, String userId)
     {

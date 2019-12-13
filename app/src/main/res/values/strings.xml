@@ -142,6 +142,19 @@
     <string name="please_enter_the_country_where_you_live">Please, enter ther country where you live</string>
     <string name="please_enter_your_status">Please, enter your status</string>
     <string name="account_settings_updated_successfully">Account settings updated succesfully</string>
+    <string name="enter_band_name">Enter band\'s name</string>
+    <string name="enter_band_story">Enter band\'s story</string>
+    <string name="where_is_the_band_located">Where is the band located?</string>
+    <string name="find_musicians">Find musicians</string>
+    <string name="creating_band">Creating band</string>
+    <string name="please_wait_while_we_are_creating_your_band">Please wait, while we are creating your band</string>
+    <string name="your_band_is_created_succesfully">Your band is created successfully</string>
+    <string name="enter_your_band_name">Enter your band name</string>
+    <string name="enter_your_band_story">Enter your band story</string>
+    <string name="please_select_band_image_first">Please, select band image first</string>
+    <string name="band_image">Band Image</string>
+    <string name="please_wait_while_we_are_updating_your_band_image">Please wait, while we are updating your band image</string>
+    <string name="search_for_musicians_for_your_band">Search for musicians for your band</string>
 
     <array name="instruments">
         <item>Bass</item>
