@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,10 +36,8 @@ public class FindMusicianActivity extends AppCompatActivity {
 
     @BindView(R.id.find_musician_appbar_layout)
     Toolbar toolbar;
-    @BindView(R.id.search_musician_ET)
-    EditText searchET;
-    @BindView(R.id.search_musician_BT)
-    ImageButton searchBT;
+    @BindView(R.id.find_musician_SV)
+    SearchView searchMusicianSV;
     @BindView(R.id.search_musician_RV)
     RecyclerView recyclerViewRV;
 
@@ -63,23 +62,26 @@ public class FindMusicianActivity extends AppCompatActivity {
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
 
-        searchBT.setOnClickListener(new View.OnClickListener()
-        {
+        searchMusicianSV.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View view)
-            {
-                String searchString = searchET.getText().toString();
-                searchMusicians(searchString);
+            public boolean onQueryTextSubmit(String s) {
+                searchMusicians(s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                searchMusicians(s);
+                return false;
             }
         });
 
-            //displayMusicians();
 
     }
 
     private void searchMusicians(String searchString)
     {
-        {
+
             Query query = allMusiciansReference.orderByChild("mUserName").startAt(searchString).endAt(searchString + "u\uf8ff");
 
             FirebaseRecyclerOptions<FindMusician> options = new FirebaseRecyclerOptions.Builder<FindMusician>().setQuery(query,
@@ -129,9 +131,10 @@ public class FindMusicianActivity extends AppCompatActivity {
             };
 
             recyclerViewRV.setAdapter(recyclerAdapter);
-        }
+            recyclerAdapter.startListening();
 
     }
+
 
     public class FindMusicianViewHolder extends RecyclerView.ViewHolder
     {
@@ -160,6 +163,25 @@ public class FindMusicianActivity extends AppCompatActivity {
                 }
             });
 
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(null != recyclerAdapter)
+        {
+            recyclerAdapter.stopListening();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(null != recyclerAdapter)
+        {
+            recyclerAdapter.startListening();
         }
     }
 }
