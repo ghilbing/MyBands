@@ -121,8 +121,17 @@ public class LoginActivity extends AppCompatActivity
             }
         });
 
+        forgotPasswordTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendUserToResetPasswordActivity();
+            }
+        });
+
 
     }
+
+
 
     private void signInGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
@@ -264,6 +273,12 @@ public class LoginActivity extends AppCompatActivity
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
 
+    }
+
+    private void sendUserToResetPasswordActivity()
+    {
+        Intent resetIntent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+        startActivity(resetIntent);
     }
 
     @Override

@@ -14,43 +14,35 @@
     </include>
 
 
-    <TextView
-        android:id="@+id/simpleTextTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/search_for_musicians_for_your_band"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/find_musician_appbar_layout"
-        app:layout_constraintVertical_bias="0.06" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_musician_RV"
-        android:layout_width="394dp"
-        android:layout_height="472dp"
+        android:layout_width="389dp"
+        android:layout_height="511dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/find_musician_SV" />
 
     <SearchView
         android:id="@+id/find_musician_SV"
         android:layout_width="351dp"
         android:layout_height="63dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/simpleTextTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_text_TV" />
+
+    <TextView
+        android:id="@+id/search_text_TV"
+        android:layout_width="355dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:text="@string/search_for_musicians_for_your_band"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/find_musician_appbar_layout" />
