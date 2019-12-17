@@ -13,12 +13,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ResetPasswordActivity"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".PersonActivity"></activity>
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".FindMusicianActivity"
             android:parentActivityName=".AddBandActivity"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".AddBandActivity" />
         <activity
             android:name=".ProfileActivity"

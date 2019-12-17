@@ -158,6 +158,15 @@
     <string name="we_will_email_you_a_link_to_reset_your_password">We will email you a link to reset your password</string>
     <string name="reset_password_email">Reset Password Email</string>
     <string name="please_check_your_email_account">Please, check your email account</string>
+    <string name="add_to_band_request">Add to band request</string>
+    <string name="decline_band_request">Decline band request</string>
+    <string name="not_from_same_band">Not from same band</string>
+    <string name="request_sent">Request sent</string>
+    <string name="cancel_request">Cancel request</string>
+    <string name="request_received">Request received</string>
+    <string name="accept_request">Accept Request</string>
+    <string name="from_same_band">From same band</string>
+    <string name="quit_band">Quit band</string>
 
     <array name="instruments">
         <item>Bass</item>

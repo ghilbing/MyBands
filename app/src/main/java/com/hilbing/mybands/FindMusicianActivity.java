@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,8 +124,8 @@ public class FindMusicianActivity extends AppCompatActivity {
                     holder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                          //  sendUserToClickMusicianActivity(musicianKey);
-                            Toast.makeText(FindMusicianActivity.this, musicianKey, Toast.LENGTH_LONG).show();
+                            sendUserToPersonActivity(musicianKey);
+                          //  Toast.makeText(FindMusicianActivity.this, musicianKey, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -164,6 +165,13 @@ public class FindMusicianActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+    private void sendUserToPersonActivity(String musicianKey)
+    {
+        Intent personIntent = new Intent(FindMusicianActivity.this, PersonActivity.class);
+        personIntent.putExtra("selectedUser", musicianKey);
+        startActivity(personIntent);
     }
 
 
