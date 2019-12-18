@@ -39,10 +39,7 @@ public class MusiciansActivity extends AppCompatActivity {
     private DatabaseReference usersDataReference;
     private FirebaseAuth mAuth;
     private String currentUserId;
-    private String userName;
-    private String profileImage;
-    private String status;
-    private String date;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +93,7 @@ public class MusiciansActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull MusicianViewHolder holder, int position, @NonNull final UsersBands model)
+            protected void onBindViewHolder(@NonNull final MusicianViewHolder holder, int position, @NonNull final UsersBands model)
             {
                 final String musicianKey = getRef(position).getKey();
                 holder.dateTV.setText(model.getmDate());
@@ -107,9 +104,13 @@ public class MusiciansActivity extends AppCompatActivity {
                     {
                         if(dataSnapshot.exists())
                         {
-                            userName = dataSnapshot.child("mUserName").getValue().toString();
-                            profileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
-                            status = dataSnapshot.child("mUserStatus").getValue().toString();
+                            String userName = String.valueOf(dataSnapshot.child("mUserName").getValue());
+                            String profileImage = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
+                            String status = String.valueOf(dataSnapshot.child("mUserStatus").getValue());
+
+                            holder.fullNameTV.setText(userName);
+                            Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.profileCIV);
+                            holder.statusTV.setText(status);
                         }
                     }
 
@@ -119,11 +120,6 @@ public class MusiciansActivity extends AppCompatActivity {
 
                     }
                 });
-
-                holder.fullNameTV.setText(userName);
-                Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.profileCIV);
-                holder.statusTV.setText(status);
-
 
 
             }
