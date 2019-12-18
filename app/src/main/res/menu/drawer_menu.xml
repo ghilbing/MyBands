@@ -20,6 +20,10 @@
             android:icon="@drawable/ic_band"
             android:title="@string/bands"/>
         <item
+            android:id="@+id/nav_musicians"
+            android:icon="@drawable/ic_band"
+            android:title="@string/musicians"/>
+        <item
             android:id="@+id/nav_song"
             android:icon="@drawable/ic_song"
             android:title="@string/songs"/>

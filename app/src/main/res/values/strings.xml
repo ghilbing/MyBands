@@ -167,6 +167,7 @@
     <string name="accept_request">Accept Request</string>
     <string name="from_same_band">From same band</string>
     <string name="quit_band">Quit band</string>
+    <string name="musicians">Musicians</string>
 
     <array name="instruments">
         <item>Bass</item>

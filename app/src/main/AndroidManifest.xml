@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PersonActivity"></activity>
+        <activity android:name=".MusiciansActivity"></activity>
+        <activity android:name=".PersonActivity" />
         <activity
             android:name=".ResetPasswordActivity"
             android:parentActivityName=".MainActivity" />
@@ -21,12 +22,14 @@
             android:name=".FindMusicianActivity"
             android:parentActivityName=".AddBandActivity"
             android:windowSoftInputMode="adjustNothing" />
-        <activity android:name=".AddBandActivity" />
         <activity
             android:name=".ProfileActivity"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".AddBandActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".ClickInstrumentActivity" />
         <activity android:name=".AddInstrumentActivity" />

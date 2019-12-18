@@ -172,6 +172,7 @@ public class FindMusicianActivity extends AppCompatActivity {
         Intent personIntent = new Intent(FindMusicianActivity.this, PersonActivity.class);
         personIntent.putExtra("selectedUser", musicianKey);
         startActivity(personIntent);
+        finish();
     }
 
 

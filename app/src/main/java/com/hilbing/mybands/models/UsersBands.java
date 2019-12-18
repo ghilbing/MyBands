@@ -1,51 +1,21 @@
 package com.hilbing.mybands.models;
 
 public class UsersBands {
-    String mUserId;
-    String mUserName;
-    String mBandId;
-    String mBandName;
+
+    String mDate;
 
     public UsersBands() {
     }
 
-    public UsersBands(String mUserId, String mUserName, String mBandId, String mBandName) {
-        this.mUserId = mUserId;
-        this.mUserName = mUserName;
-        this.mBandId = mBandId;
-        this.mBandName = mBandName;
+    public UsersBands(String mDate) {
+        this.mDate = mDate;
     }
 
-    public String getmUserId() {
-        return mUserId;
+    public String getmDate() {
+        return mDate;
     }
 
-    public void setmUserId(String mUserId) {
-        this.mUserId = mUserId;
+    public void setmDate(String mDate) {
+        this.mDate = mDate;
     }
-
-    public String getmUserName() {
-        return mUserName;
-    }
-
-    public void setmUserName(String mUserName) {
-        this.mUserName = mUserName;
-    }
-
-    public String getmBandId() {
-        return mBandId;
-    }
-
-    public void setmBandId(String mBandId) {
-        this.mBandId = mBandId;
-    }
-
-    public String getmBandName() {
-        return mBandName;
-    }
-
-    public void setmBandName(String mBandName) {
-        this.mBandName = mBandName;
-    }
-
 }
