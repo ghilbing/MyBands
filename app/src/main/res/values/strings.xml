@@ -168,6 +168,11 @@
     <string name="from_same_band">From same band</string>
     <string name="quit_band">Quit band</string>
     <string name="musicians">Musicians</string>
+    <string name="send_message">Send Message</string>
+    <string name="select_option">Select option</string>
+    <string name="write_your_message_here">Write your message here...</string>
+    <string name="enter_message">Enter message</string>
+    <string name="message_sent_succesfully">Message Sent Successfully</string>
 
     <array name="instruments">
         <item>Bass</item>

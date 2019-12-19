@@ -13,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MusiciansActivity"></activity>
+        <activity android:name=".MessagesActivity"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".MusiciansActivity" />
         <activity android:name=".PersonActivity" />
         <activity
             android:name=".ResetPasswordActivity"

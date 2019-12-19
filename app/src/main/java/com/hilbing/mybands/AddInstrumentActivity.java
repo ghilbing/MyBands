@@ -79,8 +79,18 @@ public class AddInstrumentActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.update_instrument));
 
-        mAuth = FirebaseAuth.getInstance();
-        currentUserId = mAuth.getCurrentUser().getUid();
+        Intent intentGetData = getIntent();
+        Bundle bundle = intentGetData.getExtras();
+        if(bundle != null)
+        {
+            String intentString = bundle.getString("mUserId");
+            currentUserId = intentString;
+        }
+        else {
+
+            mAuth = FirebaseAuth.getInstance();
+            currentUserId = mAuth.getCurrentUser().getUid();
+        }
 
         userDataReference = FirebaseDatabase.getInstance().getReference().child("Users");
         singersReference = FirebaseDatabase.getInstance().getReference().child("Singers");

@@ -1,10 +1,13 @@
 package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.models.FindMusician;
 import com.hilbing.mybands.models.UsersBands;
 import com.squareup.picasso.Picasso;
+
+import java.io.CharArrayWriter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -104,13 +109,50 @@ public class MusiciansActivity extends AppCompatActivity {
                     {
                         if(dataSnapshot.exists())
                         {
-                            String userName = String.valueOf(dataSnapshot.child("mUserName").getValue());
+                            final String userName = String.valueOf(dataSnapshot.child("mUserName").getValue());
                             String profileImage = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
                             String status = String.valueOf(dataSnapshot.child("mUserStatus").getValue());
 
                             holder.fullNameTV.setText(userName);
                             Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.profileCIV);
                             holder.statusTV.setText(status);
+
+                            holder.mView.setOnClickListener(new View.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(View view)
+                                {
+                                    CharSequence options[] = new CharSequence[]
+                                            {
+                                                    userName + " " + getResources().getString(R.string.instruments),
+                                                    getResources().getString(R.string.send_message)
+                                            };
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MusiciansActivity.this);
+                                    builder.setTitle(getResources().getString(R.string.select_option));
+                                    builder.setItems(options, new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i)
+                                        {
+                                            if(i == 0)
+                                            {
+                                                Intent instrumentIntent = new Intent(MusiciansActivity.this, AddInstrumentActivity.class);
+                                                instrumentIntent.putExtra("mUserId", musicianKey);
+                                                startActivity(instrumentIntent);
+                                            }
+                                            if(i == 1)
+                                            {
+                                                Intent messageIntent = new Intent(MusiciansActivity.this, MessagesActivity.class);
+                                                messageIntent.putExtra("mUserId", musicianKey);
+                                                messageIntent.putExtra("mUserName", userName);
+                                                startActivity(messageIntent);
+
+                                            }
+                                        }
+                                    });
+                                    builder.show();
+                                }
+                            });
                         }
                     }
 
@@ -130,6 +172,7 @@ public class MusiciansActivity extends AppCompatActivity {
 
 
     }
+
 
     public class MusicianViewHolder extends RecyclerView.ViewHolder
     {

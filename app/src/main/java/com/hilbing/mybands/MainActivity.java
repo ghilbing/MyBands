@@ -171,6 +171,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_musicians:
                 sendUserToMusiciansActivity();
                 break;
+            case R.id.nav_messages:
+                sendUserToMusiciansActivity();
+                break;
             case R.id.nav_song:
                 Toast.makeText(this, "Songs", Toast.LENGTH_SHORT).show();
                 //    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SongFragment()).commit();

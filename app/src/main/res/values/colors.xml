@@ -5,4 +5,7 @@
     <color name="colorAccent">#F44336</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="recyclerChat">#DEC5A5</color>
+    <color name="currentUserIdColor">#986464</color>
+
 </resources>

@@ -24,6 +24,10 @@
             android:icon="@drawable/ic_band"
             android:title="@string/musicians"/>
         <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_message"
+            android:title="@string/send_message"/>
+        <item
             android:id="@+id/nav_song"
             android:icon="@drawable/ic_song"
             android:title="@string/songs"/>
