@@ -58,6 +58,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddBandActivity extends AppCompatActivity {
 
+    @BindView(R.id.add_band_toolbar)
+    Toolbar toolbar;
     @BindView(R.id.band_image_CIV)
     CircleImageView imageCIV;
     @BindView(R.id.band_name_ET)
@@ -98,6 +100,12 @@ public class AddBandActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_band);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getResources().getString(R.string.create_band));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
