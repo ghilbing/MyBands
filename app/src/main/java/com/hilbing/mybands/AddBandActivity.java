@@ -48,6 +48,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.lang.ref.Reference;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -73,6 +75,8 @@ public class AddBandActivity extends AppCompatActivity {
     private String currentUserId;
     private String currentBandId;
     private ProgressDialog progressDialog;
+    private String saveCurrentDate;
+    private String saveCurrentTime;
 
     private FirebaseAuth mAuth;
     private DatabaseReference userDataReference;
@@ -81,6 +85,8 @@ public class AddBandActivity extends AppCompatActivity {
     private DatabaseReference usersBandsReference;
     private DatabaseReference bandsUsersReference;
     private StorageReference bandsImageReference;
+    private DatabaseReference bandsMusiciansRef;
+    private DatabaseReference addToBandRequestRef;
 
     final static int GALLERY = 1;
     private String downloadUri;
@@ -105,6 +111,10 @@ public class AddBandActivity extends AppCompatActivity {
         usersBandsReference = FirebaseDatabase.getInstance().getReference("users_bands");
         bandsUsersReference = FirebaseDatabase.getInstance().getReference("bands_users");
         bandsImageReference = FirebaseStorage.getInstance().getReference().child("band_images");
+
+        bandsMusiciansRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        addToBandRequestRef = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
+
 
         if(currentBandId != null) {
             bandDataReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
@@ -164,6 +174,7 @@ public class AddBandActivity extends AppCompatActivity {
 
         Intent findMusicianIntent = new Intent(AddBandActivity.this, FindMusicianActivity.class);
         findMusicianIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        findMusicianIntent.putExtra("currentBandId", currentBandId);
         startActivity(findMusicianIntent);
         finish();
     }
@@ -203,10 +214,20 @@ public class AddBandActivity extends AppCompatActivity {
 
                 final UploadTask uploadTask = filePath.putFile(resultUri);
 
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+                saveCurrentDate = currentDate.format(calForDate.getTime());
+                Calendar calForTime = Calendar.getInstance();
+                SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+                saveCurrentTime = currentTime.format(calForTime.getTime());
+
+                final String bandRandomId = saveCurrentDate+saveCurrentTime;
+
+
                 uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        currentBandId = bandDataReference.push().getKey();
+                        currentBandId = currentUserId+bandRandomId;
                         taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
@@ -273,7 +294,6 @@ public class AddBandActivity extends AppCompatActivity {
                 progressDialog.show();
                 progressDialog.setCanceledOnTouchOutside(true);
 
-
                 HashMap bandMap = new HashMap();
                 bandMap.put("mBandId", currentBandId);
                 bandMap.put("mBandImage", downloadUri);
@@ -296,6 +316,47 @@ public class AddBandActivity extends AppCompatActivity {
                             String message = task.getException().getMessage();
                             Toast.makeText(AddBandActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                             progressDialog.dismiss();
+                        }
+                    }
+                });
+
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+                saveCurrentDate = currentDate.format(calForDate.getTime());
+
+                bandsMusiciansRef.child(currentBandId).child(currentUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful())
+                        {
+                            bandsMusiciansRef.child(currentUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                        addToBandRequestRef.child(currentBandId).child(currentUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+                                        {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task)
+                                            {
+                                                if(task.isSuccessful())
+                                                {
+                                                    addToBandRequestRef.child(currentUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task)
+                                                        {
+                                                            if(task.isSuccessful())
+                                                            {
+                                                                Toast.makeText(AddBandActivity.this, "Entro", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
                     }
                 });

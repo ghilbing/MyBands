@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,9 +32,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hilbing.mybands.adapters.ExpandableListAdapter;
+import com.hilbing.mybands.models.MenuModel;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     @BindView(R.id.main_search_BT)
     ImageButton searchBT;
-    @BindView(R.id.events_RV)
-    RecyclerView recyclerView;
+//    @BindView(R.id.events_RV)
+//    RecyclerView recyclerView;
     Toolbar mToolbar;
     private CircleImageView navProfileCIV;
     private TextView navUserNameTV;
@@ -57,6 +63,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference usersReference;
     String currentUserID;
+
+    ExpandableListAdapter expandableListAdapter;
+    @BindView(R.id.nav_expandableListView)
+    ExpandableListView expandableListView;
+    List<MenuModel> headerList = new ArrayList<>();
+    HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
 
 
 
@@ -76,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
+
+        prepareMenuData();
+        populateExpandableList();
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -133,6 +148,111 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private void prepareMenuData() {
+
+        MenuModel menuModel = new MenuModel(getResources().getString(R.string.home), false, true);
+        headerList.add(menuModel);
+        if (!menuModel.hasChildren)
+        {
+            childList.put(menuModel, null);
+        }
+
+        menuModel = new MenuModel(getResources().getString(R.string.profile), true, true);
+        headerList.add(menuModel);
+        List<MenuModel> childModelList = new ArrayList<>();
+        MenuModel childModel = new MenuModel(getResources().getString(R.string.instruments), false, false);
+        childModelList.add(childModel);
+
+        if(menuModel.hasChildren)
+        {
+            childList.put(menuModel, childModelList);
+        }
+
+        childModelList = new ArrayList<>();
+        menuModel = new MenuModel(getResources().getString(R.string.bands), true, true);
+        headerList.add(menuModel);
+        childModel = new MenuModel(getResources().getString(R.string.create_band), false, false);
+        childModelList.add(childModel);
+        childModel = new MenuModel(getResources().getString(R.string.find_musicians), false, false);
+        childModelList.add(childModel);
+        childModel = new MenuModel(getResources().getString(R.string.send_message), false, false);
+        childModelList.add(childModel);
+
+        if(menuModel.hasChildren)
+        {
+            childList.put(menuModel, childModelList);
+        }
+
+        childModelList = new ArrayList<>();
+        menuModel = new MenuModel(getResources().getString(R.string.songs), false, true);
+        headerList.add(menuModel);
+        if (!menuModel.hasChildren)
+        {
+            childList.put(menuModel, null);
+        }
+        menuModel = new MenuModel(getResources().getString(R.string.playlists), false, true);
+        headerList.add(menuModel);
+        if (!menuModel.hasChildren)
+        {
+            childList.put(menuModel, null);
+        }
+        menuModel = new MenuModel(getResources().getString(R.string.events), true, true);
+        headerList.add(menuModel);
+        childModel = new MenuModel(getResources().getString(R.string.rehearsals), false, false);
+        childModelList.add(childModel);
+        childModel = new MenuModel(getResources().getString(R.string.concerts), false, false);
+        childModelList.add(childModel);
+        if(menuModel.hasChildren)
+        {
+            childList.put(menuModel, childModelList);
+        }
+        childModelList = new ArrayList<>();
+        menuModel = new MenuModel(getResources().getString(R.string.settings), false, true);
+        headerList.add(menuModel);
+        if (!menuModel.hasChildren)
+        {
+            childList.put(menuModel, null);
+        }
+        menuModel = new MenuModel(getResources().getString(R.string.logout), false, true);
+        headerList.add(menuModel);
+        if (!menuModel.hasChildren)
+        {
+            childList.put(menuModel, null);
+        }
+
+    }
+
+    public void populateExpandableList(){
+        expandableListAdapter = new ExpandableListAdapter(this, headerList, childList);
+        expandableListView.setAdapter(expandableListAdapter);
+
+        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+                if(headerList.get(i).isGroup){
+                    if(!headerList.get(i).hasChildren){
+                        Toast.makeText(MainActivity.this, "Example", Toast.LENGTH_LONG).show();
+                    }
+                }
+                return false;
+            }
+        });
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+                if(childList.get(headerList.get(i))!= null){
+                    MenuModel menuModel = childList.get(headerList.get(i)).get(i1);
+                    if(menuModel.menuName.length() > 0){
+                        Toast.makeText(MainActivity.this, "Example subMenu", Toast.LENGTH_LONG).show();
+                    }
+                }
+                return false;
+            }
+        });
+
+    }
+
 
     @Override
     public void onBackPressed()

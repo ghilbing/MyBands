@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MessagesActivity"
             android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".MusiciansActivity" />
+        <activity android:name=".MusiciansActivity"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".PersonActivity" />
         <activity
             android:name=".ResetPasswordActivity"

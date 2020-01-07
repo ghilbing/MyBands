@@ -64,6 +64,7 @@ public class PersonActivity extends AppCompatActivity
     private String senderUserId;
     private String CURRENT_STATE;
     private String saveCurrentDate;
+    private String currentBandId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -74,6 +75,7 @@ public class PersonActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         receiverUserId = getIntent().getExtras().get("selectedUser").toString();
+        currentBandId = getIntent().getExtras().get("currentBandId").toString();
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();

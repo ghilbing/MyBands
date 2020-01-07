@@ -137,16 +137,16 @@ public class MessagesActivity extends AppCompatActivity
         rootReference.child("Messages").child(currentUserId).child(messageReceiverId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                Message message = dataSnapshot.getValue(Message.class);
+                messages.add(message);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if(dataSnapshot.exists())
                 {
-                    Message message = dataSnapshot.getValue(Message.class);
-                    messages.add(message);
-                    adapter.notifyDataSetChanged();
+
                 }
             }
 

@@ -173,6 +173,7 @@
     <string name="write_your_message_here">Write your message here...</string>
     <string name="enter_message">Enter message</string>
     <string name="message_sent_succesfully">Message Sent Successfully</string>
+    <string name="events">Events</string>
 
     <array name="instruments">
         <item>Bass</item>
