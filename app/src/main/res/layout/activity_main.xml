@@ -4,66 +4,33 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start"
-    tools:context=".MainActivity">
+    tools:openDrawer="start">
 
-
-   <LinearLayout
-        android:id="@+id/relative_layout"
-        android:orientation="vertical"
+    <include
+        layout="@layout/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <include
-            android:id="@+id/main_page_toolbar"
-            layout="@layout/app_bar_layout"></include>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView_NV"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true">
 
-
-        <!--<FrameLayout
-            android:id="@+id/main_container_FL"
+        <ExpandableListView
+            android:id="@+id/nav_expandableListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/main_page_toolbar">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="170dp"
+            android:background="@android:color/white"
+            android:dividerHeight="0dp"
+            android:groupIndicator="@null" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/events_RV"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>-->
-        <ImageButton
-            android:id="@+id/main_search_BT"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_above="@+id/main_container_FL"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_search"/>
-
-
-    </LinearLayout>
-
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigationView_NV"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:layout_marginBottom="3dp"
-            android:fitsSystemWindows="true"
-            app:menu="@menu/drawer_menu"/>
-
-    <ExpandableListView
-        android:id="@+id/nav_expandableListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="170dp"
-        android:background="@color/white"
-        android:dividerHeight="0dp"
-        android:groupIndicator="@null"/>
-
-
-
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

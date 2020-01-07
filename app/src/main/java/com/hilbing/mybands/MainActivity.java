@@ -51,11 +51,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationViewNV;
     @BindView(R.id.drawerLayout_DL)
     DrawerLayout drawerLayout;
-    @BindView(R.id.main_search_BT)
-    ImageButton searchBT;
-//    @BindView(R.id.events_RV)
-//    RecyclerView recyclerView;
-    Toolbar mToolbar;
+    private Toolbar mToolbar;
     private CircleImageView navProfileCIV;
     private TextView navUserNameTV;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -80,14 +76,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mToolbar = findViewById(R.id.main_page_toolbar);
-
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         usersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
+       // mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Home");
+       // getSupportActionBar().setTitle("Home");
 
         prepareMenuData();
         populateExpandableList();
@@ -95,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+     //   getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         View navHeader = navigationViewNV.inflateHeaderView(R.layout.nav_header);
         navUserNameTV = navHeader.findViewById(R.id.nav_header_user_name_TV);
@@ -158,10 +153,12 @@ public class MainActivity extends AppCompatActivity {
             childList.put(menuModel, null);
         }
 
-        menuModel = new MenuModel(getResources().getString(R.string.profile), true, true);
+        menuModel = new MenuModel(getResources().getString(R.string.user_profile), true, true);
         headerList.add(menuModel);
         List<MenuModel> childModelList = new ArrayList<>();
-        MenuModel childModel = new MenuModel(getResources().getString(R.string.instruments), false, false);
+        MenuModel childModel = new MenuModel(getResources().getString(R.string.profile), false, false);
+        childModelList.add(childModel);
+        childModel = new MenuModel(getResources().getString(R.string.instruments), false, false);
         childModelList.add(childModel);
 
         if(menuModel.hasChildren)
@@ -232,7 +229,24 @@ public class MainActivity extends AppCompatActivity {
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
                 if(headerList.get(i).isGroup){
                     if(!headerList.get(i).hasChildren){
-                        Toast.makeText(MainActivity.this, "Example", Toast.LENGTH_LONG).show();
+                        String title = headerList.get(i).menuName;
+                        if(title.equals(getResources().getString(R.string.home))){
+                            Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(title.equals(getResources().getString(R.string.songs))){
+                            Toast.makeText(MainActivity.this, "Songs", Toast.LENGTH_LONG).show();
+                        }
+                        else if(title.equals(getResources().getString(R.string.playlists))){
+                            Toast.makeText(MainActivity.this, "Playlists", Toast.LENGTH_LONG).show();
+                        }
+                        else if (title.equals(getResources().getString(R.string.settings))){
+                            sendUserToSettingsActivity();
+                        }
+                        else if(title.equals(getResources().getString(R.string.logout))){
+                            mAuth.signOut();
+                            sendUserToLoginActivity();
+                        }
+
                     }
                 }
                 return false;
@@ -244,7 +258,28 @@ public class MainActivity extends AppCompatActivity {
                 if(childList.get(headerList.get(i))!= null){
                     MenuModel menuModel = childList.get(headerList.get(i)).get(i1);
                     if(menuModel.menuName.length() > 0){
-                        Toast.makeText(MainActivity.this, "Example subMenu", Toast.LENGTH_LONG).show();
+                       String subTitle = menuModel.menuName;
+                       if(subTitle.equals(getResources().getString(R.string.profile))){
+                           sendUserToProfileActivity();
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.instruments))){
+                           sendUserToAddInstrumentActivity();
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.create_band))){
+                           sendUserToAddBandActivity();
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.find_musicians))){
+                           sendUsertoFindMusicians();
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.send_message))){
+                           sendUserToMessagesActivity();
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.rehearsals))){
+                           Toast.makeText(MainActivity.this, "Rehearsals", Toast.LENGTH_LONG).show();
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.concerts))){
+                           Toast.makeText(MainActivity.this, "Concerts", Toast.LENGTH_LONG).show();
+                       }
                     }
                 }
                 return false;
@@ -252,6 +287,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 
 
     @Override
@@ -283,7 +320,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_instruments:
                 sendUserToAddInstrumentActivity();
-                //    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InstrumentFragment()).commit();
                 break;
             case R.id.nav_band:
                sendUserToAddBandActivity();
@@ -296,23 +332,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_song:
                 Toast.makeText(this, "Songs", Toast.LENGTH_SHORT).show();
-                //    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SongFragment()).commit();
+
                 break;
             case R.id.nav_playlists:
                 Toast.makeText(this, "Playlists", Toast.LENGTH_SHORT).show();
-                //    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlaylistFragment()).commit();
+
                 break;
             case R.id.nav_rehearsals:
                 Toast.makeText(this, "Rehearsals", Toast.LENGTH_SHORT).show();
-                //     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RehearsalFragment()).commit();
+
                 break;
             case R.id.nav_concerts:
                 Toast.makeText(this, "Concerts", Toast.LENGTH_SHORT).show();
-                //     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ConcertFragment()).commit();
+
                 break;
             case R.id.nav_share:
                 Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
-                //    Toast.makeText(getApplicationContext(), "Share option menu", Toast.LENGTH_LONG).show();
+
                 break;
             case R.id.nav_settings:
                sendUserToSettingsActivity();
@@ -381,6 +417,22 @@ public class MainActivity extends AppCompatActivity {
         Intent setUpIntent = new Intent(MainActivity.this, SetUpActivity.class);
         setUpIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setUpIntent);
+        finish();
+    }
+
+    private void sendUsertoFindMusicians() {
+        Intent findMusicianIntent = new Intent(MainActivity.this, FindMusicianActivity.class);
+        findMusicianIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(findMusicianIntent);
+        finish();
+
+    }
+
+    private void sendUserToMessagesActivity() {
+
+        Intent sendMessageIntent = new Intent(MainActivity.this, MessagesActivity.class);
+        sendMessageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(sendMessageIntent);
         finish();
     }
 
