@@ -80,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
         currentUserID = mAuth.getCurrentUser().getUid();
         usersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
-       // mToolbar = findViewById(R.id.main_page_toolbar);
+        mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
-       // getSupportActionBar().setTitle("Home");
+        getSupportActionBar().setTitle("Home");
 
         prepareMenuData();
         populateExpandableList();
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-     //   getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         View navHeader = navigationViewNV.inflateHeaderView(R.layout.nav_header);
         navUserNameTV = navHeader.findViewById(R.id.nav_header_user_name_TV);
