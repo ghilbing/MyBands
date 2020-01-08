@@ -4,8 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -26,9 +25,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -72,8 +68,8 @@ public class AddBandActivity extends AppCompatActivity {
     Spinner countrySP;
     @BindView(R.id.band_save_BT)
     Button createBT;
-    @BindView(R.id.band_find_musicians_BT)
-    Button findMusiciansBT;
+   /* @BindView(R.id.band_find_musicians_BT)
+    Button findMusiciansBT;*/
     private String currentUserId;
     private String currentBandId;
     private ProgressDialog progressDialog;
@@ -162,12 +158,12 @@ public class AddBandActivity extends AppCompatActivity {
             }
         });
 
-        findMusiciansBT.setOnClickListener(new View.OnClickListener() {
+       /* findMusiciansBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendUserToFindMusiciansActivity();
             }
-        });
+        });*/
 
 
     ArrayAdapter<String> countriesAdapter = new ArrayAdapter<String>(AddBandActivity.this,

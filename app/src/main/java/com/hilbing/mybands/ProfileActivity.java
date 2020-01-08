@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
@@ -45,10 +47,14 @@ public class ProfileActivity extends AppCompatActivity
     CheckBox singerCB;
     @BindView(R.id.profile_composer_CB)
     CheckBox composerCB;
+    @BindView(R.id.profile_bands_number_BT)
+    Button bandsNumberBT;
 
     private DatabaseReference profileUserReference;
+    private DatabaseReference bandsReference;
     private FirebaseAuth mAuth;
     private String currentUserId;
+    private int countBands = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -67,6 +73,7 @@ public class ProfileActivity extends AppCompatActivity
         currentUserId = mAuth.getCurrentUser().getUid();
 
         profileUserReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
+        bandsReference = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
 
         profileUserReference.addValueEventListener(new ValueEventListener()
         {
@@ -102,7 +109,35 @@ public class ProfileActivity extends AppCompatActivity
             }
         });
 
+        bandsNumberBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendUserToMyBandsActivity();
+            }
+        });
+
+        bandsReference.orderByKey().startAt(currentUserId).endAt(currentUserId + "\uf8ff").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    countBands = (int) dataSnapshot.getChildrenCount();
+                    bandsNumberBT.setText(countBands + " " + getResources().getString(R.string.bands));
+                }
+                else
+                {
+                    bandsNumberBT.setText(0 + " " + getResources().getString(R.string.bands));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
@@ -125,5 +160,12 @@ public class ProfileActivity extends AppCompatActivity
         startActivity(mainIntent);
         finish();
 
+    }
+
+    private void sendUserToMyBandsActivity() {
+        Intent myBandsIntent = new Intent(ProfileActivity.this, MyBandsActivity.class);
+        myBandsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(myBandsIntent);
+        finish();
     }
 }

@@ -175,6 +175,7 @@
     <string name="message_sent_succesfully">Message Sent Successfully</string>
     <string name="events">Events</string>
     <string name="user_profile">User profile</string>
+    <string name="my_bands">My Bands</string>
 
     <array name="instruments">
         <item>Bass</item>

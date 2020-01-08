@@ -3,13 +3,13 @@ package com.hilbing.mybands.models;
 public class Band
 {
 
-    String mBandId;
-    String mCreatorId;
-    String mBandName;
-    String mBandImage;
-    String mBandStory;
-    String mCountry;
-    boolean mAvailable;
+    public String mBandId;
+    public String mCreatorId;
+    public String mBandName;
+    public String mBandImage;
+    public String mBandStory;
+    public String mCountry;
+    public boolean mAvailable;
 
     public Band()
     {

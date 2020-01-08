@@ -28,6 +28,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -88,6 +89,7 @@
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_phone_TV"
@@ -121,6 +123,16 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/profile_bands_number_BT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout"
+                android:background="@drawable/buttons"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="@string/bands"/>
 
 
         </RelativeLayout>

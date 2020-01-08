@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
             {
-                userSelector(menuItem);
+              //  userSelector(menuItem);
                 return false;
             }
         });
@@ -170,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
         menuModel = new MenuModel(getResources().getString(R.string.bands), true, true);
         headerList.add(menuModel);
         childModel = new MenuModel(getResources().getString(R.string.create_band), false, false);
+        childModelList.add(childModel);
+        childModel = new MenuModel(getResources().getString(R.string.my_bands), false, false);
         childModelList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.find_musicians), false, false);
         childModelList.add(childModel);
@@ -268,6 +270,9 @@ public class MainActivity extends AppCompatActivity {
                        else if(subTitle.equals(getResources().getString(R.string.create_band))){
                            sendUserToAddBandActivity();
                        }
+                       else if(subTitle.equals(getResources().getString(R.string.my_bands))){
+                           sendUserToMyBands();
+                       }
                        else if(subTitle.equals(getResources().getString(R.string.find_musicians))){
                            sendUsertoFindMusicians();
                        }
@@ -289,8 +294,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     @Override
     public void onBackPressed()
     {
@@ -305,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void userSelector(MenuItem menuItem)
+ /*   private void userSelector(MenuItem menuItem)
     {
 
         switch (menuItem.getItemId())
@@ -359,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-    }
+    }*/
 
 
 
@@ -418,6 +421,15 @@ public class MainActivity extends AppCompatActivity {
         setUpIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setUpIntent);
         finish();
+    }
+
+    private void sendUserToMyBands() {
+        Intent myBandsIntent = new Intent(MainActivity.this, MyBandsActivity.class);
+        myBandsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(myBandsIntent);
+        finish();
+
+
     }
 
     private void sendUsertoFindMusicians() {
