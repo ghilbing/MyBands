@@ -13,8 +13,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference bandsRequestReference;
     String currentUserID;
     String currentBandId;
+    String currentBandIdPref;
     private boolean openDialog;
 
     ExpandableListAdapter expandableListAdapter;
@@ -93,12 +96,42 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         usersReference = FirebaseDatabase.getInstance().getReference().child("Users");
         bandsMusiciansReference = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
         bandsRequestReference = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
         bandsReference = FirebaseDatabase.getInstance().getReference().child("Bands");
+
+        Intent intent = getIntent();
+        if(intent != null){
+            currentBandId = intent.getStringExtra("currentBandId");
+
+            if(currentBandId != null){
+                bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+                            if(dataSnapshot.hasChild("mBandName"))
+                            {
+                                String name = dataSnapshot.child("mBandName").getValue().toString();
+                                Log.d("MainActivity", name);
+                            }
+                            else
+                            {
+                                Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
 
 
         mToolbar = findViewById(R.id.main_page_toolbar);
@@ -346,6 +379,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
+
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandId", "");
+        Log.d("MainActivitySharedPreferences", currentBandIdPref);
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null)
         {
@@ -418,7 +456,9 @@ public class MainActivity extends AppCompatActivity {
                     if (dataSnapshot.hasChild(currentUserID))
                     {
                         int count = (int) dataSnapshot.child(currentUserID).getChildrenCount();
-                        if (count > 1) {
+                        if (count > 1 && currentBandIdPref != null) {
+
+                            sendUserToMyBands();
 
                             Toast.makeText(MainActivity.this, getResources().getString(R.string.please_select_a_band), Toast.LENGTH_LONG).show();
                             for(DataSnapshot ds :dataSnapshot.child(currentUserID).getChildren()){
@@ -435,7 +475,7 @@ public class MainActivity extends AppCompatActivity {
                                             bands.add(band);
                                         }
                                         if(openDialog == false) {
-                                            openBandDialog();
+                                           // openBandDialog();
                                             openDialog = true;
                                         }
 

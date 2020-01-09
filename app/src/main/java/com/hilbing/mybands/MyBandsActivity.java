@@ -4,9 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +54,7 @@ public class MyBandsActivity extends AppCompatActivity {
     private String currentUserId;
     private DatabaseReference bandsMusicianRef;
     private DatabaseReference bandsRef;
+    private String currentBandId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class MyBandsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.my_bands));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
@@ -112,9 +117,9 @@ public class MyBandsActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull final MyBandsViewHolder holder, int position, @NonNull final UsersBands model)
             {
-                final String bandKey = getRef(position).getKey();
+                currentBandId = getRef(position).getKey();
                 holder.dateTV.setText(model.getmDate());
-                bandsRef.child(bandKey).addValueEventListener(new ValueEventListener()
+                bandsRef.child(currentBandId).addValueEventListener(new ValueEventListener()
                 {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot)
@@ -175,6 +180,16 @@ public class MyBandsActivity extends AppCompatActivity {
                 }
             });
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SharedPreferences preferences = getApplicationContext().getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("currentBandId", currentBandId);
+                    sendUserToMainActivity();
+                }
+            });
+
         }
     }
 
@@ -196,6 +211,7 @@ public class MyBandsActivity extends AppCompatActivity {
     {
         Intent mainIntent = new Intent(MyBandsActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mainIntent.putExtra("currentBandId", currentBandId);
         startActivity(mainIntent);
         finish();
 
