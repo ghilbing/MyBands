@@ -242,14 +242,14 @@ public class PersonActivity extends AppCompatActivity
 
     private void cancelRequest()
     {
-        addToBandRequestRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        addToBandRequestRef.child(senderUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
                 if(task.isSuccessful())
                 {
-                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    addToBandRequestRef.child(receiverUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {
@@ -279,7 +279,7 @@ public class PersonActivity extends AppCompatActivity
             {
                 if(dataSnapshot.hasChild(receiverUserId))
                 {
-                    String request_type = dataSnapshot.child(receiverUserId).child("request_type").getValue().toString();
+                    String request_type = dataSnapshot.child(receiverUserId).child(currentBandId).child(senderUserId).child("request_type").getValue().toString();
                     if(request_type.equals("sent"))
                     {
                         CURRENT_STATE = getResources().getString(R.string.request_sent);

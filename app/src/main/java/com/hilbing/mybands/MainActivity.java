@@ -10,16 +10,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,8 +37,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hilbing.mybands.adapters.BandAlertAdapter;
 import com.hilbing.mybands.adapters.ExpandableListAdapter;
+import com.hilbing.mybands.models.Band;
 import com.hilbing.mybands.models.MenuModel;
+import com.hilbing.mybands.models.MusiciansBands;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -70,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
     ExpandableListView expandableListView;
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
-    ArrayList keys = new ArrayList();
+    List<Band> bands = new ArrayList();
+
 
 
 
@@ -409,8 +418,27 @@ public class MainActivity extends AppCompatActivity {
                         int count = (int) dataSnapshot.child(currentUserID).getChildrenCount();
                         if (count > 1) {
                             for(DataSnapshot ds :dataSnapshot.child(currentUserID).getChildren()){
-                                String key = ds.getKey();
-                                keys.add(key);
+                                final String key = ds.getKey();
+
+                                bandsReference.child(key).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.exists()){
+                                            String name = dataSnapshot.child("mBandName").getValue().toString();
+                                            String image = dataSnapshot.child("mBandImage").getValue().toString();
+                                            String id = dataSnapshot.child("mBandId").getValue().toString();
+                                            Band band = new Band(id,name, image);
+                                            bands.add(band);
+                                        }
+                                        openBandDialog();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                                openBandDialog();
                                 Log.d("MainActivity", key);
 
                             }
@@ -455,6 +483,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void openBandDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.alert_bands, null);
+        ListView listView = view.findViewById(R.id.alert_band_list_LV);
+        listView.setAdapter(new BandAlertAdapter(this, (ArrayList<Band>) bands));
+
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
 
     }
 

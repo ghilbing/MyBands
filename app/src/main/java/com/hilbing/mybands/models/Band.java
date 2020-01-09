@@ -26,6 +26,12 @@ public class Band
         this.mAvailable = mAvailable;
     }
 
+    public Band(String mBandId, String mBandName, String mBandImage) {
+        this.mBandId = mBandId;
+        this.mBandName = mBandName;
+        this.mBandImage = mBandImage;
+    }
+
     public String getmBandId() {
         return mBandId;
     }
