@@ -27,12 +27,13 @@
 
     <SearchView
         android:id="@+id/find_musician_SV"
-        android:layout_width="351dp"
-        android:layout_height="63dp"
+        android:layout_width="353dp"
+        android:layout_height="43dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_text_TV" />
 
@@ -40,12 +41,23 @@
         android:id="@+id/search_text_TV"
         android:layout_width="355dp"
         android:layout_height="29dp"
-        android:layout_marginTop="20dp"
-        android:textStyle="bold"
+        android:layout_marginTop="24dp"
         android:text="@string/search_for_musicians_for_your_band"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/find_musician_appbar_layout" />
+
+    <TextView
+        android:id="@+id/search_band_name_TV"
+        android:layout_width="355dp"
+        android:layout_height="29dp"
+        android:text="@string/bands"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_text_TV" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

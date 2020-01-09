@@ -22,9 +22,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.models.FindMusician;
 import com.hilbing.mybands.models.UsersInstruments;
 import com.squareup.picasso.Picasso;
@@ -41,9 +43,14 @@ public class FindMusicianActivity extends AppCompatActivity {
     SearchView searchMusicianSV;
     @BindView(R.id.search_musician_RV)
     RecyclerView recyclerViewRV;
+    @BindView(R.id.search_band_name_TV)
+    TextView bandNameTV;
+
+    private String currentBandId;
 
     private FirebaseRecyclerAdapter recyclerAdapter;
     private DatabaseReference allMusiciansReference;
+    private DatabaseReference bandsReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,15 +60,37 @@ public class FindMusicianActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+
+        currentBandId = getIntent().getExtras().get("currentBandId").toString();
+
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.find_musicians));
 
         allMusiciansReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        bandsReference = FirebaseDatabase.getInstance().getReference().child("Bands");
 
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
+
+        if(currentBandId != null) {
+
+            bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        bandNameTV.setText(dataSnapshot.child("mBandName").getValue().toString());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         searchMusicianSV.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -171,6 +200,7 @@ public class FindMusicianActivity extends AppCompatActivity {
     {
         Intent personIntent = new Intent(FindMusicianActivity.this, PersonActivity.class);
         personIntent.putExtra("selectedUser", musicianKey);
+        personIntent.putExtra("currentBandId", currentBandId);
         startActivity(personIntent);
         finish();
     }

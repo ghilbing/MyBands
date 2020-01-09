@@ -176,6 +176,8 @@
     <string name="events">Events</string>
     <string name="user_profile">User profile</string>
     <string name="my_bands">My Bands</string>
+    <string name="you_need_to_belong_to_a_band">You need to belong to a band</string>
+    <string name="band_does_not_exist">Band does not exist</string>
 
     <array name="instruments">
         <item>Bass</item>

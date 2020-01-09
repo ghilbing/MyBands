@@ -192,6 +192,8 @@ public class AddBandActivity extends AppCompatActivity {
         startActivityForResult(galleryIntent, GALLERY);
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data)
     {
@@ -328,24 +330,24 @@ public class AddBandActivity extends AppCompatActivity {
                 SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
                 saveCurrentDate = currentDate.format(calForDate.getTime());
 
-                bandsMusiciansRef.child(currentBandId).child(currentUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                bandsMusiciansRef.child(currentUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful())
                         {
-                            bandsMusiciansRef.child(currentUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            bandsMusiciansRef.child(currentBandId).child(currentUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful())
                                     {
-                                        addToBandRequestRef.child(currentBandId).child(currentUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+                                        addToBandRequestRef.child(currentUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
                                         {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task)
                                             {
                                                 if(task.isSuccessful())
                                                 {
-                                                    addToBandRequestRef.child(currentUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    addToBandRequestRef.child(currentBandId).child(currentUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task)
                                                         {
@@ -383,107 +385,6 @@ public class AddBandActivity extends AppCompatActivity {
 
         return 0;
     }
-
-
-    /*private void addUsersForInstrumentsToDataBase()
-    {
-        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    if(dataSnapshot.hasChild("mUserName"))
-                    {
-                        String name = dataSnapshot.child("mUserName").getValue().toString();
-                        String instrument = instrumentsSP.getSelectedItem().toString();
-
-                        HashMap instrumentMap = new HashMap();
-                        instrumentMap.put("mUserId", currentUserId);
-                        instrumentMap.put("mUserName", name);
-                        instrumentMap.put("mInstrumentName", instrument);
-
-                        instrumentsUsersReference.child(instrument).child(currentUserId).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener()
-                        {
-                            @Override
-                            public void onComplete(@NonNull Task task)
-                            {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.instrument_added_successfully), Toast.LENGTH_LONG).show();
-                                    progressDialog.dismiss();
-                                }
-                                else
-                                {
-                                    String message = task.getException().getMessage();
-                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                                    progressDialog.dismiss();
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
-
-            }
-        });
-
-
-    }*/
-
-    /*private void addInstrumentsPlayedByUserToDataBase()
-    {
-        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    if(dataSnapshot.hasChild("mUserName"))
-                    {
-                        String name = dataSnapshot.child("mUserName").getValue().toString();
-                        String instrument = instrumentsSP.getSelectedItem().toString();
-
-                        HashMap instrumentMap = new HashMap();
-                        instrumentMap.put("mUserId", currentUserId);
-                        instrumentMap.put("mUserName", name);
-                        instrumentMap.put("mInstrumentName", instrument);
-
-                        usersInstrumentsReference.child(currentUserId).child(instrument).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener()
-                        {
-                            @Override
-                            public void onComplete(@NonNull Task task)
-                            {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.instrument_added_successfully), Toast.LENGTH_LONG).show();
-                                    progressDialog.dismiss();
-                                }
-                                else
-                                {
-                                    String message = task.getException().getMessage();
-                                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                                    progressDialog.dismiss();
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
-
-            }
-        });
-
-
-    }*/
 
 
 

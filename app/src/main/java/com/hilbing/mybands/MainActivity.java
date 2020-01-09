@@ -54,17 +54,23 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private CircleImageView navProfileCIV;
     private TextView navUserNameTV;
+    private TextView navBandNameTV;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private FirebaseAuth mAuth;
     private DatabaseReference usersReference;
+    private DatabaseReference bandsMusiciansReference;
+    private DatabaseReference bandsReference;
+    private DatabaseReference bandsRequestReference;
     String currentUserID;
+    String currentBandId;
 
     ExpandableListAdapter expandableListAdapter;
     @BindView(R.id.nav_expandableListView)
     ExpandableListView expandableListView;
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
+    ArrayList keys = new ArrayList();
 
 
 
@@ -79,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         usersReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        bandsMusiciansReference = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsRequestReference = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
+        bandsReference = FirebaseDatabase.getInstance().getReference().child("Bands");
+
 
         mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
@@ -95,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         View navHeader = navigationViewNV.inflateHeaderView(R.layout.nav_header);
         navUserNameTV = navHeader.findViewById(R.id.nav_header_user_name_TV);
         navProfileCIV = navHeader.findViewById(R.id.nav_header_user_image_CIV);
+        navBandNameTV = navHeader.findViewById(R.id.nav_header_current_band_TV);
+
         usersReference.child(currentUserID).addValueEventListener(new ValueEventListener()
         {
             @Override
@@ -129,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
 
 
         navigationViewNV.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener()
@@ -270,11 +281,11 @@ public class MainActivity extends AppCompatActivity {
                        else if(subTitle.equals(getResources().getString(R.string.create_band))){
                            sendUserToAddBandActivity();
                        }
-                       else if(subTitle.equals(getResources().getString(R.string.my_bands))){
-                           sendUserToMyBands();
-                       }
                        else if(subTitle.equals(getResources().getString(R.string.find_musicians))){
                            sendUsertoFindMusicians();
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.my_bands))){
+                           sendUserToMyBands();
                        }
                        else if(subTitle.equals(getResources().getString(R.string.send_message))){
                            sendUserToMessagesActivity();
@@ -308,63 +319,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
- /*   private void userSelector(MenuItem menuItem)
-    {
-
-        switch (menuItem.getItemId())
-        {
-            case R.id.nav_home:
-                Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
-             //   getSupportActionBar().setTitle("Home");
-                //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
-                break;
-            case R.id.nav_profile:
-                sendUserToProfileActivity();
-                break;
-            case R.id.nav_instruments:
-                sendUserToAddInstrumentActivity();
-                break;
-            case R.id.nav_band:
-               sendUserToAddBandActivity();
-                break;
-            case R.id.nav_musicians:
-                sendUserToMusiciansActivity();
-                break;
-            case R.id.nav_messages:
-                sendUserToMusiciansActivity();
-                break;
-            case R.id.nav_song:
-                Toast.makeText(this, "Songs", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_playlists:
-                Toast.makeText(this, "Playlists", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_rehearsals:
-                Toast.makeText(this, "Rehearsals", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_concerts:
-                Toast.makeText(this, "Concerts", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_share:
-                Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_settings:
-               sendUserToSettingsActivity();
-                break;
-            case R.id.nav_logout:
-                mAuth.signOut();
-                sendUserToLoginActivity();
-                break;
-            }
-
-    }*/
-
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
@@ -389,7 +343,118 @@ public class MainActivity extends AppCompatActivity {
         else
             {
             checkIfUserExists();
+            checkIfUserBelongsToBand();
+            checkIfUserHasARequest();
              }
+
+    }
+
+    private void checkIfUserHasARequest() {
+
+        bandsRequestReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()){
+                    currentBandId = ds.getKey();
+
+                    if(currentBandId != null){
+                        bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    if(dataSnapshot.hasChild("mBandName"))
+                                    {
+                                        String name = dataSnapshot.child("mBandName").getValue().toString();
+                                        Log.d("MainActivity", name);
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void checkIfUserBelongsToBand() {
+
+        bandsMusiciansReference.addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(!dataSnapshot.hasChild(currentUserID))
+                {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.you_need_to_belong_to_a_band), Toast.LENGTH_LONG).show();
+                }
+                else
+                    {
+                    if (dataSnapshot.hasChild(currentUserID))
+                    {
+                        int count = (int) dataSnapshot.child(currentUserID).getChildrenCount();
+                        if (count > 1) {
+                            for(DataSnapshot ds :dataSnapshot.child(currentUserID).getChildren()){
+                                String key = ds.getKey();
+                                keys.add(key);
+                                Log.d("MainActivity", key);
+
+                            }
+
+
+                        } else {
+                            for(DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()){
+                                currentBandId = ds.getKey();
+
+                                if(currentBandId != null){
+                                    bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.exists()){
+                                                if(dataSnapshot.hasChild("mBandName"))
+                                                {
+                                                    String name = dataSnapshot.child("mBandName").getValue().toString();
+                                                    navBandNameTV.setText(name);
+                                                }
+                                                else
+                                                {
+                                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -435,6 +500,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendUsertoFindMusicians() {
         Intent findMusicianIntent = new Intent(MainActivity.this, FindMusicianActivity.class);
         findMusicianIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        findMusicianIntent.putExtra("currentBandId", currentBandId);
         startActivity(findMusicianIntent);
         finish();
 

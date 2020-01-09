@@ -27,7 +27,7 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".FindMusicianActivity"
-            android:parentActivityName=".AddBandActivity"
+            android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ProfileActivity"

@@ -23,10 +23,14 @@
             android:id="@+id/all_bands_per_musician_name_TV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/all_bands_per_musician_date_TV"
             android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
