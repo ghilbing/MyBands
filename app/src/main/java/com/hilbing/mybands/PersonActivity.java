@@ -157,16 +157,46 @@ public class PersonActivity extends AppCompatActivity
 
     }
 
-    private void quitBand()
+    private void sendRequestToAPerson()
     {
-        bandsMusiciansRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        addToBandRequestRef.child(senderUserId).child(currentBandId).child(receiverUserId).child("request_type").setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
                 if(task.isSuccessful())
                 {
-                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(senderUserId).child("request_type").setValue("received").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task)
+                        {
+                            if(task.isSuccessful())
+                            {
+                                sendRequestBT.setEnabled(true);
+                                CURRENT_STATE = getResources().getString(R.string.request_sent);
+                                sendRequestBT.setText(getResources().getString(R.string.cancel_request));
+
+                                declineRequestBT.setVisibility(View.INVISIBLE);
+                                declineRequestBT.setEnabled(false);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+    }
+
+    private void cancelRequest()
+    {
+        addToBandRequestRef.child(senderUserId).child(currentBandId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        {
+            @Override
+            public void onComplete(@NonNull Task<Void> task)
+            {
+                if(task.isSuccessful())
+                {
+                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {
@@ -184,7 +214,6 @@ public class PersonActivity extends AppCompatActivity
                 }
             }
         });
-
 
     }
 
@@ -240,16 +269,18 @@ public class PersonActivity extends AppCompatActivity
 
     }
 
-    private void cancelRequest()
+
+
+    private void quitBand()
     {
-        addToBandRequestRef.child(senderUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        bandsMusiciansRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
                 if(task.isSuccessful())
                 {
-                    addToBandRequestRef.child(receiverUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {
@@ -268,7 +299,12 @@ public class PersonActivity extends AppCompatActivity
             }
         });
 
+
     }
+
+
+
+
 
     private void keepButtonsText()
     {
@@ -333,35 +369,7 @@ public class PersonActivity extends AppCompatActivity
         });
     }
 
-    private void sendRequestToAPerson()
-    {
-        addToBandRequestRef.child(senderUserId).child(currentBandId).child(receiverUserId).child("request_type").setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>()
-        {
-            @Override
-            public void onComplete(@NonNull Task<Void> task)
-            {
-                if(task.isSuccessful())
-                {
-                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(senderUserId).child("request_type").setValue("received").addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task)
-                        {
-                            if(task.isSuccessful())
-                            {
-                                sendRequestBT.setEnabled(true);
-                                CURRENT_STATE = getResources().getString(R.string.request_sent);
-                                sendRequestBT.setText(getResources().getString(R.string.cancel_request));
 
-                                declineRequestBT.setVisibility(View.INVISIBLE);
-                                declineRequestBT.setEnabled(false);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-    }
 
     private void initialize()
     {

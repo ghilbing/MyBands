@@ -20,6 +20,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference bandsRequestReference;
     String currentUserID;
     String currentBandId;
+    private boolean openDialog;
 
     ExpandableListAdapter expandableListAdapter;
     @BindView(R.id.nav_expandableListView)
@@ -417,6 +419,8 @@ public class MainActivity extends AppCompatActivity {
                     {
                         int count = (int) dataSnapshot.child(currentUserID).getChildrenCount();
                         if (count > 1) {
+
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.please_select_a_band), Toast.LENGTH_LONG).show();
                             for(DataSnapshot ds :dataSnapshot.child(currentUserID).getChildren()){
                                 final String key = ds.getKey();
 
@@ -430,7 +434,11 @@ public class MainActivity extends AppCompatActivity {
                                             Band band = new Band(id,name, image);
                                             bands.add(band);
                                         }
-                                        openBandDialog();
+                                        if(openDialog == false) {
+                                            openBandDialog();
+                                            openDialog = true;
+                                        }
+
                                     }
 
                                     @Override
@@ -438,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     }
                                 });
-                                openBandDialog();
+
                                 Log.d("MainActivity", key);
 
                             }
@@ -495,8 +503,28 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setView(view);
 
-        AlertDialog alertDialog = builder.create();
+        builder.setTitle(getResources().getString(R.string.select_a_band));
+
+        final AlertDialog alertDialog = builder.create();
         alertDialog.show();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                sendUserToMainActivity();
+                alertDialog.dismiss();
+                openDialog = false;
+            }
+        });
+
+    }
+
+    private void sendUserToMainActivity() {
+        Intent mainActivityIntent = new Intent(MainActivity.this, MainActivity.class);
+        mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mainActivityIntent.putExtra("currentBandId", currentBandId);
+        startActivity(mainActivityIntent);
+        finish();
 
     }
 
@@ -603,11 +631,4 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    /*Calendar calForDate = Calendar.getInstance();
-    SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
-    String saveCurrentDate = currentDate.format(calForDate.getTime());
-
-    Calendar calForTime = Calendar.getInstance();
-    SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
-    String saveCurrentTime = currentDate.format(calForTime.getTime());*/
 }
