@@ -6,13 +6,11 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,29 +29,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PersonActivity extends AppCompatActivity
-{
-    @BindView(R.id.person_toolbar)
+public class BandRequestActivity extends AppCompatActivity {
+
+    @BindView(R.id.band_request_person_toolbar)
     Toolbar toolbar;
-    @BindView(R.id.person_image_CIV)
-    CircleImageView profileImageCIV;
-    @BindView(R.id.person_full_name_TV)
-    TextView fullNameTV;
-    @BindView(R.id.person_status_TV)
-    TextView statusTV;
+    @BindView(R.id.band_request_image_CIV)
+    CircleImageView bandImageCIV;
+    @BindView(R.id.band_request_name_TV)
+    TextView bandName;
+    @BindView(R.id.band_request_person_full_name_TV)
+    TextView personNameTV;
     @BindView(R.id.person_country_TV)
     TextView countryTV;
     @BindView(R.id.person_phone_TV)
     TextView phoneTV;
-    @BindView(R.id.person_available_CB)
-    CheckBox availableCB;
-    @BindView(R.id.person_singer_CB)
-    CheckBox singerCB;
-    @BindView(R.id.person_composer_CB)
-    CheckBox composerCB;
-    @BindView(R.id.person_send_add_to_band_request_BT)
+    @BindView(R.id.band_request_person_send_add_to_band_request_BT)
     Button sendRequestBT;
-    @BindView(R.id.person_decline_add_band_request_BT)
+    @BindView(R.id.band_request_person_decline_add_band_request_BT)
     Button declineRequestBT;
 
     private DatabaseReference usersRef;
@@ -75,12 +67,17 @@ public class PersonActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
-        receiverUserId = getIntent().getExtras().get("selectedUser").toString();
-        currentBandId = getIntent().getExtras().get("currentBandId").toString();
+
+       // receiverUserId = getIntent().getExtras().get("selectedUser").toString();
+       // currentBandId = getIntent().getExtras().get("currentBandId").toString();
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
-        senderUserId = mAuth.getCurrentUser().getUid();
+        receiverUserId = mAuth.getCurrentUser().getUid();
+
+
+
+      //  senderUserId = mAuth.getCurrentUser().getUid();
         initialize();
 
         addToBandRequestRef = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
@@ -102,14 +99,11 @@ public class PersonActivity extends AppCompatActivity
                     String userStatus = dataSnapshot.child("mUserStatus").getValue().toString();
                     String userCountry = dataSnapshot.child("mUserCountry").getValue().toString();
 
-                    Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(profileImageCIV);
-                    availableCB.setChecked(userAvailable);
-                    composerCB.setChecked(userComposer);
-                    singerCB.setChecked(userSinger);
-                    fullNameTV.setText(userName);
+                    Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(bandImageCIV);
+
+                    personNameTV.setText(userName);
                     phoneTV.setText(userPhone);
                     countryTV.setText(userCountry);
-                    statusTV.setText(userStatus);
 
                     keepButtonsText();
                 }
@@ -314,49 +308,52 @@ public class PersonActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                if(dataSnapshot.exists()) {
-                    if (dataSnapshot.hasChild(receiverUserId)) {
-                        String request_type = dataSnapshot.child(receiverUserId).child("request_type").getValue().toString();
-                        Log.d("00000000000000000", request_type);
-                        if (request_type.equals("sent")) {
-                            CURRENT_STATE = getResources().getString(R.string.request_sent);
-                            sendRequestBT.setText(getResources().getString(R.string.cancel_request));
+                if(dataSnapshot.hasChild(receiverUserId))
+                {
+                    String request_type = dataSnapshot.child(receiverUserId).child(currentBandId).child(senderUserId).child("request_type").getValue().toString();
+                    if(request_type.equals("sent"))
+                    {
+                        CURRENT_STATE = getResources().getString(R.string.request_sent);
+                        sendRequestBT.setText(getResources().getString(R.string.cancel_request));
 
-                            declineRequestBT.setVisibility(View.INVISIBLE);
-                            declineRequestBT.setEnabled(false);
-                        } else if (request_type.equals("received")) {
-                            CURRENT_STATE = getResources().getString(R.string.request_received);
-                            sendRequestBT.setVisibility(View.INVISIBLE);
-                            sendRequestBT.setText(getResources().getString(R.string.accept_request));
+                        declineRequestBT.setVisibility(View.INVISIBLE);
+                        declineRequestBT.setEnabled(false);
+                    }
+                    else if (request_type.equals("received"))
+                    {
+                        CURRENT_STATE = getResources().getString(R.string.request_received);
+                        sendRequestBT.setText(getResources().getString(R.string.accept_request));
 
-                            declineRequestBT.setVisibility(View.VISIBLE);
-                            declineRequestBT.setEnabled(true);
+                        declineRequestBT.setVisibility(View.VISIBLE);
+                        declineRequestBT.setEnabled(true);
 
-                            declineRequestBT.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    cancelRequest();
-                                }
-                            });
-                        }
-                    } else {
-                        bandsMusiciansRef.child(senderUserId).child(currentBandId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        declineRequestBT.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild(receiverUserId)) {
-                                    CURRENT_STATE = getResources().getString(R.string.from_same_band);
-                                    sendRequestBT.setText(getResources().getString(R.string.quit_band));
-                                    declineRequestBT.setVisibility(View.INVISIBLE);
-                                    declineRequestBT.setEnabled(false);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            public void onClick(View view) {
+                                cancelRequest();
                             }
                         });
                     }
+                }
+                else
+                {
+                    bandsMusiciansRef.child(senderUserId).child(currentBandId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.hasChild(receiverUserId))
+                            {
+                                CURRENT_STATE = getResources().getString(R.string.from_same_band);
+                                sendRequestBT.setText(getResources().getString(R.string.quit_band));
+                                declineRequestBT.setVisibility(View.INVISIBLE);
+                                declineRequestBT.setEnabled(false);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
 
@@ -391,12 +388,11 @@ public class PersonActivity extends AppCompatActivity
 
     private void sendUserToMainActivity()
     {
-        Intent mainIntent = new Intent(PersonActivity.this, MainActivity.class);
+        Intent mainIntent = new Intent(BandRequestActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
 
     }
-
 
 }

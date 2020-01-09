@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,8 +61,11 @@ public class FindMusicianActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        if(!TextUtils.isEmpty(getIntent().getExtras().get("currentBandId").toString())) {
 
-        currentBandId = getIntent().getExtras().get("currentBandId").toString();
+
+            currentBandId = getIntent().getExtras().get("currentBandId").toString();
+        }
 
 
         setSupportActionBar(toolbar);

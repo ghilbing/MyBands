@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,9 +118,11 @@ public class MyBandsActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull final MyBandsViewHolder holder, int position, @NonNull final UsersBands model)
             {
-                currentBandId = getRef(position).getKey();
+
+
+                holder.bandId = getRef(position).getKey();
                 holder.dateTV.setText(model.getmDate());
-                bandsRef.child(currentBandId).addValueEventListener(new ValueEventListener()
+                bandsRef.child(holder.bandId).addValueEventListener(new ValueEventListener()
                 {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot)
@@ -160,6 +163,7 @@ public class MyBandsActivity extends AppCompatActivity {
         CircleImageView bandImageCIV;
         @BindView(R.id.all_bands_per_musician_date_TV)
         TextView dateTV;
+        String bandId;
 
         public MyBandsViewHolder(@NonNull final View itemView)
         {
@@ -185,7 +189,9 @@ public class MyBandsActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     SharedPreferences preferences = getApplicationContext().getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("currentBandId", currentBandId);
+                    editor.putString("currentBandIdPref", bandId);
+                    Log.d("//////////////////", bandId);
+                    editor.apply();
                     sendUserToMainActivity();
                 }
             });

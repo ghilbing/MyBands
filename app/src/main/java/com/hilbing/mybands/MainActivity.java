@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -381,8 +382,33 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
-        currentBandIdPref = preferences.getString("currentBandId", "");
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
         Log.d("MainActivitySharedPreferences", currentBandIdPref);
+
+        if(TextUtils.isEmpty(currentBandIdPref)){
+            bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        if(dataSnapshot.hasChild("mBandName"))
+                        {
+                            String name = dataSnapshot.child("mBandName").getValue().toString();
+                            Log.d(".......................", name);
+                            navBandNameTV.setText(name);
+                        }
+                        else
+                        {
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null)
@@ -393,12 +419,12 @@ public class MainActivity extends AppCompatActivity {
             {
             checkIfUserExists();
             checkIfUserBelongsToBand();
-            checkIfUserHasARequest();
+         //   checkIfUserHasARequest();
              }
 
     }
 
-    private void checkIfUserHasARequest() {
+   /* private void checkIfUserHasARequest() {
 
         bandsRequestReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -438,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+    }*/
 
     private void checkIfUserBelongsToBand() {
 
@@ -456,11 +482,11 @@ public class MainActivity extends AppCompatActivity {
                     if (dataSnapshot.hasChild(currentUserID))
                     {
                         int count = (int) dataSnapshot.child(currentUserID).getChildrenCount();
-                        if (count > 1 && currentBandIdPref != null) {
+                        if (count > 1 && TextUtils.isEmpty(currentBandIdPref)) {
 
                             sendUserToMyBands();
 
-                            Toast.makeText(MainActivity.this, getResources().getString(R.string.please_select_a_band), Toast.LENGTH_LONG).show();
+                           /* Toast.makeText(MainActivity.this, getResources().getString(R.string.please_select_a_band), Toast.LENGTH_LONG).show();
                             for(DataSnapshot ds :dataSnapshot.child(currentUserID).getChildren()){
                                 final String key = ds.getKey();
 
@@ -489,10 +515,39 @@ public class MainActivity extends AppCompatActivity {
 
                                 Log.d("MainActivity", key);
 
-                            }
+                            }*/
 
 
-                        } else {
+                        } else if (count > 1 && !TextUtils.isEmpty(currentBandIdPref)) {
+
+                                bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.exists()){
+                                            if(dataSnapshot.hasChild("mBandName"))
+                                            {
+                                                String name = dataSnapshot.child("mBandName").getValue().toString();
+                                                Log.d(".......................", name);
+                                                navBandNameTV.setText(name);
+                                            }
+                                            else
+                                            {
+                                                Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+                    }
+
+                        else {
+
                             for(DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()){
                                 currentBandId = ds.getKey();
 
@@ -534,7 +589,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void openBandDialog() {
+ /*   private void openBandDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.alert_bands, null);
@@ -557,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+    }*/
 
     private void sendUserToMainActivity() {
         Intent mainActivityIntent = new Intent(MainActivity.this, MainActivity.class);
