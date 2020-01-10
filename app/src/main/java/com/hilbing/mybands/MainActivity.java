@@ -553,26 +553,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkIfUserHasARequest()
     {
-
-        bandsRequestReference.child(currentUserID).child(currentBandId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot dataS : dataSnapshot.getChildren()) {
-                        final String receiverId = dataS.getKey();
-                        String request_type = dataSnapshot.child(receiverId).child("request_type").getValue().toString();
-                        if (request_type.equals("received")) {
-                            bandsRequestReference.addValueEventListener(new ValueEventListener() {
+                            bandsRequestReference.addValueEventListener(new ValueEventListener()
+                            {
                                 @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.hasChild(currentUserID)) {
-                                        for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()) {
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                {
+                                    if (dataSnapshot.hasChild(currentUserID))
+                                    {
+                                        for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren())
+                                        {
                                             final String bandKey = ds.getKey();
-                                            bandsRequestReference.child(currentUserID).child(bandKey).addValueEventListener(new ValueEventListener() {
+                                            bandsRequestReference.child(currentUserID).child(bandKey).addValueEventListener(new ValueEventListener()
+                                            {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                                {
                                                     if (dataSnapshot.exists()) {
-                                                        for (DataSnapshot ds1 : dataSnapshot.getChildren()) {
+                                                        for (DataSnapshot ds1 : dataSnapshot.getChildren())
+                                                        {
                                                             final String idSender = ds1.getKey();
                                                             Log.d("BAND and SENDER...........................", bandKey + " - " + idSender);
                                                             sendUserToBandRequestActivity(bandKey, idSender);
@@ -581,7 +579,8 @@ public class MainActivity extends AppCompatActivity {
                                                 }
 
                                                 @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                public void onCancelled(@NonNull DatabaseError databaseError)
+                                                {
 
                                                 }
                                             });
@@ -594,20 +593,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 }
                             });
-                        }
-
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-
-        });
 
 
     }
