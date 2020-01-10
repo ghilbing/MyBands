@@ -48,6 +48,7 @@ import com.hilbing.mybands.models.MenuModel;
 import com.hilbing.mybands.models.MusiciansBands;
 import com.squareup.picasso.Picasso;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -424,44 +425,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void checkIfUserHasARequest() {
-
-
-
-        bandsRequestReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(currentUserID)){
-                    for(DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()){
-                        final String bandKey = ds.getKey();
-                        bandsReference.child(bandKey).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.exists()){
-                                    String idSender = dataSnapshot.child("mBandCreator").getValue().toString();
-
-                                        sendUserToBandRequestActivity(bandKey, idSender);
-
-
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
 
     private void checkIfUserBelongsToBand() {
@@ -587,6 +550,68 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private void checkIfUserHasARequest()
+    {
+
+        bandsRequestReference.child(currentUserID).child(currentBandId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot dataS : dataSnapshot.getChildren()) {
+                        final String receiverId = dataS.getKey();
+                        String request_type = dataSnapshot.child(receiverId).child("request_type").getValue().toString();
+                        if (request_type.equals("received")) {
+                            bandsRequestReference.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.hasChild(currentUserID)) {
+                                        for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()) {
+                                            final String bandKey = ds.getKey();
+                                            bandsRequestReference.child(currentUserID).child(bandKey).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if (dataSnapshot.exists()) {
+                                                        for (DataSnapshot ds1 : dataSnapshot.getChildren()) {
+                                                            final String idSender = ds1.getKey();
+                                                            Log.d("BAND and SENDER...........................", bandKey + " - " + idSender);
+                                                            sendUserToBandRequestActivity(bandKey, idSender);
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+
+
+    }
+
 
  /*   private void openBandDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

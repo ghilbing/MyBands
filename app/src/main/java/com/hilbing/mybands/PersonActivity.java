@@ -190,14 +190,14 @@ public class PersonActivity extends AppCompatActivity
 
     private void cancelRequest()
     {
-        addToBandRequestRef.child(senderUserId).child(currentBandId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        addToBandRequestRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
                 if(task.isSuccessful())
                 {
-                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {
@@ -270,8 +270,6 @@ public class PersonActivity extends AppCompatActivity
 
     }
 
-
-
     private void quitBand()
     {
         bandsMusiciansRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
@@ -302,10 +300,6 @@ public class PersonActivity extends AppCompatActivity
 
 
     }
-
-
-
-
 
     private void keepButtonsText()
     {
