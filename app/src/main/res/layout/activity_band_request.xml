@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
-    tools:context=".PersonActivity">
+    android:background="@drawable/login">
 
     <include
-        android:id="@+id/band_request_person_toolbar"
+        android:id="@+id/band_request_toolbar"
         layout="@layout/app_bar_layout" />
 
     <ScrollView
-        android:layout_width="398dp"
-        android:layout_height="610dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -22,7 +21,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/band_request_person_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/band_request_toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +31,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/person_toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/band_request_toolbar">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -46,12 +45,10 @@
                 android:id="@+id/band_request_image_CIV"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="139dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="139dp"
                 android:src="@drawable/profile"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="2dp" />
@@ -60,16 +57,19 @@
                 android:id="@+id/band_request_name_TV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/person_image_CIV"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
                 android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/bands"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="@string/contact_information"
+                android:layout_gravity="center_horizontal"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
@@ -81,6 +81,7 @@
                 android:layout_below="@+id/person_image_CIV"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
+                android:text="@string/bands"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -92,6 +93,7 @@
                 android:layout_below="@+id/person_status_TV"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
+                android:text="@string/enter_your_country"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -103,13 +105,16 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
                 android:textSize="14sp"
+                android:text="@string/enter_your_phone"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/band_request_person_send_add_to_band_request_BT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_below="@+id/checkboxGroup"
+                android:layout_gravity="center_horizontal"
                 android:background="@drawable/buttons"
                 android:text="@string/add_to_band_request"
                 android:textColor="@color/white"
@@ -121,6 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/person_send_add_to_band_request_BT"
                 android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
                 android:background="@drawable/buttons_delete"
                 android:text="@string/decline_band_request"
                 android:textColor="@color/white"

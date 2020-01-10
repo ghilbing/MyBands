@@ -1,16 +1,20 @@
 package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,17 +35,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BandRequestActivity extends AppCompatActivity {
 
-    @BindView(R.id.band_request_person_toolbar)
+    @BindView(R.id.band_request_toolbar)
     Toolbar toolbar;
     @BindView(R.id.band_request_image_CIV)
     CircleImageView bandImageCIV;
     @BindView(R.id.band_request_name_TV)
-    TextView bandName;
+    TextView bandNameTV;
     @BindView(R.id.band_request_person_full_name_TV)
     TextView personNameTV;
-    @BindView(R.id.person_country_TV)
+    @BindView(R.id.band_request_person_country_TV)
     TextView countryTV;
-    @BindView(R.id.person_phone_TV)
+    @BindView(R.id.band_request_person_phone_TV)
     TextView phoneTV;
     @BindView(R.id.band_request_person_send_add_to_band_request_BT)
     Button sendRequestBT;
@@ -51,6 +55,7 @@ public class BandRequestActivity extends AppCompatActivity {
     private DatabaseReference usersRef;
     private DatabaseReference addToBandRequestRef;
     private DatabaseReference bandsMusiciansRef;
+    private DatabaseReference bandsDataRef;
     private FirebaseAuth mAuth;
 
     private String receiverUserId;
@@ -63,43 +68,52 @@ public class BandRequestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_person);
+        setContentView(R.layout.activity_band_request);
 
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
 
-       // receiverUserId = getIntent().getExtras().get("selectedUser").toString();
-       // currentBandId = getIntent().getExtras().get("currentBandId").toString();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        actionBar.setTitle(R.string.band_request);
+
+
+        senderUserId = getIntent().getExtras().get("idSender").toString();
+        currentBandId = getIntent().getExtras().get("idBand").toString();
+        Log.d(">>>>>>>>>>>>>.", "Band: " + currentBandId + " Sender: " + senderUserId);
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
         receiverUserId = mAuth.getCurrentUser().getUid();
 
+        if(senderUserId.equals(receiverUserId)){
+            Toast.makeText(BandRequestActivity.this, "ARE THE SAME", Toast.LENGTH_LONG).show();
+        // sendUserToMainActivity();
+        }
 
-
-      //  senderUserId = mAuth.getCurrentUser().getUid();
         initialize();
 
         addToBandRequestRef = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
         bandsMusiciansRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsDataRef = FirebaseDatabase.getInstance().getReference().child("Bands");
 
-        usersRef.child(receiverUserId).addValueEventListener(new ValueEventListener()
+        usersRef.child(senderUserId).addValueEventListener(new ValueEventListener()
         {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 if(dataSnapshot.exists())
                 {
-                    String userProfileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
-                    boolean userAvailable = (boolean) dataSnapshot.child("mUserAvailable").getValue();
-                    boolean userSinger = (boolean)dataSnapshot.child("mUserSinger").getValue();
-                    boolean userComposer = (boolean)dataSnapshot.child("mUserComposer").getValue();
+                   // String userProfileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
                     String userName = dataSnapshot.child("mUserName").getValue().toString();
                     String userPhone = dataSnapshot.child("mUserPhone").getValue().toString();
-                    String userStatus = dataSnapshot.child("mUserStatus").getValue().toString();
                     String userCountry = dataSnapshot.child("mUserCountry").getValue().toString();
 
-                    Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(bandImageCIV);
+                 //   Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(bandImageCIV);
 
                     personNameTV.setText(userName);
                     phoneTV.setText(userPhone);
@@ -112,6 +126,23 @@ public class BandRequestActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError)
             {
+
+            }
+        });
+
+        bandsDataRef.child(currentBandId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    String bandImage = dataSnapshot.child("mBandImage").getValue().toString();
+                    String bandName = dataSnapshot.child("mBandName").getValue().toString();
+                    bandNameTV.setText(bandName);
+                    Picasso.get().load(bandImage).placeholder(R.drawable.profile).into(bandImageCIV);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -218,12 +249,12 @@ public class BandRequestActivity extends AppCompatActivity {
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
         saveCurrentDate = currentDate.format(calForDate.getTime());
 
-        bandsMusiciansRef.child(senderUserId).child(currentBandId).child(receiverUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+        bandsMusiciansRef.child(senderUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())
                 {
-                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).child(senderUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful())
@@ -268,14 +299,14 @@ public class BandRequestActivity extends AppCompatActivity {
 
     private void quitBand()
     {
-        bandsMusiciansRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        bandsMusiciansRef.child(senderUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
                 if(task.isSuccessful())
                 {
-                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {
@@ -310,7 +341,7 @@ public class BandRequestActivity extends AppCompatActivity {
             {
                 if(dataSnapshot.hasChild(receiverUserId))
                 {
-                    String request_type = dataSnapshot.child(receiverUserId).child(currentBandId).child(senderUserId).child("request_type").getValue().toString();
+                    String request_type = dataSnapshot.child(receiverUserId).child("request_type").getValue().toString();
                     if(request_type.equals("sent"))
                     {
                         CURRENT_STATE = getResources().getString(R.string.request_sent);

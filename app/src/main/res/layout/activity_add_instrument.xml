@@ -14,7 +14,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="392dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
@@ -30,22 +30,22 @@
             android:id="@+id/instruments_singer_CB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:text="@string/are_you_a_singer"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/white"
-            android:layout_marginLeft="20dp"
             android:textStyle="bold" />
 
         <CheckBox
             android:id="@+id/instruments_composer_CB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:text="@string/are_you_a_composer"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/white"
-            android:layout_marginLeft="20dp"
             android:textStyle="bold" />
         />
     </LinearLayout>

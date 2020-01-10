@@ -182,6 +182,7 @@
     <string name="please_select_a_band">Please, select a band before starting</string>
     <string name="you_are_getting_an_invitation_from_the_following_band">You are getting an invitation from the following band:</string>
     <string name="contact_information">Contact information:</string>
+    <string name="band_request">Band request</string>
 
     <array name="instruments">
         <item>Bass</item>

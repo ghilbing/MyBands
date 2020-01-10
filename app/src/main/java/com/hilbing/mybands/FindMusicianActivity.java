@@ -61,11 +61,11 @@ public class FindMusicianActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        if(!TextUtils.isEmpty(getIntent().getExtras().get("currentBandId").toString())) {
-
-
-            currentBandId = getIntent().getExtras().get("currentBandId").toString();
+        Intent intent = getIntent();
+        if(intent != null) {
+            currentBandId = intent.getStringExtra("currentBandId");
         }
+
 
 
         setSupportActionBar(toolbar);

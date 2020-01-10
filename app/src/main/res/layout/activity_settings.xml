@@ -12,11 +12,13 @@
         layout="@layout/app_bar_layout" />
 
     <ScrollView
-        android:layout_width="394dp"
-        android:layout_height="676dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_toolbar">
@@ -24,24 +26,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_margin="10dp"
+            android:orientation="vertical"
             android:padding="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/settings_profile_picture_CIV"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                app:civ_border_width="2dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/profile" />
+                android:src="@drawable/profile"
+                app:civ_border_width="2dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp">
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal">
 
                 <CheckBox
                     android:id="@+id/settings_available_CB"
@@ -73,39 +75,39 @@
                 android:id="@+id/settings_user_name_ET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/inputs"/>
+                android:background="@drawable/inputs" />
 
             <EditText
                 android:id="@+id/settings_phone_ET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/inputs"/>
+                android:background="@drawable/inputs" />
 
             <EditText
                 android:id="@+id/settings_user_status_ET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/inputs"/>
+                android:background="@drawable/inputs" />
 
             <Spinner
                 android:id="@+id/settings_countries_SP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/countries_array"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/inputs"/>
+                android:background="@drawable/inputs"
+                android:entries="@array/countries_array" />
 
             <Button
                 android:id="@+id/settings_update_account_BT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/buttons"
-                android:textStyle="bold"
                 android:layout_marginTop="10dp"
+                android:background="@drawable/buttons"
+                android:text="@string/update"
                 android:textColor="@color/white"
-                android:text="@string/update"/>
+                android:textStyle="bold" />
 
 
         </LinearLayout>
