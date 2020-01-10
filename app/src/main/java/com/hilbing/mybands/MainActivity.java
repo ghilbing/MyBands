@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
                 {
 
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.you_need_to_belong_to_a_band), Toast.LENGTH_LONG).show();
-                    checkIfUserHasARequest();
+                  //  checkIfUserHasARequest();
                 }
                 else
                     {
@@ -553,46 +553,103 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkIfUserHasARequest()
     {
-                            bandsRequestReference.addValueEventListener(new ValueEventListener()
+
+        bandsRequestReference.child(currentUserID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot dataSnapshot1 :dataSnapshot.getChildren())
+                    {
+                        final String bandId = dataSnapshot1.getKey();
+                        bandsRequestReference.child(currentUserID).child(bandId).addValueEventListener(new ValueEventListener()
+                        {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                             {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                for(DataSnapshot dataSnapshot2 :dataSnapshot.getChildren())
                                 {
-                                    if (dataSnapshot.hasChild(currentUserID))
-                                    {
-                                        for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren())
-                                        {
-                                            final String bandKey = ds.getKey();
-                                            bandsRequestReference.child(currentUserID).child(bandKey).addValueEventListener(new ValueEventListener()
+                                    final String senderId = dataSnapshot2.getKey();
+                                    bandsRequestReference.child(currentUserID).child(bandId).child(senderId).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            String request_type = dataSnapshot.child("request_type").getValue().toString();
+                                            if(request_type.equals("received"))
                                             {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+
+                                                bandsRequestReference.addValueEventListener(new ValueEventListener()
                                                 {
-                                                    if (dataSnapshot.exists()) {
-                                                        for (DataSnapshot ds1 : dataSnapshot.getChildren())
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                                    {
+                                                        if (dataSnapshot.hasChild(currentUserID))
                                                         {
-                                                            final String idSender = ds1.getKey();
-                                                            Log.d("BAND and SENDER...........................", bandKey + " - " + idSender);
-                                                            sendUserToBandRequestActivity(bandKey, idSender);
+                                                            for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren())
+                                                            {
+                                                                final String bandKey = ds.getKey();
+                                                                bandsRequestReference.child(currentUserID).child(bandKey).addValueEventListener(new ValueEventListener()
+                                                                {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                                                    {
+                                                                        if (dataSnapshot.exists()) {
+                                                                            for (DataSnapshot ds1 : dataSnapshot.getChildren())
+                                                                            {
+                                                                                final String idSender = ds1.getKey();
+                                                                                Log.d("BAND and SENDER...........................", bandKey + " - " + idSender);
+                                                                                sendUserToBandRequestActivity(bandKey, idSender);
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError databaseError)
+                                                                    {
+
+                                                                    }
+                                                                });
+                                                            }
                                                         }
                                                     }
-                                                }
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError)
-                                                {
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                }
-                                            });
+                                                    }
+                                                });
+
+                                            }
+                                            else
+                                            {
+                                                sendUserToMainActivity();
+                                            }
                                         }
-                                    }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+
 
                                 }
-                            });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
     }
