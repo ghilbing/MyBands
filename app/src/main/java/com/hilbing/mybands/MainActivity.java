@@ -232,6 +232,8 @@ public class MainActivity extends AppCompatActivity {
         childModelList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.find_musicians), false, false);
         childModelList.add(childModel);
+        childModel = new MenuModel(getResources().getString(R.string.band_request), false, false);
+        childModelList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.send_message), false, false);
         childModelList.add(childModel);
 
@@ -336,6 +338,9 @@ public class MainActivity extends AppCompatActivity {
                        else if(subTitle.equals(getResources().getString(R.string.send_message))){
                            sendUserToMessagesActivity();
                        }
+                       else if(subTitle.equals(getResources().getString(R.string.band_request))){
+                         //  sendUserToBandRequestActivity();
+                       }
                        else if(subTitle.equals(getResources().getString(R.string.rehearsals))){
                            Toast.makeText(MainActivity.this, "Rehearsals", Toast.LENGTH_LONG).show();
                        }
@@ -420,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
             {
             checkIfUserExists();
             checkIfUserBelongsToBand();
-           // checkIfUserHasARequest();
+            checkIfUserHasARequest();
              }
 
     }
@@ -554,11 +559,13 @@ public class MainActivity extends AppCompatActivity {
     private void checkIfUserHasARequest()
     {
 
-        bandsRequestReference.child(currentUserID).addValueEventListener(new ValueEventListener() {
+        bandsRequestReference.child(currentUserID).addValueEventListener(new ValueEventListener()
+        {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                if(dataSnapshot.exists()){
+                if(dataSnapshot.exists())
+                {
                     for(DataSnapshot dataSnapshot1 :dataSnapshot.getChildren())
                     {
                         final String bandId = dataSnapshot1.getKey();
@@ -573,55 +580,48 @@ public class MainActivity extends AppCompatActivity {
                                     bandsRequestReference.child(currentUserID).child(bandId).child(senderId).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            String request_type = dataSnapshot.child("request_type").getValue().toString();
-                                            if(request_type.equals("received"))
-                                            {
+                                            if(dataSnapshot.exists()) {
+                                                String request_type = dataSnapshot.child("request_type").getValue().toString();
+                                                if (request_type.equals("received")) {
 
-                                                bandsRequestReference.addValueEventListener(new ValueEventListener()
-                                                {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                                                    {
-                                                        if (dataSnapshot.hasChild(currentUserID))
-                                                        {
-                                                            for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren())
-                                                            {
-                                                                final String bandKey = ds.getKey();
-                                                                bandsRequestReference.child(currentUserID).child(bandKey).addValueEventListener(new ValueEventListener()
-                                                                {
-                                                                    @Override
-                                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                                                                    {
-                                                                        if (dataSnapshot.exists()) {
-                                                                            for (DataSnapshot ds1 : dataSnapshot.getChildren())
-                                                                            {
-                                                                                final String idSender = ds1.getKey();
-                                                                                Log.d("BAND and SENDER...........................", bandKey + " - " + idSender);
-                                                                                sendUserToBandRequestActivity(bandKey, idSender);
+                                                    bandsRequestReference.addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            if (dataSnapshot.hasChild(currentUserID)) {
+                                                                for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()) {
+                                                                    final String bandKey = ds.getKey();
+                                                                    bandsRequestReference.child(currentUserID).child(bandKey).addValueEventListener(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                            if (dataSnapshot.exists()) {
+                                                                                for (DataSnapshot ds1 : dataSnapshot.getChildren()) {
+                                                                                    final String idSender = ds1.getKey();
+                                                                                    Log.d("BAND and SENDER...........................", bandKey + " - " + idSender);
+                                                                                    sendUserToBandRequestActivity(bandKey, idSender);
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    @Override
-                                                                    public void onCancelled(@NonNull DatabaseError databaseError)
-                                                                    {
+                                                                        @Override
+                                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                                    }
-                                                                });
+                                                                        }
+                                                                    });
+                                                                }
                                                             }
                                                         }
-                                                    }
 
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                    }
-                                                });
+                                                        }
+                                                    });
 
+                                                }
                                             }
                                             else
                                             {
-                                                sendUserToMainActivity();
+                                               // sendUserToMainActivity();
                                             }
                                         }
 
@@ -643,6 +643,10 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 }
+                else
+                {
+                 //   sendUserToMainActivity();
+                }
             }
 
             @Override
@@ -653,32 +657,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-
- /*   private void openBandDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.alert_bands, null);
-        ListView listView = view.findViewById(R.id.alert_band_list_LV);
-        listView.setAdapter(new BandAlertAdapter(this, (ArrayList<Band>) bands));
-
-        builder.setView(view);
-
-        builder.setTitle(getResources().getString(R.string.select_a_band));
-
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                sendUserToMainActivity();
-                alertDialog.dismiss();
-                openDialog = false;
-            }
-        });
-
-    }*/
 
     private void sendUserToMainActivity() {
         Intent mainActivityIntent = new Intent(MainActivity.this, MainActivity.class);

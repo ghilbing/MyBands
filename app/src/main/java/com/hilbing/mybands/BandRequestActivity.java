@@ -48,7 +48,7 @@ public class BandRequestActivity extends AppCompatActivity {
     @BindView(R.id.band_request_person_phone_TV)
     TextView phoneTV;
     @BindView(R.id.band_request_person_send_add_to_band_request_BT)
-    Button sendRequestBT;
+    Button acceptRequestBT;
     @BindView(R.id.band_request_person_decline_add_band_request_BT)
     Button declineRequestBT;
 
@@ -97,6 +97,22 @@ public class BandRequestActivity extends AppCompatActivity {
 
         initialize();
 
+        acceptRequestBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                acceptRequest();
+            }
+        });
+
+        declineRequestBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelRequest();
+            }
+        });
+
+
+
         addToBandRequestRef = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
         bandsMusiciansRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
         bandsDataRef = FirebaseDatabase.getInstance().getReference().child("Bands");
@@ -119,7 +135,7 @@ public class BandRequestActivity extends AppCompatActivity {
                     phoneTV.setText(userPhone);
                     countryTV.setText(userCountry);
 
-                    keepButtonsText();
+                  //  keepButtonsText();
                 }
             }
 
@@ -147,10 +163,10 @@ public class BandRequestActivity extends AppCompatActivity {
             }
         });
 
-        declineRequestBT.setVisibility(View.INVISIBLE);
-        declineRequestBT.setEnabled(false);
+       // declineRequestBT.setVisibility(View.INVISIBLE);
+      //  declineRequestBT.setEnabled(false);
 
-        if(!senderUserId.equals(receiverUserId))
+    /*    if(!senderUserId.equals(receiverUserId))
         {
             sendRequestBT.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -158,11 +174,11 @@ public class BandRequestActivity extends AppCompatActivity {
                     sendRequestBT.setEnabled(false);
                     if(CURRENT_STATE.equals(getResources().getString(R.string.not_from_same_band)))
                     {
-                        sendRequestToAPerson();
+                      //  sendRequestToAPerson();
                     }
                     if (CURRENT_STATE.equals(getResources().getString(R.string.request_sent)))
                     {
-                        cancelRequest();
+                     //   cancelRequest();
                     }
                     if (CURRENT_STATE.equals(getResources().getString(R.string.request_received)))
                     {
@@ -170,15 +186,15 @@ public class BandRequestActivity extends AppCompatActivity {
                     }
                     if (CURRENT_STATE.equals(getResources().getString(R.string.from_same_band)))
                     {
-                        quitBand();
+                     //   quitBand();
                     }
                 }
             });
-        }
-        else
+        }*/
+       // else
         {
-            declineRequestBT.setVisibility(View.INVISIBLE);
-            sendRequestBT.setVisibility(View.INVISIBLE);
+          //  declineRequestBT.setVisibility(View.INVISIBLE);
+          //  sendRequestBT.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -198,9 +214,9 @@ public class BandRequestActivity extends AppCompatActivity {
                         {
                             if(task.isSuccessful())
                             {
-                                sendRequestBT.setEnabled(true);
+                              //  sendRequestBT.setEnabled(true);
                                 CURRENT_STATE = getResources().getString(R.string.request_sent);
-                                sendRequestBT.setText(getResources().getString(R.string.cancel_request));
+                             //   sendRequestBT.setText(getResources().getString(R.string.cancel_request));
 
                                 declineRequestBT.setVisibility(View.INVISIBLE);
                                 declineRequestBT.setEnabled(false);
@@ -228,9 +244,9 @@ public class BandRequestActivity extends AppCompatActivity {
                         {
                             if(task.isSuccessful())
                             {
-                                sendRequestBT.setEnabled(true);
+                              //  sendRequestBT.setEnabled(true);
                                 CURRENT_STATE = getResources().getString(R.string.not_from_same_band);
-                                sendRequestBT.setText(getResources().getString(R.string.add_to_band_request));
+                             //   sendRequestBT.setText(getResources().getString(R.string.add_to_band_request));
 
                                 declineRequestBT.setVisibility(View.INVISIBLE);
                                 declineRequestBT.setEnabled(false);
@@ -272,9 +288,9 @@ public class BandRequestActivity extends AppCompatActivity {
                                                 {
                                                     if(task.isSuccessful())
                                                     {
-                                                        sendRequestBT.setEnabled(true);
+                                                      //  sendRequestBT.setEnabled(true);
                                                         CURRENT_STATE = getResources().getString(R.string.from_same_band);
-                                                        sendRequestBT.setText(getResources().getString(R.string.quit_band));
+                                                      //  sendRequestBT.setText(getResources().getString(R.string.quit_band));
 
                                                         declineRequestBT.setVisibility(View.INVISIBLE);
                                                         declineRequestBT.setEnabled(false);
@@ -312,9 +328,9 @@ public class BandRequestActivity extends AppCompatActivity {
                         {
                             if(task.isSuccessful())
                             {
-                                sendRequestBT.setEnabled(true);
+                              //  sendRequestBT.setEnabled(true);
                                 CURRENT_STATE = getResources().getString(R.string.not_from_same_band);
-                                sendRequestBT.setText(getResources().getString(R.string.add_to_band_request));
+                             //   sendRequestBT.setText(getResources().getString(R.string.add_to_band_request));
 
                                 declineRequestBT.setVisibility(View.INVISIBLE);
                                 declineRequestBT.setEnabled(false);
@@ -332,7 +348,7 @@ public class BandRequestActivity extends AppCompatActivity {
 
 
 
-    private void keepButtonsText()
+    /*private void keepButtonsText()
     {
         addToBandRequestRef.child(senderUserId).child(currentBandId).addListenerForSingleValueEvent(new ValueEventListener()
         {
@@ -393,7 +409,7 @@ public class BandRequestActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
 
 
 

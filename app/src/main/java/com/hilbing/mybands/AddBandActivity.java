@@ -340,7 +340,8 @@ public class AddBandActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful())
                                     {
-                                        addToBandRequestRef.child(currentUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+                                        Toast.makeText(AddBandActivity.this, getResources().getString(R.string.creating_band), Toast.LENGTH_LONG).show();
+                                        /*addToBandRequestRef.child(currentUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
                                         {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task)
@@ -353,13 +354,13 @@ public class AddBandActivity extends AppCompatActivity {
                                                         {
                                                             if(task.isSuccessful())
                                                             {
-                                                                Toast.makeText(AddBandActivity.this, "Entro", Toast.LENGTH_LONG).show();
+                                                               // Toast.makeText(AddBandActivity.this, "Entro", Toast.LENGTH_LONG).show();
                                                             }
                                                         }
                                                     });
                                                 }
                                             }
-                                        });
+                                        });*/
                                     }
                                 }
                             });

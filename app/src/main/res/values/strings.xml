@@ -164,7 +164,7 @@
     <string name="request_sent">Request sent</string>
     <string name="cancel_request">Cancel request</string>
     <string name="request_received">Request received</string>
-    <string name="accept_request">Accept Request</string>
+    <string name="accept_request">Accept Band Request</string>
     <string name="from_same_band">From same band</string>
     <string name="quit_band">Quit band</string>
     <string name="musicians">Musicians</string>

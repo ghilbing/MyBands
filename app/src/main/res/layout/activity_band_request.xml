@@ -116,7 +116,7 @@
                 android:layout_below="@+id/checkboxGroup"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/buttons"
-                android:text="@string/add_to_band_request"
+                android:text="@string/accept_request"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
 
