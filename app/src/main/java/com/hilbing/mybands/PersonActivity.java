@@ -1,6 +1,7 @@
 package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -79,6 +80,15 @@ public class PersonActivity extends AppCompatActivity
         currentBandId = getIntent().getExtras().get("currentBandId").toString();
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        actionBar.setTitle(R.string.send_request);
+
         mAuth = FirebaseAuth.getInstance();
         senderUserId = mAuth.getCurrentUser().getUid();
         initialize();
@@ -127,6 +137,7 @@ public class PersonActivity extends AppCompatActivity
 
         if(!senderUserId.equals(receiverUserId))
         {
+            Log.d("CURRENT STATE", CURRENT_STATE);
             sendRequestBT.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -139,14 +150,14 @@ public class PersonActivity extends AppCompatActivity
                     {
                         cancelRequest();
                     }
-                    if (CURRENT_STATE.equals(getResources().getString(R.string.request_received)))
+                   /* if (CURRENT_STATE.equals(getResources().getString(R.string.request_received)))
                     {
                         acceptRequest();
                     }
                     if (CURRENT_STATE.equals(getResources().getString(R.string.from_same_band)))
                     {
                         quitBand();
-                    }
+                    }*/
                 }
             });
         }

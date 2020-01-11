@@ -232,10 +232,11 @@ public class MainActivity extends AppCompatActivity {
         childModelList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.find_musicians), false, false);
         childModelList.add(childModel);
-        childModel = new MenuModel(getResources().getString(R.string.band_request), false, false);
+        childModel = new MenuModel(getResources().getString(R.string.band_members), false, false);
         childModelList.add(childModel);
-        childModel = new MenuModel(getResources().getString(R.string.send_message), false, false);
+        childModel = new MenuModel(getResources().getString(R.string.quit_band), false, false);
         childModelList.add(childModel);
+
 
         if(menuModel.hasChildren)
         {
@@ -335,11 +336,14 @@ public class MainActivity extends AppCompatActivity {
                        else if(subTitle.equals(getResources().getString(R.string.my_bands))){
                            sendUserToMyBands();
                        }
+                       else if(subTitle.equals(getResources().getString(R.string.band_members))){
+                           sendUserToMusiciansActivity();
+                       }
                        else if(subTitle.equals(getResources().getString(R.string.send_message))){
                            sendUserToMessagesActivity();
                        }
-                       else if(subTitle.equals(getResources().getString(R.string.band_request))){
-                         //  sendUserToBandRequestActivity();
+                       else if(subTitle.equals(getResources().getString(R.string.quit_band))){
+                           sendUserToQuitBandActivity(currentBandIdPref, currentUserID);
                        }
                        else if(subTitle.equals(getResources().getString(R.string.rehearsals))){
                            Toast.makeText(MainActivity.this, "Rehearsals", Toast.LENGTH_LONG).show();
@@ -454,38 +458,6 @@ public class MainActivity extends AppCompatActivity {
 
                             sendUserToMyBands();
 
-                           /* Toast.makeText(MainActivity.this, getResources().getString(R.string.please_select_a_band), Toast.LENGTH_LONG).show();
-                            for(DataSnapshot ds :dataSnapshot.child(currentUserID).getChildren()){
-                                final String key = ds.getKey();
-
-                                bandsReference.child(key).addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if(dataSnapshot.exists()){
-                                            String name = dataSnapshot.child("mBandName").getValue().toString();
-                                            String image = dataSnapshot.child("mBandImage").getValue().toString();
-                                            String id = dataSnapshot.child("mBandId").getValue().toString();
-                                            Band band = new Band(id,name, image);
-                                            bands.add(band);
-                                        }
-                                        if(openDialog == false) {
-                                           // openBandDialog();
-                                            openDialog = true;
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-
-                                Log.d("MainActivity", key);
-
-                            }*/
-
-
                         } else if (count > 1 && !TextUtils.isEmpty(currentBandIdPref)) {
 
                                 bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
@@ -509,7 +481,6 @@ public class MainActivity extends AppCompatActivity {
 
                                     }
                                 });
-
 
                     }
 
@@ -619,10 +590,7 @@ public class MainActivity extends AppCompatActivity {
 
                                                 }
                                             }
-                                            else
-                                            {
-                                               // sendUserToMainActivity();
-                                            }
+
                                         }
 
                                         @Override
@@ -643,10 +611,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 }
-                else
-                {
-                 //   sendUserToMainActivity();
-                }
+
             }
 
             @Override
@@ -709,7 +674,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendUsertoFindMusicians() {
         Intent findMusicianIntent = new Intent(MainActivity.this, FindMusicianActivity.class);
         findMusicianIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        findMusicianIntent.putExtra("currentBandId", currentBandId);
+        findMusicianIntent.putExtra("currentBandId", currentBandIdPref);
         startActivity(findMusicianIntent);
         finish();
 
@@ -776,6 +741,16 @@ public class MainActivity extends AppCompatActivity {
         bandRequestIntent.putExtra("idBand", idBand);
         bandRequestIntent.putExtra("idSender", idSender);
         startActivity(bandRequestIntent);
+        finish();
+
+    }
+
+    private void sendUserToQuitBandActivity(String idBand, String idCurrentUser) {
+        Intent bandQuitIntent = new Intent(MainActivity.this, QuitBandActivity.class);
+        bandQuitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        bandQuitIntent.putExtra("idBand", currentBandIdPref);
+        bandQuitIntent.putExtra("idUser", currentUserID);
+        startActivity(bandQuitIntent);
         finish();
 
     }

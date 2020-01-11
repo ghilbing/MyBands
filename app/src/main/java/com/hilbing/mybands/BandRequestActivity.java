@@ -231,14 +231,14 @@ public class BandRequestActivity extends AppCompatActivity {
 
     private void cancelRequest()
     {
-        addToBandRequestRef.child(senderUserId).child(currentBandId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
+        addToBandRequestRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
                 if(task.isSuccessful())
                 {
-                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    addToBandRequestRef.child(receiverUserId).child(currentBandId).child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {
@@ -246,10 +246,12 @@ public class BandRequestActivity extends AppCompatActivity {
                             {
                               //  sendRequestBT.setEnabled(true);
                                 CURRENT_STATE = getResources().getString(R.string.not_from_same_band);
+                                acceptRequestBT.setVisibility(View.INVISIBLE);
+                                acceptRequestBT.setEnabled(false);
                              //   sendRequestBT.setText(getResources().getString(R.string.add_to_band_request));
 
-                                declineRequestBT.setVisibility(View.INVISIBLE);
-                                declineRequestBT.setEnabled(false);
+                             //   declineRequestBT.setVisibility(View.INVISIBLE);
+                             //   declineRequestBT.setEnabled(false);
                             }
                         }
                     });
@@ -265,12 +267,12 @@ public class BandRequestActivity extends AppCompatActivity {
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
         saveCurrentDate = currentDate.format(calForDate.getTime());
 
-        bandsMusiciansRef.child(senderUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+        bandsMusiciansRef.child(receiverUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())
                 {
-                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    bandsMusiciansRef.child(currentBandId).child(receiverUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful())

@@ -8,6 +8,10 @@
     android:orientation="vertical"
     android:background="@drawable/rockimage">
 
+    <include
+        android:id="@+id/musicians_toolbar"
+        layout="@layout/app_bar_layout" />
+
     <TextView
         android:id="@+id/all_musicians"
         android:layout_width="wrap_content"

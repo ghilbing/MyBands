@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -70,6 +71,7 @@ public class MessagesActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private String messageReceiverId;
     private String messageReceiverName;
+    private String messageBandId;
 
 
     private DatabaseReference rootReference;
@@ -79,6 +81,9 @@ public class MessagesActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
+
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        messageBandId = preferences.getString("currentBandIdPref", "");
 
         ButterKnife.bind(this);
 
@@ -134,7 +139,7 @@ public class MessagesActivity extends AppCompatActivity
 
     private void fetchMessages()
     {
-        rootReference.child("Messages").child(currentUserId).child(messageReceiverId).addChildEventListener(new ChildEventListener() {
+        rootReference.child("Messages").child(messageBandId).child(currentUserId).child(messageReceiverId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message message = dataSnapshot.getValue(Message.class);
@@ -180,10 +185,10 @@ public class MessagesActivity extends AppCompatActivity
         }
         else
         {
-            String message_sender_ref = "Messages/" + currentUserId + "/" + messageReceiverId;
-            String message_receiver_ref = "Messages/" + messageReceiverId + "/" + currentUserId;
+            String message_sender_ref = "Messages/" + messageBandId + "/" + currentUserId + "/" + messageReceiverId;
+            String message_receiver_ref = "Messages/" + messageBandId + "/" + messageReceiverId + "/" + currentUserId;
 
-            DatabaseReference userMessagesKey = rootReference.child("Messages").child(currentUserId).child(messageReceiverId).push();
+            DatabaseReference userMessagesKey = rootReference.child("Messages").child(messageBandId).child(currentUserId).child(messageReceiverId).push();
             String messageKey = userMessagesKey.getKey();
 
             Calendar calForDate = Calendar.getInstance();

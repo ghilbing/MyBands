@@ -6,10 +6,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -60,6 +63,8 @@ public class FindMusicianActivity extends AppCompatActivity {
         setContentView(R.layout.activity_find_musician);
 
         ButterKnife.bind(this);
+
+
 
         Intent intent = getIntent();
         if(intent != null) {
@@ -200,6 +205,20 @@ public class FindMusicianActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home)
+        {
+            sendUserToMainActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void sendUserToPersonActivity(String musicianKey)
     {
         Intent personIntent = new Intent(FindMusicianActivity.this, PersonActivity.class);
@@ -226,5 +245,14 @@ public class FindMusicianActivity extends AppCompatActivity {
         {
             recyclerAdapter.startListening();
         }
+    }
+
+    private void sendUserToMainActivity()
+    {
+        Intent mainIntent = new Intent(FindMusicianActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+
     }
 }

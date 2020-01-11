@@ -183,6 +183,9 @@
     <string name="you_are_getting_an_invitation_from_the_following_band">You are getting an invitation from the following band:</string>
     <string name="contact_information">Contact information:</string>
     <string name="band_request">Band request</string>
+    <string name="send_request">Send Request</string>
+    <string name="band_members">Band members</string>
+    <string name="you_cannot_send_messages_to_yourself">You cannot send messages to yourself</string>
 
     <array name="instruments">
         <item>Bass</item>
