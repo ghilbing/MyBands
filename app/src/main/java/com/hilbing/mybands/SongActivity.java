@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hilbing.mybands.adapters.SongAdapter;
 import com.hilbing.mybands.models.Song;
 
 import java.util.ArrayList;
@@ -162,7 +163,7 @@ public class SongActivity extends AppCompatActivity {
 
     private boolean updateSong(String id, String name, String artist, String duration, String youtube){
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("songs").child(idBand).child(id);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Songs").child(currentBandIdPref).child(id);
         Song song = new Song(id, name, artist, duration, youtube);
         databaseReference.setValue(song);
         Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added_successfully), Toast.LENGTH_LONG).show();
@@ -179,12 +180,13 @@ public class SongActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 songsList.clear();
 
-                for(DataSnapshot songSnapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
                     Song song = songSnapshot.getValue(Song.class);
                     songsList.add(song);
                 }
 
-                SongAdapter adapter = new SongAdapter(getContext(), songsList);
+
+                SongAdapter adapter = new SongAdapter(SongActivity.this, songsList);
                 songsLV.setAdapter(adapter);
             }
 

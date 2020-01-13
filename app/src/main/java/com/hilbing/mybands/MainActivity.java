@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
                         }
                         else if(title.equals(getResources().getString(R.string.songs))){
-                            Toast.makeText(MainActivity.this, "Songs", Toast.LENGTH_LONG).show();
+                            sendUserToSongActivity();
                         }
                         else if(title.equals(getResources().getString(R.string.playlists))){
                             Toast.makeText(MainActivity.this, "Playlists", Toast.LENGTH_LONG).show();
@@ -753,6 +753,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(bandQuitIntent);
         finish();
 
+    }
+
+    private void sendUserToSongActivity(){
+        Intent songIntent = new Intent(MainActivity.this, SongActivity.class);
+        songIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(songIntent);
+        finish();
     }
 
 
