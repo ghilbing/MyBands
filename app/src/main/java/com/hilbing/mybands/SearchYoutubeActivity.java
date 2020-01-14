@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.hilbing.mybands.adapters.RecyclerItemClickListener;
 import com.hilbing.mybands.adapters.VideoRecyclerAdapter;
@@ -44,6 +45,9 @@ public class SearchYoutubeActivity extends AppCompatActivity {
 
     @BindView(R.id.videos_RV)
     RecyclerView recyclerView;
+    @BindView(R.id.youtube_toolbar)
+    Toolbar toolbar;
+
 
     private String key = "AIzaSyAWjEqiLz9z9ZBrd1mynjQnHPQdKiQYCno";
     private String part = "snippet";
@@ -63,6 +67,9 @@ public class SearchYoutubeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_youtube);
 
         ButterKnife.bind(this);
+
+        toolbar.inflateMenu(R.menu.options_menu);
+
 
         sharedPreferences = getBaseContext().getSharedPreferences(PREFS, MODE_PRIVATE);
 
