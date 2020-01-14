@@ -1,18 +1,33 @@
 package com.hilbing.mybands;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.models.Item;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,10 +42,23 @@ public class VideoDetailActivity extends YouTubeBaseActivity implements YouTubeP
     TextView description;
     @BindView(R.id.youtube_detail_view)
     YouTubePlayerView youTubeView;
+    @BindView(R.id.youtube_detail_save_song_BT)
+    Button saveSongBT;
+
+
+    private DatabaseReference songsReference;
 
     private String key = "AIzaSyAWjEqiLz9z9ZBrd1mynjQnHPQdKiQYCno";
     private static final int RECOVERY_REQUEST = 1;
     private Item video;
+
+    private ProgressDialog progressDialog;
+
+    private String videoTitle;
+    private String videoDescription;
+    private String videoChannel;
+    private String videoId;
+    private String currentBandIdPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +66,86 @@ public class VideoDetailActivity extends YouTubeBaseActivity implements YouTubeP
         setContentView(R.layout.activity_video_detail);
         ButterKnife.bind(this);
 
+        progressDialog = new ProgressDialog(this);
+
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
         video = getIntent().getExtras().getParcelable("VIDEO");
+
+        videoTitle = video.getSnippet().getTitle();
+        videoDescription = video.getSnippet().getDescription();
+        videoChannel = video.getSnippet().getChannelTitle();
+        videoId = video.getId().getVideoId();
 
         title.setText(video.getSnippet().getTitle());
         description.setText(video.getSnippet().getDescription());
         channel.setText(video.getSnippet().getChannelTitle());
-        Log.d("YOUTUBE............ ", video.getSnippet().getTitle() + " " + video.getSnippet().getDescription() + " " + video.getSnippet().getChannelTitle());
+
+        songsReference = FirebaseDatabase.getInstance().getReference().child("SongYoutube");
+
+        saveSongBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveSongLink();
+            }
+        });
 
         youTubeView.initialize(key, this);
+    }
+
+    private void saveSongLink() {
+
+        Intent songIntent = new Intent(VideoDetailActivity.this, SongActivity.class);
+        songIntent.putExtra("YouTubeURL", videoId);
+        startActivity(songIntent);
+        finish();
+
+        /*progressDialog.setTitle(getResources().getString(R.string.adding_song));
+        progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_adding_your_song));
+        progressDialog.show();
+        progressDialog.setCanceledOnTouchOutside(true);
+
+
+        HashMap songMap = new HashMap();
+        songMap.put("mSongTitle", videoTitle);
+        songMap.put("mSongDescription", videoDescription);
+        songMap.put("mSongChannel", videoChannel);
+        songMap.put("mSongVideo", videoId);
+        songsReference.child(currentBandIdPref).updateChildren(songMap).addOnCompleteListener(new OnCompleteListener()
+        {
+            @Override
+            public void onComplete(@NonNull Task task)
+            {
+                if(task.isSuccessful())
+                {
+                    //  sendUserToMainActivity();
+                    Toast.makeText(VideoDetailActivity.this, getResources().getString(R.string.your_song_was_added_succesfully),Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                } else
+                {
+                    String message = task.getException().getMessage();
+                    Toast.makeText(VideoDetailActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                }
+            }
+        });
+
+
+        songsReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
+
     }
 
     @Override

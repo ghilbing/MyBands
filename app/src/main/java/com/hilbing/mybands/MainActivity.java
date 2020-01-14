@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -105,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
         bandsMusiciansReference = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
         bandsRequestReference = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
         bandsReference = FirebaseDatabase.getInstance().getReference().child("Bands");
+
+        isNetworkAvailable(this);
 
         Intent intent = getIntent();
         if(intent != null){
@@ -434,6 +437,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //Verify Network connection
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo() !=  null
+                && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+
 
 
     private void checkIfUserBelongsToBand() {
@@ -757,7 +768,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendUserToSongActivity(){
-        Intent songIntent = new Intent(MainActivity.this, SearchYoutubeActivity.class);
+        Intent songIntent = new Intent(MainActivity.this, SongActivity.class);
         songIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(songIntent);
         finish();

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -69,6 +70,7 @@ public class SearchYoutubeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         toolbar.inflateMenu(R.menu.options_menu);
+        setSupportActionBar(toolbar);
 
 
         sharedPreferences = getBaseContext().getSharedPreferences(PREFS, MODE_PRIVATE);
@@ -215,8 +217,11 @@ public class SearchYoutubeActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+
         YoutubeAPI youtubeAPI = retrofit.create(YoutubeAPI.class);
+
         Call<SOAnswersResponse> call = youtubeAPI.getAnswers(key, part, query, "video", 20);
+        Log.d("RETROFIT",youtubeAPI.getAnswers(key, part, query, "video", 20).request().url().toString());
         call.enqueue(new Callback<SOAnswersResponse>() {
             @Override
             public void onResponse(Call<SOAnswersResponse> call, Response<SOAnswersResponse> response) {
@@ -225,6 +230,8 @@ public class SearchYoutubeActivity extends AppCompatActivity {
                 adapter.getVideos().addAll(videos);
                 adapter.notifyDataSetChanged();
             }
+
+
 
             @Override
             public void onFailure(Call<SOAnswersResponse> call, Throwable t) {

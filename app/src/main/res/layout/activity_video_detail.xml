@@ -61,4 +61,13 @@
         android:layout_marginRight="10dp"
         android:justificationMode="inter_word" />
 
+    <Button
+        android:id="@+id/youtube_detail_save_song_BT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_song_link"
+        android:background="@drawable/buttons"
+        android:textStyle="bold"
+        android:textColor="@color/white"/>
+
 </LinearLayout>

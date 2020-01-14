@@ -50,19 +50,31 @@
             android:hint="@string/enter_duration"
             android:importantForAutofill="no"
             android:inputType="textPersonName" />
+        <Button
+            android:id="@+id/song_search_song_youtube_BT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/search_song_youtube"
+            android:background="@drawable/buttons"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            />
 
         <EditText
             android:id="@+id/song_youtube_link_ET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:hint="@string/copy_youtube_link"
+            android:hint="@string/youtube_link"
             android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/song_add_song_BT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/buttons"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:text="@string/add_song" />
 
         <ListView

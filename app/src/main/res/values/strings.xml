@@ -187,6 +187,16 @@
     <string name="band_members">Band members</string>
     <string name="you_cannot_send_messages_to_yourself">You cannot send messages to yourself</string>
     <string name="search_title">Search</string>
+    <string name="enter_a_name_for_a_new_playlist">Enter a name for a new playlist</string>
+    <string name="create_playlist">Create Playlist</string>
+    <string name="save_song">Save song</string>
+    <string name="adding_song">Adding song...</string>
+    <string name="please_wait_while_we_are_adding_your_song">Please, wait while we are adding your song</string>
+    <string name="your_song_was_added_succesfully">Your song was added succesfully</string>
+    <string name="save_song_link">Save Song Link</string>
+    <string name="youtube_link">Youtube link</string>
+    <string name="search_song_youtube">Search song into Youtube</string>
+    <string name="no_link_from_youtube">No Link from YouTube</string>
 
     <array name="instruments">
         <item>Bass</item>

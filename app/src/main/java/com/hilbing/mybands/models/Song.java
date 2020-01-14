@@ -1,5 +1,7 @@
 package com.hilbing.mybands.models;
 
+import androidx.cardview.widget.CardView;
+
 public class Song {
 
     String mId;
@@ -7,15 +9,17 @@ public class Song {
     String mArtist;
     String mDuration;
     String mUrlYoutube;
+    String mCurrentUser;
 
     public Song () {}
 
-    public Song(String mId, String mName, String mArtist, String mDuration, String mUrlYoutube) {
+    public Song(String mId, String mName, String mArtist, String mDuration, String mUrlYoutube, String mCurrentUser) {
         this.mId = mId;
         this.mName = mName;
         this.mArtist = mArtist;
         this.mDuration = mDuration;
         this.mUrlYoutube = mUrlYoutube;
+        this.mCurrentUser = mCurrentUser;
     }
 
     public String getmId() {
@@ -56,5 +60,13 @@ public class Song {
 
     public void setmUrlYoutube(String mUrlYoutube) {
         this.mUrlYoutube = mUrlYoutube;
+    }
+
+    public String getmCurrentUser() {
+        return mCurrentUser;
+    }
+
+    public void setmCurrentUser(String mCurrentUser) {
+        this.mCurrentUser = mCurrentUser;
     }
 }
