@@ -1,19 +1,23 @@
 package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,6 +49,8 @@ public class SongActivity extends AppCompatActivity {
     Button addSongBT;
     @BindView(R.id.songs_LV)
     ListView songsLV;
+    @BindView(R.id.song_toolbar)
+    Toolbar toolbar;
 
     private List<Song> songsList = new ArrayList<>();
 
@@ -58,6 +64,15 @@ public class SongActivity extends AppCompatActivity {
         setContentView(R.layout.activity_song);
 
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        actionBar.setTitle(R.string.band_request);
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
@@ -195,5 +210,28 @@ public class SongActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home)
+        {
+            sendUserToMainActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sendUserToMainActivity()
+    {
+        Intent mainIntent = new Intent(SongActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+
     }
 }

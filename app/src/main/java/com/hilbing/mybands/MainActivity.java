@@ -580,6 +580,7 @@ public class MainActivity extends AppCompatActivity {
                                                                     });
                                                                 }
                                                             }
+                                                            bandsRequestReference.removeEventListener(this);
                                                         }
 
                                                         @Override
@@ -756,7 +757,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendUserToSongActivity(){
-        Intent songIntent = new Intent(MainActivity.this, SongActivity.class);
+        Intent songIntent = new Intent(MainActivity.this, SearchYoutubeActivity.class);
         songIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(songIntent);
         finish();

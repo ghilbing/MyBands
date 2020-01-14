@@ -186,6 +186,7 @@
     <string name="send_request">Send Request</string>
     <string name="band_members">Band members</string>
     <string name="you_cannot_send_messages_to_yourself">You cannot send messages to yourself</string>
+    <string name="search_title">Search</string>
 
     <array name="instruments">
         <item>Bass</item>
