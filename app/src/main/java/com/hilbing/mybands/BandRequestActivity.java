@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -86,6 +88,7 @@ public class BandRequestActivity extends AppCompatActivity {
         currentBandId = getIntent().getExtras().get("idBand").toString();
         Log.d(">>>>>>>>>>>>>.", "Band: " + currentBandId + " Sender: " + senderUserId);
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        usersRef.keepSynced(true);
 
         mAuth = FirebaseAuth.getInstance();
         receiverUserId = mAuth.getCurrentUser().getUid();
@@ -114,8 +117,11 @@ public class BandRequestActivity extends AppCompatActivity {
 
 
         addToBandRequestRef = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
+        addToBandRequestRef.keepSynced(true);
         bandsMusiciansRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsMusiciansRef.keepSynced(true);
         bandsDataRef = FirebaseDatabase.getInstance().getReference().child("Bands");
+        bandsDataRef.keepSynced(true);
 
         usersRef.child(senderUserId).addValueEventListener(new ValueEventListener()
         {
@@ -150,10 +156,21 @@ public class BandRequestActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    String bandImage = dataSnapshot.child("mBandImage").getValue().toString();
+                    final String bandImage = dataSnapshot.child("mBandImage").getValue().toString();
                     String bandName = dataSnapshot.child("mBandName").getValue().toString();
                     bandNameTV.setText(bandName);
-                    Picasso.get().load(bandImage).placeholder(R.drawable.profile).into(bandImageCIV);
+                    Picasso.get().load(bandImage).networkPolicy(NetworkPolicy.OFFLINE).into(bandImageCIV, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(bandImage).placeholder(R.drawable.profile).into(bandImageCIV);
+                        }
+                    });
+
                 }
             }
 

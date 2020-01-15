@@ -47,6 +47,8 @@ import com.hilbing.mybands.adapters.ExpandableListAdapter;
 import com.hilbing.mybands.models.Band;
 import com.hilbing.mybands.models.MenuModel;
 import com.hilbing.mybands.models.MusiciansBands;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.Reference;
@@ -103,9 +105,13 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         usersReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        usersReference.keepSynced(true);
         bandsMusiciansReference = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsMusiciansReference.keepSynced(true);
         bandsRequestReference = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
+        bandsMusiciansReference.keepSynced(true);
         bandsReference = FirebaseDatabase.getInstance().getReference().child("Bands");
+        bandsReference.keepSynced(true);
 
         isNetworkAvailable(this);
 
@@ -171,8 +177,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if(dataSnapshot.hasChild("mUserProfileImage"))
                     {
-                        String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
-                        Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(navProfileCIV);
+                        final String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                        Picasso.get().load(imagePath).networkPolicy(NetworkPolicy.OFFLINE).into(navProfileCIV, new Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(navProfileCIV);
+                            }
+                        });
+
                     }
                     else
                         {

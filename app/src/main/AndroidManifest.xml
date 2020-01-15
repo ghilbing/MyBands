@@ -12,11 +12,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".MyBands"
         android:theme="@style/AppTheme">
         <activity android:name=".PlaylistActivity"></activity>
         <activity android:name=".VideoDetailActivity" />
         <activity android:name=".SearchYoutubeActivity" />
-        <activity android:name=".SongActivity" />
+        <activity android:name=".SongActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".QuitBandActivity" />
         <activity android:name=".BandRequestActivity" />
         <activity android:name=".BandProfileActivity" />

@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.hilbing.mybands.R;
 import com.hilbing.mybands.models.Band;
 import com.hilbing.mybands.models.MusiciansBands;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -46,15 +48,26 @@ public class BandAlertAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.row_item_alert_bands, viewGroup, false);
-        CircleImageView image = (CircleImageView) row.findViewById(R.id.alert_band_image);
+        final CircleImageView image = (CircleImageView) row.findViewById(R.id.alert_band_image);
         TextView name = (TextView) row.findViewById(R.id.alert_band_name);
         TextView id = (TextView) row.findViewById(R.id.alert_band_id);
 
-        Band tempBand = bands.get(i);
+        final Band tempBand = bands.get(i);
 
         name.setText(tempBand.getmBandName());
         id.setText(tempBand.getmBandId());
-        Picasso.get().load(tempBand.getmBandImage()).placeholder(R.drawable.profile).into(image);
+        Picasso.get().load(tempBand.getmBandImage()).networkPolicy(NetworkPolicy.OFFLINE).into(image, new Callback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Picasso.get().load(tempBand.getmBandImage()).placeholder(R.drawable.profile).into(image);
+
+            }
+        });
 
         return row;
     }

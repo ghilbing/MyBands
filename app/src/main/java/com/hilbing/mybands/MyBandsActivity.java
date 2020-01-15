@@ -37,6 +37,8 @@ import com.hilbing.mybands.models.Band;
 import com.hilbing.mybands.models.MusiciansBands;
 import com.hilbing.mybands.models.UsersBands;
 import com.hilbing.mybands.models.UsersInstruments;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -74,7 +76,9 @@ public class MyBandsActivity extends AppCompatActivity {
         currentUserId = mAuth.getCurrentUser().getUid();
 
         bandsMusicianRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsMusicianRef.keepSynced(true);
         bandsRef = FirebaseDatabase.getInstance().getReference().child("Bands");
+        bandsRef.keepSynced(true);
 
         bandsAddedRV.setHasFixedSize(true);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -130,10 +134,21 @@ public class MyBandsActivity extends AppCompatActivity {
                         if(dataSnapshot.exists())
                         {
                             final String bandName = String.valueOf(dataSnapshot.child("mBandName").getValue());
-                            String bandImage = String.valueOf(dataSnapshot.child("mBandImage").getValue());
+                            final String bandImage = String.valueOf(dataSnapshot.child("mBandImage").getValue());
 
                             holder.bandNameTV.setText(bandName);
-                            Picasso.get().load(bandImage).placeholder(R.drawable.profile).into(holder.bandImageCIV);
+                            Picasso.get().load(bandImage).networkPolicy(NetworkPolicy.OFFLINE).into(holder.bandImageCIV, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Picasso.get().load(bandImage).placeholder(R.drawable.profile).into(holder.bandImageCIV);
+                                }
+                            });
+
 
                         }
                     }

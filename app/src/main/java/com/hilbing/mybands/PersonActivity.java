@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -79,6 +81,7 @@ public class PersonActivity extends AppCompatActivity
         receiverUserId = getIntent().getExtras().get("selectedUser").toString();
         currentBandId = getIntent().getExtras().get("currentBandId").toString();
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        usersRef.keepSynced(true);
 
         setSupportActionBar(toolbar);
 
@@ -103,7 +106,7 @@ public class PersonActivity extends AppCompatActivity
             {
                 if(dataSnapshot.exists())
                 {
-                    String userProfileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                    final String userProfileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
                     boolean userAvailable = (boolean) dataSnapshot.child("mUserAvailable").getValue();
                     boolean userSinger = (boolean)dataSnapshot.child("mUserSinger").getValue();
                     boolean userComposer = (boolean)dataSnapshot.child("mUserComposer").getValue();
@@ -112,7 +115,18 @@ public class PersonActivity extends AppCompatActivity
                     String userStatus = dataSnapshot.child("mUserStatus").getValue().toString();
                     String userCountry = dataSnapshot.child("mUserCountry").getValue().toString();
 
-                    Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(profileImageCIV);
+                    Picasso.get().load(userProfileImage).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageCIV, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(profileImageCIV);
+                        }
+                    });
+
                     availableCB.setChecked(userAvailable);
                     composerCB.setChecked(userComposer);
                     singerCB.setChecked(userSinger);

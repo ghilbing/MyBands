@@ -30,6 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -97,6 +99,7 @@ public class SettingsActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
         settingsUserReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
+        settingsUserReference.keepSynced(true);
 
         settingsUserReference.addValueEventListener(new ValueEventListener()
         {
@@ -114,7 +117,18 @@ public class SettingsActivity extends AppCompatActivity
                     String userStatus = dataSnapshot.child("mUserStatus").getValue().toString();
                     String userCountry = dataSnapshot.child("mUserCountry").getValue().toString();
 
-                    Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(profileImageCIV);
+                    Picasso.get().load(userProfileImage).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageCIV, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(profileImageCIV);
+                        }
+                    });
+
                     availableCB.setChecked(userAvailable);
                     composerCB.setChecked(userComposer);
                     singerCB.setChecked(userSinger);

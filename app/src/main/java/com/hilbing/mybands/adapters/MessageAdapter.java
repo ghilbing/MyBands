@@ -18,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.R;
 import com.hilbing.mybands.models.Message;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -59,13 +61,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         String fromMessageType = message.getType();
 
         usersDataReference = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUserId);
+        usersDataReference.keepSynced(true);
         usersDataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
-                    String profileImage = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
-                    Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.profileImageCIV);
+                    final String profileImage = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
+                    Picasso.get().load(profileImage).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileImageCIV, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.profileImageCIV);
+                        }
+                    });
+
                 }
             }
 

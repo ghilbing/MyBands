@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hilbing.mybands.R;
 import com.hilbing.mybands.models.Item;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -58,10 +60,21 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
 
         }
 
-        public void bind(Item item) {
+        public void bind(final Item item) {
             title.setText(item.getSnippet().getTitle());
             channel.setText(item.getSnippet().getChannelTitle());
-            Picasso.get().load(item.getSnippet().getThumbnails().getHigh().getUrl()).into(imageView);
+            Picasso.get().load(item.getSnippet().getThumbnails().getHigh().getUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageView, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(item.getSnippet().getThumbnails().getHigh().getUrl()).into(imageView);
+                }
+            });
+
         }
     }
 }

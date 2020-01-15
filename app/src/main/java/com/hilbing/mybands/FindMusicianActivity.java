@@ -33,6 +33,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.models.FindMusician;
 import com.hilbing.mybands.models.UsersInstruments;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -79,7 +81,9 @@ public class FindMusicianActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.find_musicians));
 
         allMusiciansReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        allMusiciansReference.keepSynced(true);
         bandsReference = FirebaseDatabase.getInstance().getReference().child("Bands");
+        bandsReference.keepSynced(true);
 
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
@@ -151,12 +155,23 @@ public class FindMusicianActivity extends AppCompatActivity {
                 }
 
                 @Override
-                protected void onBindViewHolder(@NonNull FindMusicianViewHolder holder, int position, @NonNull final FindMusician model)
+                protected void onBindViewHolder(@NonNull final FindMusicianViewHolder holder, int position, @NonNull final FindMusician model)
                 {
                     final String musicianKey = getRef(position).getKey();
 
                     holder.fullNameTV.setText(model.getmUserName());
-                    Picasso.get().load(model.getmUserProfileImage()).placeholder(R.drawable.profile).into(holder.profileCIV);
+                    Picasso.get().load(model.getmUserProfileImage()).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileCIV, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(model.getmUserProfileImage()).placeholder(R.drawable.profile).into(holder.profileCIV);
+                        }
+                    });
+
                     holder.statusTV.setText(model.getmUserStatus());
 
                     holder.mView.setOnClickListener(new View.OnClickListener() {

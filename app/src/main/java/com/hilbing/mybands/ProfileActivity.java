@@ -18,6 +18,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -73,7 +75,9 @@ public class ProfileActivity extends AppCompatActivity
         currentUserId = mAuth.getCurrentUser().getUid();
 
         profileUserReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
+        profileUserReference.keepSynced(true);
         bandsReference = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsReference.keepSynced(true);
 
         profileUserReference.addValueEventListener(new ValueEventListener()
         {
@@ -82,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity
             {
                 if(dataSnapshot.exists())
                 {
-                    String userProfileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                    final String userProfileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
                     boolean userAvailable = (boolean) dataSnapshot.child("mUserAvailable").getValue();
                     boolean userSinger = (boolean)dataSnapshot.child("mUserSinger").getValue();
                     boolean userComposer = (boolean)dataSnapshot.child("mUserComposer").getValue();
@@ -91,7 +95,18 @@ public class ProfileActivity extends AppCompatActivity
                     String userStatus = dataSnapshot.child("mUserStatus").getValue().toString();
                     String userCountry = dataSnapshot.child("mUserCountry").getValue().toString();
 
-                    Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(profileImageCIV);
+                    Picasso.get().load(userProfileImage).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageCIV, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(userProfileImage).placeholder(R.drawable.profile).into(profileImageCIV);
+                        }
+                    });
+
                     availableCB.setChecked(userAvailable);
                     composerCB.setChecked(userComposer);
                     singerCB.setChecked(userSinger);

@@ -31,6 +31,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.hilbing.mybands.models.User;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -84,6 +86,7 @@ public class SetUpActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
         usersReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
+        usersReference.keepSynced(true);
         usersProfileImageReference = FirebaseStorage.getInstance().getReference().child("profile_images");
 
         progressDialog = new ProgressDialog(this);
@@ -115,8 +118,19 @@ public class SetUpActivity extends AppCompatActivity
                 if(dataSnapshot.exists()){
                     if(dataSnapshot.hasChild("mUserProfileImage"))
                     {
-                        String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
-                        Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(profileImageCIV);
+                        final String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
+                        Picasso.get().load(imagePath).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageCIV, new Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(profileImageCIV);
+                            }
+                        });
+
                     }
                     else{
                         Toast.makeText(SetUpActivity.this, getResources().getString(R.string.please_select_profile_image_first), Toast.LENGTH_LONG).show();

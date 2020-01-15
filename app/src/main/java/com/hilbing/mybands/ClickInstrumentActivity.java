@@ -53,9 +53,13 @@ public class ClickInstrumentActivity extends AppCompatActivity {
         deleteBT.setVisibility(View.INVISIBLE);
 
         instrumentsUsersReference = FirebaseDatabase.getInstance().getReference().child("instruments_users").child(instrumentKey);
+        instrumentsUsersReference.keepSynced(true);
         usersInstrumentsReference = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId);
+        usersInstrumentsReference.keepSynced(true);
         deleteUpdateInstrumentUserReference = FirebaseDatabase.getInstance().getReference().child("instruments_users").child(instrumentKey).child(currentUserId);
+        deleteUpdateInstrumentUserReference.keepSynced(true);
         deleteUpdateUserInstrumentReference = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId).child(instrumentKey);
+        deleteUpdateUserInstrumentReference.keepSynced(true);
 
         usersInstrumentsReference.addValueEventListener(new ValueEventListener()
         {

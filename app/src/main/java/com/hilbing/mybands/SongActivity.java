@@ -91,12 +91,13 @@ public class SongActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
 
-        actionBar.setTitle(R.string.band_request);
+        actionBar.setTitle(R.string.add_song);
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
         databaseSongs = FirebaseDatabase.getInstance().getReference("Songs");
+        databaseSongs.keepSynced(true);
 
 
         songYoutubeLinkET.setText(R.string.no_data_available);

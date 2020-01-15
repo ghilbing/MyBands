@@ -36,6 +36,8 @@ import com.hilbing.mybands.models.FindMusician;
 import com.hilbing.mybands.models.MusiciansBands;
 import com.hilbing.mybands.models.UsersBands;
 import com.hilbing.mybands.models.UsersInstruments;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.CharArrayWriter;
@@ -69,7 +71,9 @@ public class MusiciansActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
         usersBandsReference = FirebaseDatabase.getInstance().getReference().child("BandsMusicians").child(currentUserId);
+        usersBandsReference.keepSynced(true);
         usersDataReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        usersDataReference.keepSynced(true);
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandId = preferences.getString("currentBandIdPref", "");
@@ -136,11 +140,22 @@ public class MusiciansActivity extends AppCompatActivity {
                         if(dataSnapshot.exists())
                         {
                             final String userName = String.valueOf(dataSnapshot.child("mUserName").getValue());
-                            String profileImage = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
+                            final String profileImage = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
                             String status = String.valueOf(dataSnapshot.child("mUserStatus").getValue());
 
                             holder.fullNameTV.setText(userName);
-                            Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.profileCIV);
+                            Picasso.get().load(profileImage).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileCIV, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.profileCIV);
+                                }
+                            });
+
                             holder.statusTV.setText(status);
 
                             holder.mView.setOnClickListener(new View.OnClickListener()

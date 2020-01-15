@@ -33,6 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.adapters.MessageAdapter;
 import com.hilbing.mybands.models.Message;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -111,6 +113,7 @@ public class MessagesActivity extends AppCompatActivity
         userReceiverCIV = findViewById(R.id.message_custom_bar_CIV);
 
         rootReference = FirebaseDatabase.getInstance().getReference();
+        rootReference.keepSynced(true);
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
 
@@ -242,8 +245,19 @@ public class MessagesActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 if(dataSnapshot.exists()){
-                    String imageString = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
-                    Picasso.get().load(imageString).placeholder(R.drawable.profile).into(userReceiverCIV);
+                   final String imageString = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
+                    Picasso.get().load(imageString).networkPolicy(NetworkPolicy.OFFLINE).into(userReceiverCIV, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(imageString).placeholder(R.drawable.profile).into(userReceiverCIV);
+
+                        }
+                    });
 
                 }
             }

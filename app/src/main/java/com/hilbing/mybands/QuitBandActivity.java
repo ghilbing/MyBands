@@ -42,6 +42,7 @@ public class QuitBandActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         bandsMusiciansRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsMusiciansRef.keepSynced(true);
         currentUserId = mAuth.getCurrentUser().getUid();
 
         quitBandBT.setOnClickListener(new View.OnClickListener() {

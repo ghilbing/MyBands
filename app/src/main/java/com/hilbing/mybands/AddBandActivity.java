@@ -39,6 +39,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.hilbing.mybands.models.UsersInstruments;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -111,13 +113,20 @@ public class AddBandActivity extends AppCompatActivity {
         downloadUri = intent.getStringExtra("uri");
 
         userDataReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
+        userDataReference.keepSynced(true);
         bandDataReference = FirebaseDatabase.getInstance().getReference().child("Bands");
+        bandDataReference.keepSynced(true);
         usersBandsReference = FirebaseDatabase.getInstance().getReference("users_bands");
+        userDataReference.keepSynced(true);
         bandsUsersReference = FirebaseDatabase.getInstance().getReference("bands_users");
+        bandsUsersReference.keepSynced(true);
         bandsImageReference = FirebaseStorage.getInstance().getReference().child("band_images");
 
+
         bandsMusiciansRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
+        bandsMusiciansRef.keepSynced(true);
         addToBandRequestRef = FirebaseDatabase.getInstance().getReference().child("BandUsersRequests");
+        addToBandRequestRef.keepSynced(true);
 
 
         if(currentBandId != null) {
@@ -126,8 +135,19 @@ public class AddBandActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         if (dataSnapshot.hasChild("mBandImage")) {
-                            String imagePath = dataSnapshot.child("mBandImage").getValue().toString();
-                            Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(imageCIV);
+                            //Picasso changes for offline case
+                            final String imagePath = dataSnapshot.child("mBandImage").getValue().toString();
+                            Picasso.get().load(imagePath).networkPolicy(NetworkPolicy.OFFLINE).into(imageCIV, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Picasso.get().load(imagePath).placeholder(R.drawable.profile).into(imageCIV);
+                                }
+                            });
                         } else {
                             Toast.makeText(AddBandActivity.this, getResources().getString(R.string.please_select_band_image_first), Toast.LENGTH_LONG).show();
                             imageCIV.requestFocus();

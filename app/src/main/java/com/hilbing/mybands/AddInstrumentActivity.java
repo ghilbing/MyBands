@@ -93,10 +93,15 @@ public class AddInstrumentActivity extends AppCompatActivity
         }
 
         userDataReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        userDataReference.keepSynced(true);
         singersReference = FirebaseDatabase.getInstance().getReference().child("Singers");
+        singersReference.keepSynced(true);
         composersReference = FirebaseDatabase.getInstance().getReference().child("Composers");
+        composersReference.keepSynced(true);
         usersInstrumentsReference = FirebaseDatabase.getInstance().getReference("users_instruments");
+        usersInstrumentsReference.keepSynced(true);
         instrumentsUsersReference = FirebaseDatabase.getInstance().getReference("instruments_users");
+        instrumentsUsersReference.keepSynced(true);
 
         progressDialog = new ProgressDialog(this);
 
@@ -223,6 +228,7 @@ public class AddInstrumentActivity extends AppCompatActivity
     private void deleteInstrument(String instrument, String userId)
     {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user_instruments").child(currentUserId);
+        databaseReference.keepSynced(true);
         databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -235,6 +241,7 @@ public class AddInstrumentActivity extends AppCompatActivity
     {
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user_instruments").child(currentUserId);
+        databaseReference.keepSynced(true);
         UsersInstruments usersInstruments = new UsersInstruments(instrument, userId, userName);
         databaseReference.setValue(usersInstruments);
         Toast.makeText(getApplicationContext(), getResources().getString(R.string.instrument_updated_successfully), Toast.LENGTH_LONG).show();
@@ -360,6 +367,7 @@ public class AddInstrumentActivity extends AppCompatActivity
     private void deleteSingerFromDataBase(String userId)
     {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Singers").child(userId);
+        databaseReference.keepSynced(true);
         databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
