@@ -90,6 +90,8 @@ public class FindMusicianActivity extends AppCompatActivity {
 
         if(currentBandId != null) {
 
+            showMusicians();
+
             bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -121,6 +123,73 @@ public class FindMusicianActivity extends AppCompatActivity {
 
 
     }
+
+    private void showMusicians(){
+        Query query = allMusiciansReference.orderByChild("mUserName");
+
+        FirebaseRecyclerOptions<FindMusician> options = new FirebaseRecyclerOptions.Builder<FindMusician>().setQuery(query,
+                new SnapshotParser<FindMusician>()
+                {
+                    @NonNull
+                    @Override
+                    public FindMusician parseSnapshot(@NonNull DataSnapshot snapshot)
+                    {
+                        return new FindMusician(
+                                snapshot.child("mUserProfileImage").getValue().toString(),
+                                snapshot.child("mUserName").getValue().toString(),
+                                snapshot.child("mUserStatus").getValue().toString());
+
+                    }
+                }).build();
+
+
+
+        recyclerAdapter = new FirebaseRecyclerAdapter<FindMusician, FindMusicianViewHolder>(options)
+        {
+
+            @NonNull
+            @Override
+            public FindMusicianViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+            {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_musicians_layout, parent, false);
+                return new FindMusicianViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull final FindMusicianViewHolder holder, int position, @NonNull final FindMusician model)
+            {
+                final String musicianKey = getRef(position).getKey();
+
+                holder.fullNameTV.setText(model.getmUserName());
+                Picasso.get().load(model.getmUserProfileImage()).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileCIV, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Picasso.get().load(model.getmUserProfileImage()).placeholder(R.drawable.profile).into(holder.profileCIV);
+                    }
+                });
+
+                holder.statusTV.setText(model.getmUserStatus());
+
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sendUserToPersonActivity(musicianKey);
+                        //  Toast.makeText(FindMusicianActivity.this, musicianKey, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        };
+
+        recyclerViewRV.setAdapter(recyclerAdapter);
+        recyclerAdapter.startListening();
+
+    }
+
 
     private void searchMusicians(String searchString)
     {

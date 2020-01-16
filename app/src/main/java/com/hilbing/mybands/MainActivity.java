@@ -264,18 +264,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         childModelList = new ArrayList<>();
-        menuModel = new MenuModel(getResources().getString(R.string.songs), false, true);
+        menuModel = new MenuModel(getResources().getString(R.string.songs), true, true);
         headerList.add(menuModel);
-        if (!menuModel.hasChildren)
+        childModel = new MenuModel(getResources().getString(R.string.add_song), false, false);
+        childModelList.add(childModel);
+        childModel = new MenuModel(getResources().getString(R.string.my_songs), false, false);
+        childModelList.add(childModel);
+
+        if(menuModel.hasChildren)
         {
-            childList.put(menuModel, null);
+            childList.put(menuModel, childModelList);
         }
+
         menuModel = new MenuModel(getResources().getString(R.string.playlists), false, true);
         headerList.add(menuModel);
         if (!menuModel.hasChildren)
         {
             childList.put(menuModel, null);
         }
+        childModelList = new ArrayList<>();
         menuModel = new MenuModel(getResources().getString(R.string.events), true, true);
         headerList.add(menuModel);
         childModel = new MenuModel(getResources().getString(R.string.rehearsals), false, false);
@@ -364,6 +371,12 @@ public class MainActivity extends AppCompatActivity {
                        }
                        else if(subTitle.equals(getResources().getString(R.string.quit_band))){
                            sendUserToQuitBandActivity(currentBandIdPref, currentUserID);
+                       }
+                       else if(subTitle.equals(getResources().getString(R.string.add_song))){
+                           sendUserToSongActivity();
+                        }
+                       else if(subTitle.equals(getResources().getString(R.string.my_songs))){
+                           sendUserToMySongsActivity();
                        }
                        else if(subTitle.equals(getResources().getString(R.string.rehearsals))){
                            Toast.makeText(MainActivity.this, "Rehearsals", Toast.LENGTH_LONG).show();
@@ -788,6 +801,13 @@ public class MainActivity extends AppCompatActivity {
         Intent songIntent = new Intent(MainActivity.this, SongActivity.class);
         songIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(songIntent);
+        finish();
+    }
+
+    private void sendUserToMySongsActivity(){
+        Intent mySongsIntent = new Intent(MainActivity.this, MySongsActivity.class);
+        mySongsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mySongsIntent);
         finish();
     }
 

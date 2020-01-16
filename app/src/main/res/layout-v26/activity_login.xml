@@ -131,25 +131,26 @@
             android:id="@+id/login_facebook_IV"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="10dp"
-            android:src="@drawable/facebook"
-            android:contentDescription="TODO" />
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/facebook_login"
+            android:src="@drawable/facebook" />
+
         <ImageView
             android:id="@+id/login_twitter_IV"
             android:layout_width="100dp"
             android:layout_height="90dp"
-            android:src="@drawable/twitter"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/twitter_login"
+            android:src="@drawable/twitter" />
 
         <ImageView
             android:id="@+id/login_google_IV"
-            android:layout_marginTop="12dp"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/google"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/google_login"
+            android:src="@drawable/google" />
 
 
 

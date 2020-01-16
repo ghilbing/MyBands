@@ -99,53 +99,9 @@ public class VideoDetailActivity extends YouTubeBaseActivity implements YouTubeP
 
         Intent songIntent = new Intent(VideoDetailActivity.this, SongActivity.class);
         songIntent.putExtra("YouTubeURL", videoId);
+        songIntent.putExtra("YouTubeTitle", videoTitle);
         startActivity(songIntent);
         finish();
-
-        /*progressDialog.setTitle(getResources().getString(R.string.adding_song));
-        progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_adding_your_song));
-        progressDialog.show();
-        progressDialog.setCanceledOnTouchOutside(true);
-
-
-        HashMap songMap = new HashMap();
-        songMap.put("mSongTitle", videoTitle);
-        songMap.put("mSongDescription", videoDescription);
-        songMap.put("mSongChannel", videoChannel);
-        songMap.put("mSongVideo", videoId);
-        songsReference.child(currentBandIdPref).updateChildren(songMap).addOnCompleteListener(new OnCompleteListener()
-        {
-            @Override
-            public void onComplete(@NonNull Task task)
-            {
-                if(task.isSuccessful())
-                {
-                    //  sendUserToMainActivity();
-                    Toast.makeText(VideoDetailActivity.this, getResources().getString(R.string.your_song_was_added_succesfully),Toast.LENGTH_LONG).show();
-                    progressDialog.dismiss();
-                } else
-                {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(VideoDetailActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                    progressDialog.dismiss();
-                }
-            }
-        });
-
-
-        songsReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
 
     }
 

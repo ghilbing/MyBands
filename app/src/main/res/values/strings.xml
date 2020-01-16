@@ -3,7 +3,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="select_a_picture_for_your_profile">Select a picture for your profile</string>
     <string name="uploading_image">Uploading Image...</string>
-    <string name="deleted_image_succesfully">Deleted image succesfully</string>
+    <string name="deleted_image_succesfully">Deleted image successfully</string>
     <string name="deleted_image_failed">Deleted image failed</string>
     <string name="finished">Finished</string>
     <string name="authentication_failed">Authentication Failed</string>
@@ -70,8 +70,8 @@
     <string name="create_band">Create Band</string>
     <string name="add_musician">Add musician</string>
     <string name="invite_musician">Invite musician</string>
-    <string name="account_created_succesfully">Account created succesfully</string>
-    <string name="you_are_authenticated_succesfully">You are authenticated succesfully</string>
+    <string name="account_created_succesfully">Account created successfully</string>
+    <string name="you_are_authenticated_succesfully">You are authenticated successfully</string>
 
     <string name="spotify_client_id">8a3367eb003649048f31515144e208b5</string>
     <string name="add_song">Add song</string>
@@ -92,7 +92,7 @@
     <string name="song_added">Song added</string>
     <string name="updating_song">Updating song</string>
     <string name="song_deleted">Song deleted</string>
-    <string name="song_added_successfully">Song added succesfully</string>
+    <string name="song_added_successfully">Song added successfully</string>
     <string name="no_data_available">No data available</string>
     <string name="updating_musicans_bands">Updating musicians from band...</string>
     <string name="musician_updated_successfully">Musician updated successfully</string>
@@ -108,7 +108,7 @@
     <string name="please_wait_while_we_are_loggin_you">Please wait, while we are loggin you</string>
     <string name="please_wait_while_we_are_allowing_you_into_your_account">Please wait, while we are allowing you into your account</string>
     <string name="enter_your_full_name">Enter your full name</string>
-    <string name="your_user_account_is_created_succesfully">Your user account is created succesfully</string>
+    <string name="your_user_account_is_created_succesfully">Your user account is created successfully</string>
     <string name="creating_user">Creating User</string>
     <string name="profile_image_stored_successfully">Profile image stored successfully</string>
     <string name="image_stored_in_database_successfully">Image stored in database successfully</string>
@@ -139,9 +139,9 @@
     <string name="account_settings">Account Settings</string>
     <string name="please_enter_your_full_name">Please, enter your full name</string>
     <string name="please_enter_your_phone">Please, enter your phone</string>
-    <string name="please_enter_the_country_where_you_live">Please, enter ther country where you live</string>
+    <string name="please_enter_the_country_where_you_live">Please, enter the country where you live</string>
     <string name="please_enter_your_status">Please, enter your status</string>
-    <string name="account_settings_updated_successfully">Account settings updated succesfully</string>
+    <string name="account_settings_updated_successfully">Account settings updated successfully</string>
     <string name="enter_band_name">Enter band\'s name</string>
     <string name="enter_band_story">Enter band\'s story</string>
     <string name="where_is_the_band_located">Where is the band located?</string>
@@ -192,11 +192,28 @@
     <string name="save_song">Save song</string>
     <string name="adding_song">Adding song...</string>
     <string name="please_wait_while_we_are_adding_your_song">Please, wait while we are adding your song</string>
-    <string name="your_song_was_added_succesfully">Your song was added succesfully</string>
+    <string name="your_song_was_added_succesfully">Your song was added successfully</string>
     <string name="save_song_link">Save Song Link</string>
     <string name="youtube_link">Youtube link</string>
     <string name="search_song_youtube">Search song into Youtube</string>
     <string name="no_link_from_youtube">No Link from YouTube</string>
+    <string name="logo">logo</string>
+    <string name="facebook_login">Facebook Login</string>
+    <string name="twitter_login">twitter_login</string>
+    <string name="google_login">Google Login</string>
+    <string name="image_user">Image User</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="status">status</string>
+    <string name="textview">TextView</string>
+    <string name="user_id">User Id</string>
+    <string name="user_name">User Name</string>
+    <string name="user_image">User image</string>
+    <string name="video">video</string>
+    <string name="my_songs">My Songs</string>
+    <string name="youtube_title">Youtube title</string>
+    <string name="no_title_from_youtube">No title from youtube</string>
+    <string name="song_name">Song name</string>
 
     <array name="instruments">
         <item>Bass</item>

@@ -45,8 +45,8 @@ public class SongActivity extends AppCompatActivity {
     EditText songNameET;
     @BindView(R.id.song_artist_band_ET)
     EditText songArtistBandET;
-    @BindView(R.id.song_duration_ET)
-    EditText songDurationET;
+    @BindView(R.id.song_youtube_title_ET)
+    EditText songYoutubeTitleET;
     @BindView(R.id.song_youtube_link_ET)
     EditText songYoutubeLinkET;
     @BindView(R.id.song_add_song_BT)
@@ -65,6 +65,7 @@ public class SongActivity extends AppCompatActivity {
     private String currentBandIdPref;
     private String currentUser;
     private String videoURL;
+    private String songTitleYoutube;
 
     private FirebaseAuth mAuth;
 
@@ -100,7 +101,7 @@ public class SongActivity extends AppCompatActivity {
         databaseSongs.keepSynced(true);
 
 
-        songYoutubeLinkET.setText(R.string.no_data_available);
+       // songYoutubeLinkET.setText(R.string.no_data_available);
 
         if(!TextUtils.isEmpty(videoURL)){
             songYoutubeLinkET.setText(videoURL);
@@ -126,7 +127,7 @@ public class SongActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Song song = songsList.get(i);
-                showUpdateDialog(song.getmId(), song.getmName(), song.getmArtist(), song.getmDuration(), song.getmUrlYoutube());
+                showUpdateDialog(song.getmId(), song.getmName(), song.getmArtist(), song.getmYoutubeTitle(), song.getmUrlYoutube());
                 return false;
             }
         });
@@ -143,7 +144,7 @@ public class SongActivity extends AppCompatActivity {
 
         String name = songNameET.getText().toString();
         String artist = songArtistBandET.getText().toString();
-        String duration = songDurationET.getText().toString();
+        String duration = songYoutubeTitleET.getText().toString();
         String youtubeLink = songYoutubeLinkET.getText().toString();
 
         String id = databaseSongs.push().getKey();
@@ -154,7 +155,7 @@ public class SongActivity extends AppCompatActivity {
 
     }
 
-    private void showUpdateDialog(final String id, String name, String artist, String duration, String youtubeLink){
+    private void showUpdateDialog(final String id, String name, String artist, String youtubeTitle, String youtubeLink){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.update_dialog_song, null);
@@ -162,14 +163,14 @@ public class SongActivity extends AppCompatActivity {
 
         final EditText nameET = dialogView.findViewById(R.id.newSongNameET);
         final EditText artistET = dialogView.findViewById(R.id.newArtistNameET);
-        final EditText durationET = dialogView.findViewById(R.id.newDurationET);
+        final EditText youtubeTitleET = dialogView.findViewById(R.id.newYoutubeTitleET);
         final EditText youtubeET = dialogView.findViewById(R.id.newYoutubeLinkET);
         final Button updateBT = dialogView.findViewById(R.id.update_BT);
         final Button deleteBT = dialogView.findViewById(R.id.delete_BT);
 
         nameET.setText(name);
         artistET.setText(artist);
-        durationET.setText(duration);
+        youtubeTitleET.setText(youtubeTitle);
         youtubeET.setText(youtubeLink);
 
         dialogBuilder.setTitle(getResources().getString(R.string.updating_song));
@@ -181,10 +182,10 @@ public class SongActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String newName = nameET.getText().toString();
                 String newArtist = artistET.getText().toString();
-                String newDuration = durationET.getText().toString();
+                String newYoutubeTitle = youtubeTitleET.getText().toString();
                 String newYoutube = youtubeET.getText().toString();
 
-                updateSong(id, newName, newArtist, newDuration, newYoutube, currentUser);
+                updateSong(id, newName, newArtist, newYoutubeTitle, newYoutube, currentUser);
 
                 alertDialog.dismiss();
 
@@ -215,10 +216,10 @@ public class SongActivity extends AppCompatActivity {
     }
 
 
-    private boolean updateSong(String id, String name, String artist, String duration, String youtube, String currentUser){
+    private boolean updateSong(String id, String name, String artist, String youtubeTitle, String youtube, String currentUser){
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Songs").child(currentBandIdPref).child(id);
-        Song song = new Song(id, name, artist, duration, youtube, currentUser);
+        Song song = new Song(id, name, artist, youtubeTitle, youtube, currentUser);
         databaseReference.setValue(song);
         Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added_successfully), Toast.LENGTH_LONG).show();
         return true;
@@ -263,6 +264,27 @@ public class SongActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        videoURL = getIntent().getStringExtra("YouTubeURL");
+        songTitleYoutube = getIntent().getStringExtra("YouTubeTitle");
+
+        if(!TextUtils.isEmpty(videoURL) && !TextUtils.isEmpty(songTitleYoutube)){
+            songYoutubeLinkET.setText(videoURL);
+            songYoutubeTitleET.setText(songTitleYoutube);
+        } else {
+            songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
+            songYoutubeTitleET.setText(getResources().getString(R.string.no_title_from_youtube));
+        }
+        super.onResume();
     }
 
     @Override

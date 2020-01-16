@@ -7,17 +7,17 @@ public class Song {
     String mId;
     String mName;
     String mArtist;
-    String mDuration;
+    String mYoutubeTitle;
     String mUrlYoutube;
     String mCurrentUser;
 
     public Song () {}
 
-    public Song(String mId, String mName, String mArtist, String mDuration, String mUrlYoutube, String mCurrentUser) {
+    public Song(String mId, String mName, String mArtist, String mYoutubeTitle, String mUrlYoutube, String mCurrentUser) {
         this.mId = mId;
         this.mName = mName;
         this.mArtist = mArtist;
-        this.mDuration = mDuration;
+        this.mYoutubeTitle = mYoutubeTitle;
         this.mUrlYoutube = mUrlYoutube;
         this.mCurrentUser = mCurrentUser;
     }
@@ -46,14 +46,6 @@ public class Song {
         this.mArtist = mArtist;
     }
 
-    public String getmDuration() {
-        return mDuration;
-    }
-
-    public void setmDuration(String mDuration) {
-        this.mDuration = mDuration;
-    }
-
     public String getmUrlYoutube() {
         return mUrlYoutube;
     }
@@ -68,5 +60,13 @@ public class Song {
 
     public void setmCurrentUser(String mCurrentUser) {
         this.mCurrentUser = mCurrentUser;
+    }
+
+    public String getmYoutubeTitle() {
+        return mYoutubeTitle;
+    }
+
+    public void setmYoutubeTitle(String mYoutubeTitle) {
+        this.mYoutubeTitle = mYoutubeTitle;
     }
 }

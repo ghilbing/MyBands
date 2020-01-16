@@ -22,8 +22,9 @@
             android:id="@+id/youtube_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:contentDescription="@string/video" />
 
         <TextView
             android:id="@+id/youtube_title"
@@ -32,7 +33,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/youtube_imageView"
+            android:layout_toEndOf="@id/youtube_imageView"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@android:color/primary_text_light"/>
@@ -41,7 +42,7 @@
             android:id="@+id/youtube_channel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/youtube_imageView"
+            android:layout_toEndOf="@id/youtube_imageView"
             android:layout_below="@id/youtube_title"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"

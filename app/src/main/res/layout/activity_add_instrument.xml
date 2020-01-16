@@ -9,7 +9,10 @@
 
     <include
         android:id="@+id/update_instrument_toolbar"
-        layout="@layout/app_bar_layout"/>
+        layout="@layout/app_bar_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
@@ -30,7 +33,7 @@
             android:id="@+id/instruments_singer_CB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
             android:text="@string/are_you_a_singer"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -41,7 +44,7 @@
             android:id="@+id/instruments_composer_CB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
             android:text="@string/are_you_a_composer"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"

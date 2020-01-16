@@ -14,14 +14,14 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:cropToPadding="true"
-        android:layout_marginRight="15dp"/>
+        android:layout_marginEnd="15dp"/>
 
     <TextView
         android:id="@+id/message_custom_bar_TV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:text="@string/gretel_hilbing"
         android:layout_marginTop="8dp"
