@@ -151,6 +151,10 @@ public class SongActivity extends AppCompatActivity {
 
         Song song = new Song(id, name, artist, duration, youtubeLink, currentUser);
         databaseSongs.child(currentBandIdPref).child(id).setValue(song);
+        songArtistBandET.setText("");
+        songNameET.setText("");
+        songYoutubeTitleET.setText(getResources().getString(R.string.no_title_from_youtube));
+        songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
         Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
 
     }
@@ -221,7 +225,7 @@ public class SongActivity extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Songs").child(currentBandIdPref).child(id);
         Song song = new Song(id, name, artist, youtubeTitle, youtube, currentUser);
         databaseReference.setValue(song);
-        Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added_successfully), Toast.LENGTH_LONG).show();
+        Toast.makeText(SongActivity.this, getResources().getString(R.string.song_updated_successfully), Toast.LENGTH_LONG).show();
         return true;
 
     }

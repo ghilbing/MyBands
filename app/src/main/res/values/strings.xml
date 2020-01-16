@@ -214,6 +214,8 @@
     <string name="youtube_title">Youtube title</string>
     <string name="no_title_from_youtube">No title from youtube</string>
     <string name="song_name">Song name</string>
+    <string name="search_for_songs">Search for songs</string>
+    <string name="song_updated_successfully">Song updated successfully</string>
 
     <array name="instruments">
         <item>Bass</item>
