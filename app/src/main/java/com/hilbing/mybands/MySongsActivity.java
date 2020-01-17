@@ -60,7 +60,6 @@ public class MySongsActivity extends AppCompatActivity {
 
     private String currentBandId;
     private String currentUserId;
-    private String url;
 
     private FirebaseRecyclerAdapter recyclerAdapter;
     private DatabaseReference allSongsReference;
@@ -169,14 +168,14 @@ public class MySongsActivity extends AppCompatActivity {
                 holder.songNameTV.setText(model.getmName());
                 holder.songArtistTV.setText(model.getmArtist());
                 holder.youtubeLinkTV.setText(model.getmUrlYoutube());
-                url = model.getmUrlYoutube();
+                final String url = model.getmUrlYoutube();
 
                 if(!url.equals(getResources().getString(R.string.no_link_from_youtube))){
                     holder.playSongIV.setVisibility(View.VISIBLE);
                     holder.playSongIV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            sendUserToYoutubeDialogActivity(holder.youtubeLinkTV.getText().toString());
+                            sendUserToYoutubeDialogActivity(url);
                         }
                     });
                 }
@@ -193,6 +192,13 @@ public class MySongsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         deleteSong(songKey);
+                    }
+                });
+
+                holder.editSongIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sendUserToUpdateSongActivity(songKey);
                     }
                 });
 
@@ -215,6 +221,8 @@ public class MySongsActivity extends AppCompatActivity {
         recyclerAdapter.startListening();
 
     }
+
+
 
 
     private void searchSongs(String searchString)
@@ -259,14 +267,14 @@ public class MySongsActivity extends AppCompatActivity {
                 holder.songNameTV.setText(model.getmName());
                 holder.songArtistTV.setText(model.getmArtist());
                 holder.youtubeLinkTV.setText(model.getmUrlYoutube());
-                url = model.getmUrlYoutube();
+                final String url = model.getmUrlYoutube();
 
                 if(!url.equals(getResources().getString(R.string.no_link_from_youtube))){
                     holder.playSongIV.setVisibility(View.VISIBLE);
                     holder.playSongIV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            sendUserToYoutubeDialogActivity(holder.youtubeLinkTV.getText().toString());
+                            sendUserToYoutubeDialogActivity(url);
                         }
                     });
                 }
@@ -280,6 +288,13 @@ public class MySongsActivity extends AppCompatActivity {
                 } else {
                     holder.editionLL.setVisibility(View.VISIBLE);
                 }
+
+                holder.deleteSongIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        deleteSong(songKey);
+                    }
+                });
 
 
 
@@ -304,6 +319,13 @@ public class MySongsActivity extends AppCompatActivity {
         Intent youtubeDialogIntent = new Intent(MySongsActivity.this, YoutubeDialogActivity.class);
         youtubeDialogIntent.putExtra("VIDEO_ID", url);
         startActivity(youtubeDialogIntent);
+
+    }
+
+    private void sendUserToUpdateSongActivity(String songKey) {
+        Intent updateSongIntent = new Intent(MySongsActivity.this, SongUpdateActivity.class);
+        updateSongIntent.putExtra("SONG_ID", songKey);
+        startActivity(updateSongIntent);
 
     }
 

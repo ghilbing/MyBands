@@ -190,6 +190,10 @@ public class SettingsActivity extends AppCompatActivity
         {
             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_your_full_name), Toast.LENGTH_LONG).show();
         }
+        else if (TextUtils.isEmpty(userImage))
+        {
+            Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_profile_image), Toast.LENGTH_LONG).show();
+        }
 
         else if(TextUtils.isEmpty(phone))
         {
@@ -247,7 +251,6 @@ public class SettingsActivity extends AppCompatActivity
                 }
             }
         });
-
 
     }
 

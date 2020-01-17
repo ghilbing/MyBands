@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchYoutubeActivity">
+    tools:context=".SearchYoutubeUpdateActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/youtube_toolbar"
+        android:id="@+id/update_youtube_toolbar"
         android:layout_width="match_parent"
         android:background="@color/colorPrimary"
         android:layout_height="?attr/actionBarSize"
@@ -20,7 +20,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/videos_RV"
+        android:id="@+id/update_videos_RV"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -30,7 +30,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/youtube_toolbar" />
-
+        app:layout_constraintTop_toBottomOf="@+id/update_youtube_toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

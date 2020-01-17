@@ -156,18 +156,33 @@ public class SongActivity extends AppCompatActivity {
 
         String name = songNameET.getText().toString();
         String artist = songArtistBandET.getText().toString();
-        String duration = songYoutubeTitleET.getText().toString();
+        String youtubeTitle = songYoutubeTitleET.getText().toString();
         String youtubeLink = songYoutubeLinkET.getText().toString();
 
-        String id = databaseSongs.push().getKey();
+        if (TextUtils.isEmpty(name))
+        {
+            songNameET.setError(getResources().getString(R.string.enter_name_of_the_song));
+            songNameET.requestFocus();
+            return;
+        }
 
-        Song song = new Song(id, name, artist, duration, youtubeLink, currentUser);
-        databaseSongs.child(currentBandIdPref).child(id).setValue(song);
-        songArtistBandET.setText("");
-        songNameET.setText("");
-        songYoutubeTitleET.setText(getResources().getString(R.string.no_title_from_youtube));
-        songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
-        Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
+        if (TextUtils.isEmpty(artist))
+        {
+            songArtistBandET.setError(getResources().getString(R.string.enter_name_of_the_artist_or_band));
+            songArtistBandET.requestFocus();
+            return;
+        } else {
+
+            String id = databaseSongs.push().getKey();
+
+            Song song = new Song(id, name, artist, youtubeTitle, youtubeLink, currentUser);
+            databaseSongs.child(currentBandIdPref).child(id).setValue(song);
+            songArtistBandET.setText("");
+            songNameET.setText("");
+            songYoutubeTitleET.setText(getResources().getString(R.string.no_title_from_youtube));
+            songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
+            Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
+        }
 
     }
 
