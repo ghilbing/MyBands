@@ -58,6 +58,7 @@ public class MySongsActivity extends AppCompatActivity {
 
     private String currentBandId;
     private String currentUserId;
+    private String url;
 
     private FirebaseRecyclerAdapter recyclerAdapter;
     private DatabaseReference allSongsReference;
@@ -166,17 +167,23 @@ public class MySongsActivity extends AppCompatActivity {
                 holder.songNameTV.setText(model.getmName());
                 holder.songArtistTV.setText(model.getmArtist());
                 holder.youtubeLinkTV.setText(model.getmUrlYoutube());
-                String url = model.getmUrlYoutube();
+                url = model.getmUrlYoutube();
 
-                if(url != getResources().getString(R.string.no_link_from_youtube)){
+                if(!url.equals(getResources().getString(R.string.no_link_from_youtube))){
                     holder.playSongIV.setVisibility(View.VISIBLE);
+                    holder.playSongIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sendUserToYoutubeDialogActivity(holder.youtubeLinkTV.getText().toString());
+                        }
+                    });
                 }
 
 
                 String user = model.getmCurrentUser();
-                if(user != currentUserId){
+                if(!user.equals(currentUserId)){
                     holder.editionLL.setVisibility(View.INVISIBLE);
-                } else if (user == currentUserId){
+                } else {
                     holder.editionLL.setVisibility(View.VISIBLE);
                 }
 
@@ -241,17 +248,25 @@ public class MySongsActivity extends AppCompatActivity {
                 holder.songNameTV.setText(model.getmName());
                 holder.songArtistTV.setText(model.getmArtist());
                 holder.youtubeLinkTV.setText(model.getmUrlYoutube());
-                String url = model.getmUrlYoutube();
+                url = model.getmUrlYoutube();
 
-                if(url != getResources().getString(R.string.no_link_from_youtube)){
+                if(!url.equals(getResources().getString(R.string.no_link_from_youtube))){
                     holder.playSongIV.setVisibility(View.VISIBLE);
+                    holder.playSongIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sendUserToYoutubeDialogActivity(holder.youtubeLinkTV.getText().toString());
+                        }
+                    });
                 }
 
 
+
+
                 String user = model.getmCurrentUser();
-                if(user != currentUserId){
+                if(!user.equals(currentUserId)){
                     holder.editionLL.setVisibility(View.INVISIBLE);
-                } else if (user == currentUserId){
+                } else {
                     holder.editionLL.setVisibility(View.VISIBLE);
                 }
 
@@ -271,6 +286,13 @@ public class MySongsActivity extends AppCompatActivity {
         recyclerViewRV.setAdapter(recyclerAdapter);
         recyclerAdapter.startListening();
 
+
+    }
+
+    private void sendUserToYoutubeDialogActivity(String url) {
+        Intent youtubeDialogIntent = new Intent(MySongsActivity.this, YoutubeDialogActivity.class);
+        youtubeDialogIntent.putExtra("VIDEO_ID", url);
+        startActivity(youtubeDialogIntent);
 
     }
 
@@ -307,6 +329,7 @@ public class MySongsActivity extends AppCompatActivity {
                 public boolean onLongClick(View view)
                 {
                     int itemClicked = getAdapterPosition();
+                    Toast.makeText(MySongsActivity.this, String.valueOf(itemClicked), Toast.LENGTH_LONG).show();
 
                     return false;
                 }

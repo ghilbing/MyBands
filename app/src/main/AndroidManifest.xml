@@ -15,8 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".YoutubeDialogActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Dialog"></activity>
+            android:theme="@style/Transparent"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
         <activity android:name=".MySongsActivity" />
         <activity android:name=".PlaylistActivity" />
         <activity android:name=".VideoDetailActivity" />

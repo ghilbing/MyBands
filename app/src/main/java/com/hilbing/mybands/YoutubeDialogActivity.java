@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Window;
+import android.view.WindowManager;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -24,7 +27,6 @@ public class YoutubeDialogActivity extends YouTubeBaseActivity implements YouTub
     private YouTubePlayer myYouTubePlayer;
     private final int RQS_ErrorDialog = 1;
     private MyPlayerStateChangeListener myPlayerStateChangeListener;
-   // private MyPlaybackEventListener myPlaybackEventListener;
     String log = "";
 
 
@@ -32,18 +34,20 @@ public class YoutubeDialogActivity extends YouTubeBaseActivity implements YouTub
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // Make us non-modal, so that others can receive touch events.
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+        // ...but notify us that it happened.
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
         setContentView(R.layout.activity_youtube_dialog);
         ButterKnife.bind(this);
+
         Bundle bundle = getIntent().getExtras();
         video_id = bundle.getString("VIDEO_ID");
         youTubePlayerView.initialize(key, this);
         myPlayerStateChangeListener = new MyPlayerStateChangeListener();
-      //  myPlaybackEventListener = new MyPlaybackEventListener();
-
 
     }
-
-
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
@@ -51,11 +55,11 @@ public class YoutubeDialogActivity extends YouTubeBaseActivity implements YouTub
         youTubePlayer.setPlayerStyle(style);
         myYouTubePlayer = youTubePlayer;
         myYouTubePlayer.setPlayerStateChangeListener(myPlayerStateChangeListener);
-     //   myYouTubePlayer.setPlaybackEventListener(myPlaybackEventListener);
         if(!b){
             youTubePlayer.cueVideo(video_id);
         }
     }
+
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
@@ -95,5 +99,19 @@ public class YoutubeDialogActivity extends YouTubeBaseActivity implements YouTub
         public void onError(YouTubePlayer.ErrorReason errorReason) {
 
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // If we've received a touch notification that the user has touched
+        // outside the app, finish the activity.
+        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+            finish();
+            return true;
+        }
+
+        // Delegate everything else to Activity.
+        return super.onTouchEvent(event);
+
     }
 }
