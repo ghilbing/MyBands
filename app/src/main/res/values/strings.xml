@@ -216,6 +216,7 @@
     <string name="song_name">Song name</string>
     <string name="search_for_songs">Search for songs</string>
     <string name="song_updated_successfully">Song updated successfully</string>
+    <string name="update_song">Update Song</string>
 
     <array name="instruments">
         <item>Bass</item>

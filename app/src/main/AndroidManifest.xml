@@ -14,10 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".YoutubeDialogActivity"
+        <activity android:name=".SongUpdateActivity"></activity>
+        <activity
+            android:name=".YoutubeDialogActivity"
             android:theme="@style/Transparent"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-        </activity>
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
         <activity android:name=".MySongsActivity" />
         <activity android:name=".PlaylistActivity" />
         <activity android:name=".VideoDetailActivity" />

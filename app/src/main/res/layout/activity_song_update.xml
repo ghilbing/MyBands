@@ -8,28 +8,13 @@
     tools:context=".SongActivity">
 
     <include
-        android:id="@+id/song_toolbar"
+        android:id="@+id/update_song_toolbar"
         layout="@layout/app_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/song_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:visibility="invisible"
-        android:text="@string/you_need_to_belong_to_a_band"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/song_toolbar" />
-
     <RelativeLayout
-        android:id="@+id/song_layout_RL"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -37,19 +22,17 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/song_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/update_song_toolbar">
 
 
         <EditText
-            android:id="@+id/song_song_name_ET"
+            android:id="@+id/update_song_song_name_ET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:padding="10dp"
             android:layout_margin="10dp"
             android:background="@drawable/inputs"
             android:ems="10"
@@ -58,33 +41,31 @@
             tools:targetApi="o" />
 
         <EditText
-            android:id="@+id/song_artist_band_ET"
+            android:id="@+id/update_song_artist_band_ET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/inputs"
             android:layout_margin="10dp"
-            android:layout_below="@+id/song_song_name_ET"
+            android:layout_below="@+id/update_song_song_name_ET"
             android:autofillHints=""
-            android:padding="10dp"
             android:ems="10"
             android:hint="@string/enter_name_of_the_artist_or_band"
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/song_youtube_title_ET"
+            android:id="@+id/update_song_youtube_title_ET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/inputs"
             android:layout_margin="10dp"
-            android:padding="10dp"
-            android:layout_below="@+id/song_youtube_link_ET"
+            android:layout_below="@+id/update_song_youtube_link_ET"
             android:ems="10"
             android:hint="@string/youtube_title"
             android:importantForAutofill="no"
             android:inputType="textImeMultiLine" />
 
         <Button
-            android:id="@+id/song_search_song_youtube_BT"
+            android:id="@+id/update_song_search_song_youtube_BT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/buttons"
@@ -92,28 +73,27 @@
             android:text="@string/search_song_youtube"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:layout_below="@id/song_artist_band_ET"/>
+            android:layout_below="@id/update_song_artist_band_ET"/>
 
         <EditText
-            android:id="@+id/song_youtube_link_ET"
+            android:id="@+id/update_song_youtube_link_ET"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:autofillHints=""
-            android:padding="10dp"
             android:visibility="invisible"
             android:enabled="false"
             android:hint="@string/youtube_link"
             android:inputType="textPersonName"
-            android:layout_below="@id/song_search_song_youtube_BT"/>
+            android:layout_below="@id/update_song_search_song_youtube_BT"/>
 
         <Button
-            android:id="@+id/song_add_song_BT"
+            android:id="@+id/update_song_add_song_BT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_below="@+id/song_youtube_title_ET"
+            android:layout_below="@+id/update_song_youtube_title_ET"
             android:background="@drawable/buttons"
-            android:text="@string/add_song"
+            android:text="@string/update_song"
             android:textColor="@color/white"
             android:textStyle="bold" />
 

@@ -333,6 +333,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(title.equals(getResources().getString(R.string.logout))){
                             mAuth.signOut();
+                            SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+                            preferences.edit().clear().commit();
                             sendUserToLoginActivity();
                         }
 
@@ -441,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
+                           // Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
                         }
                     }
                 }

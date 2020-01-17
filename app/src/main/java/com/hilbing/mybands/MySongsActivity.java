@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -186,6 +188,15 @@ public class MySongsActivity extends AppCompatActivity {
                 } else {
                     holder.editionLL.setVisibility(View.VISIBLE);
                 }
+
+                holder.deleteSongIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        deleteSong(songKey);
+                    }
+                });
+
+
 
 
 
@@ -378,6 +389,19 @@ public class MySongsActivity extends AppCompatActivity {
         {
             recyclerAdapter.startListening();
         }
+    }
+
+    private void deleteSong(String id) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Songs").child(currentBandId).child(id);
+        databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(MySongsActivity.this, getResources().getString(R.string.song_deleted), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
     }
 
     private void sendUserToMainActivity()

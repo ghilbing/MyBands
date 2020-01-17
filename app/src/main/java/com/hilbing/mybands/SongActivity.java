@@ -19,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
@@ -51,12 +53,14 @@ public class SongActivity extends AppCompatActivity {
     EditText songYoutubeLinkET;
     @BindView(R.id.song_add_song_BT)
     Button addSongBT;
-    @BindView(R.id.songs_LV)
-    ListView songsLV;
     @BindView(R.id.song_toolbar)
     Toolbar toolbar;
+    @BindView(R.id.song_layout_RL)
+    RelativeLayout layout;
     @BindView(R.id.song_search_song_youtube_BT)
     Button searchSongBT;
+    @BindView(R.id.song_message)
+    TextView message;
 
     private List<Song> songsList = new ArrayList<>();
 
@@ -97,6 +101,14 @@ public class SongActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
+        if(TextUtils.isEmpty(currentBandIdPref)){
+            message.setVisibility(View.VISIBLE);
+            layout.setVisibility(View.INVISIBLE);
+        } else {
+            message.setVisibility(View.INVISIBLE);
+            layout.setVisibility(View.VISIBLE);
+        }
+
         databaseSongs = FirebaseDatabase.getInstance().getReference("Songs");
         databaseSongs.keepSynced(true);
 
@@ -123,14 +135,14 @@ public class SongActivity extends AppCompatActivity {
             }
         });
 
-        songsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+       /* songsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Song song = songsList.get(i);
                 showUpdateDialog(song.getmId(), song.getmName(), song.getmArtist(), song.getmYoutubeTitle(), song.getmUrlYoutube());
                 return false;
             }
-        });
+        });*/
 
     }
 
@@ -246,7 +258,7 @@ public class SongActivity extends AppCompatActivity {
 
 
                 SongAdapter adapter = new SongAdapter(SongActivity.this, songsList);
-                songsLV.setAdapter(adapter);
+              //  songsLV.setAdapter(adapter);
             }
 
             @Override
