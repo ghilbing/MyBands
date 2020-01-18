@@ -121,7 +121,9 @@ public class MyPlaylistsActivity extends AppCompatActivity {
             }
         });
 
-        displayMyPlaylists();
+        if(!TextUtils.isEmpty(currentBandIdPref)){
+            displayMyPlaylists();
+        }
 
     }
 
