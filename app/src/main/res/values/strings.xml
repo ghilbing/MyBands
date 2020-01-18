@@ -218,6 +218,25 @@
     <string name="song_updated_successfully">Song updated successfully</string>
     <string name="update_song">Update Song</string>
     <string name="please_enter_profile_image">Please, enter profile image</string>
+    <string name="creating_playlist">Creating playlist</string>
+    <string name="please_wait_while_we_are_creating_your_new_playlist">Please, wait while we are creating your new playlist</string>
+    <string name="add_playlist">Add playlist</string>
+    <string name="my_playlists">My playlists</string>
+    <string name="create_event">Create event</string>
+    <string name="select_event">Select type of event</string>
+    <string name="please_select_what_kind_of_event_would_you_like_to_create">Please, select what kind of event would you like to create</string>
+    <string name="rehearsal">Rehearsal</string>
+    <string name="concert">Concert</string>
+    <string name="common_places">Common Places</string>
+    <string name="enter_event_date">Enter event\'s date</string>
+    <string name="enter_event_time">Enter event time</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
+    <string name="enter_a_date">Enter a date</string>
+    <string name="enter_a_place">Enter the address</string>
+    <string name="enter_a_name_for_your_event">Enter a name for your event</string>
+    <string name="select_playlist">Select playlist</string>
+    <string name="select_a_playlist">Select a playlist</string>
 
     <array name="instruments">
         <item>Bass</item>
@@ -238,6 +257,11 @@
         <item>Medium</item>
         <item>Advanced</item>
         <item>None</item>
+    </array>
+
+    <array name="events_array">
+        <item>@string/rehearsal</item>
+        <item>@string/concert</item>
     </array>
 
     <array name="countries_array">

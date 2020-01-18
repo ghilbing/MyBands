@@ -14,7 +14,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VideoUpdateDetailActivity"></activity>
+        <activity android:name=".CreateEventActivity"></activity>
+        <activity android:name=".ConcertActivity" />
+        <activity android:name=".RehearsalActivity" />
+        <activity android:name=".MyPlaylistsActivity" />
+        <activity
+            android:name=".MySongsDialogActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/full_screen_dialog" />
+        <activity android:name=".VideoUpdateDetailActivity" />
         <activity android:name=".SearchYoutubeUpdateActivity" />
         <activity android:name=".SongUpdateActivity" />
         <activity

@@ -29,6 +29,9 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -92,6 +95,10 @@ public class SongUpdateActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         songId = intent.getStringExtra("SONG_ID");
+        if(TextUtils.isEmpty(songId)){
+            songNameET.setText(savedInstanceState.getString("Song"));
+            songArtistBandET.setText(savedInstanceState.getString("Artist"));
+        }
         videoURL = intent.getStringExtra("YouTubeURL");
 
 
@@ -128,6 +135,19 @@ public class SongUpdateActivity extends AppCompatActivity {
                 }
             });
         }
+
+        updateSongBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("mName", String.valueOf(songNameET.getText()));
+                map.put("mArtist", String.valueOf(songArtistBandET.getText()));
+                map.put("mYoutubeTitle", String.valueOf(songYoutubeTitleET.getText()));
+                map.put("mUrlYoutube", String.valueOf(songYoutubeLinkET.getText()));
+                map.put("mCurrentUser", currentUserId);
+                songsReference.child(songId).updateChildren(map);
+            }
+        });
 
 
         searchSongBT.setOnClickListener(new View.OnClickListener() {

@@ -6,7 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".PlaylistActivity">
 
+    <include
+        android:id="@+id/playlist_toolbar"
+        layout="@layout/app_bar_layout"
+        tools:layout_editor_absoluteX="-8dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/playlist_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        android:text="@string/you_need_to_belong_to_a_band"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playlist_toolbar" />
+
     <ScrollView
+        android:id="@+id/playlist_scrollView_SV"
+        android:visibility="invisible"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -16,12 +38,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/playlist_toolbar">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <EditText
                 android:id="@+id/playlist_entername_ET"
@@ -29,12 +51,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/inputs"
+                android:padding="10dp"
                 android:layout_marginEnd="8dp"
+                android:autofillHints=""
                 android:ems="10"
                 android:hint="@string/enter_a_name_for_a_new_playlist"
-                android:inputType="textPersonName"
-                android:text="@string/name"
-                android:autofillHints="" />
+                android:inputType="textPersonName" />
 
             <Button
                 android:id="@+id/playlist_create_BT"
@@ -43,23 +66,33 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/buttons"
+                android:textColor="@color/white"
+                android:textStyle="bold"
                 android:text="@string/create_playlist"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/playlist_entername_ET" />
+
             <Button
                 android:id="@+id/playlist_add_song_BT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_song"
+                android:background="@drawable/buttons"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:visibility="invisible"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:text="@string/add_song" />
 
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/playlist_songs_RV"
+                android:visibility="invisible"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </ScrollView>

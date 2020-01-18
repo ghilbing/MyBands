@@ -273,7 +273,7 @@ public class SongActivity extends AppCompatActivity {
 
 
                 SongAdapter adapter = new SongAdapter(SongActivity.this, songsList);
-              //  songsLV.setAdapter(adapter);
+                //songsLV.setAdapter(adapter);
             }
 
             @Override

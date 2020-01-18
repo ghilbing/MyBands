@@ -24,7 +24,16 @@ import butterknife.ButterKnife;
 
 public class SongAdapter extends ArrayAdapter<Song> {
 
-    @BindView(R.id.songNameTV)
+    @BindView(R.id.playlist_all_songs_name_TV)
+    TextView songNameTV;
+    @BindView(R.id.playlist_all_songs_artist_TV)
+    TextView artistName;
+    @BindView(R.id.playlist_all_songs_youtube_link_TV)
+    TextView youtubeLinkTV;
+    @BindView(R.id.youtubePlayIB)
+    ImageButton addBT;
+
+   /* @BindView(R.id.songNameTV)
     TextView songNameTV;
     @BindView(R.id.artistNameTV)
     TextView artistName;
@@ -33,7 +42,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
     @BindView(R.id.youtubeTV)
     TextView youtubeTV;
     @BindView(R.id.youtubePlayIB)
-    ImageButton playBT;
+    ImageButton playBT;*/
 
 
     private Context context;
@@ -42,7 +51,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
     private String resources;
 
     public SongAdapter(Context context, List<Song> songsList) {
-        super(context, R.layout.song_layout, songsList);
+        super(context, R.layout.all_songs_playlist_dialog, songsList);
         this.context = context;
         this.songsList = songsList;
 
@@ -54,23 +63,23 @@ public class SongAdapter extends ArrayAdapter<Song> {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
-        View listItem = inflater.inflate(R.layout.song_layout, null, true);
+        View listItem = inflater.inflate(R.layout.all_songs_playlist_dialog, null, true);
         ButterKnife.bind(this, listItem);
 
         Song song = songsList.get(position);
         songNameTV.setText(song.getmName());
         artistName.setText(song.getmArtist());
-        youtubeTitleTV.setText(song.getmYoutubeTitle());
+        youtubeLinkTV.setText(song.getmYoutubeTitle());
         songLink = song.getmUrlYoutube();
         resources = getContext().getResources().getString(R.string.no_link_from_youtube);
         if(songLink != resources && TextUtils.isEmpty(songLink)){
-            youtubeTV.setText(song.getmUrlYoutube());
-            playBT.setVisibility(View.VISIBLE);
+          //  youtubeTV.setText(song.getmUrlYoutube());
+            addBT.setVisibility(View.VISIBLE);
         } else {
-            playBT.setVisibility(View.INVISIBLE);
+            addBT.setVisibility(View.INVISIBLE);
         }
 
-        playBT.setOnClickListener(new View.OnClickListener() {
+        addBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), VideoDetailActivity.class);
