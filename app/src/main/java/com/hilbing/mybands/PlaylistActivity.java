@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -54,10 +55,6 @@ public class PlaylistActivity extends AppCompatActivity {
     EditText namePlaylistET;
     @BindView(R.id.playlist_create_BT)
     Button createPlaylistBT;
-    @BindView(R.id.playlist_add_song_BT)
-    Button addSongBT;
-    @BindView(R.id.playlist_songs_RV)
-    RecyclerView recyclerView;
     @BindView(R.id.playlist_toolbar)
     Toolbar toolbar;
     @BindView(R.id.playlist_scrollView_SV)
@@ -119,60 +116,7 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         });
 
-        addSongBT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showSongsDialog(currentBandIdPref);
-
-            }
-        });
-
-
-
     }
-
-    private void showSongsDialog(String currentBandIdPref) {
-
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.songs_playlist_dialog, null);
-        dialogBuilder.setView(dialogView);
-
-        final ListView songsLV = dialogView.findViewById(R.id.playlist_dialog_songs_LV);
-
-        songsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                songsList.clear();
-
-                for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
-                    Song song = songSnapshot.getValue(Song.class);
-                    songsList.add(song);
-                }
-
-
-                SongAdapter adapter = new SongAdapter(getApplicationContext(), songsList);
-                songsLV.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        dialogBuilder.setTitle(getResources().getString(R.string.adding_song));
-        final AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
-
-    }
-
-    private void sendUserToMySongsDialogActivity() {
-        Intent dialogIntent = new Intent(PlaylistActivity.this, MySongsDialogActivity.class);
-        startActivity(dialogIntent);
-
-    }
-
 
     private void savePlaylist() {
         final String playlistName = namePlaylistET.getText().toString();
@@ -200,15 +144,12 @@ public class PlaylistActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()){
                         getSupportActionBar().setTitle(playlistName);
-                        addSongBT.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.VISIBLE);
                         createPlaylistBT.setVisibility(View.INVISIBLE);
+                        sendUserToMainActivity();
                         progressDialog.dismiss();
                     } else {
                         String message = task.getException().getMessage();
                         Toast.makeText(PlaylistActivity.this, message, Toast.LENGTH_LONG).show();
-                        addSongBT.setVisibility(View.INVISIBLE);
-                        recyclerView.setVisibility(View.INVISIBLE);
                         createPlaylistBT.setVisibility(View.VISIBLE);
                         progressDialog.dismiss();
                     }
@@ -216,5 +157,30 @@ public class PlaylistActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home)
+        {
+            sendUserToMainActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sendUserToMainActivity()
+    {
+        Intent mainIntent = new Intent(PlaylistActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+
     }
 }

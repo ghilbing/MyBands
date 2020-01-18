@@ -18,7 +18,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -139,13 +142,9 @@ public class SongUpdateActivity extends AppCompatActivity {
         updateSongBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("mName", String.valueOf(songNameET.getText()));
-                map.put("mArtist", String.valueOf(songArtistBandET.getText()));
-                map.put("mYoutubeTitle", String.valueOf(songYoutubeTitleET.getText()));
-                map.put("mUrlYoutube", String.valueOf(songYoutubeLinkET.getText()));
-                map.put("mCurrentUser", currentUserId);
-                songsReference.child(songId).updateChildren(map);
+
+                updateSong();
+
             }
         });
 
@@ -160,11 +159,69 @@ public class SongUpdateActivity extends AppCompatActivity {
 
     }
 
+    private void updateSong() {
+
+        String name = songNameET.getText().toString();
+        String artist = songArtistBandET.getText().toString();
+        String youtubeLink = songYoutubeLinkET.getText().toString();
+        String youtubeTitle = songYoutubeTitleET.getText().toString();
+
+        if (TextUtils.isEmpty(name))
+        {
+            songNameET.setError(getResources().getString(R.string.enter_name_of_the_song));
+            songNameET.requestFocus();
+            return;
+        }
+
+        if (TextUtils.isEmpty(artist))
+        {
+            songArtistBandET.setError(getResources().getString(R.string.enter_name_of_the_artist_or_band));
+            songArtistBandET.requestFocus();
+            return;
+        }
+
+        if (TextUtils.isEmpty(youtubeLink) && TextUtils.isEmpty(youtubeTitle))
+        {
+            songYoutubeTitleET.setError(getResources().getString(R.string.please_select_a_video));
+            searchSongBT.requestFocus();
+            return;
+        }
+        else {
+
+            progressDialog.setTitle(getResources().getString(R.string.song_update));
+            progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_updating_your_song));
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(true);
+
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("mName", String.valueOf(songNameET.getText()));
+            map.put("mArtist", String.valueOf(songArtistBandET.getText()));
+            map.put("mYoutubeTitle", String.valueOf(songYoutubeTitleET.getText()));
+            map.put("mUrlYoutube", String.valueOf(songYoutubeLinkET.getText()));
+            map.put("mCurrentUser", currentUserId);
+            songsReference.child(songId).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        progressDialog.dismiss();
+                    }
+                    else
+                    {
+                        String message = task.getException().getMessage();
+                        Toast.makeText(SongUpdateActivity.this, message, Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                    }
+                }
+            });
+        }
+
+    }
+
     private void sendUserToSearchSongActivity() {
         Intent searchSongIntent = new Intent(SongUpdateActivity.this, SearchYoutubeUpdateActivity.class);
         searchSongIntent.putExtra("SONG_ID", songId);
         startActivity(searchSongIntent);
-        finish();
 
     }
 

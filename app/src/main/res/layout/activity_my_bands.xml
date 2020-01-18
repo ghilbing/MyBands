@@ -39,6 +39,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_bands_added_RV" />
 
-     />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

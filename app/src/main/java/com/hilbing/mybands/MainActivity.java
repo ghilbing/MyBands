@@ -395,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
                            sendUserToAddPlaylistActivity();
                         }
                        else if(subTitle.equals(getResources().getString(R.string.my_playlists))){
-                         //  sendUserToMyPlaylistsActivity();
+                           sendUserToMyPlaylistsActivity();
                        }
                        else if(subTitle.equals(getResources().getString(R.string.create_event))){
                            sendUserToCreateEventActivity();
@@ -844,6 +844,13 @@ public class MainActivity extends AppCompatActivity {
         Intent createEventIntent = new Intent(MainActivity.this, CreateEventActivity.class);
         createEventIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(createEventIntent);
+        finish();
+    }
+
+    private void sendUserToMyPlaylistsActivity(){
+        Intent myPlaylistsIntent = new Intent(MainActivity.this, MyPlaylistsActivity.class);
+        myPlaylistsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(myPlaylistsIntent);
         finish();
     }
 
