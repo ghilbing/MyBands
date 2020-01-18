@@ -286,6 +286,24 @@ public class MyPlaylistsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(null != recyclerAdapter)
+        {
+            recyclerAdapter.stopListening();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(null != recyclerAdapter)
+        {
+            recyclerAdapter.startListening();
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
