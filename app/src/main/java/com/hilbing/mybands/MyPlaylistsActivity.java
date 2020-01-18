@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -102,6 +103,9 @@ public class MyPlaylistsActivity extends AppCompatActivity {
             message.setVisibility(View.INVISIBLE);
             scrollViewSV.setVisibility(View.VISIBLE);
         }
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         playlistReference = FirebaseDatabase.getInstance().getReference().child("Playlists");
         playlistReference.keepSynced(true);
