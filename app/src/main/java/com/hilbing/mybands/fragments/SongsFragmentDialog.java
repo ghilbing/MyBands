@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -51,6 +52,8 @@ public class SongsFragmentDialog extends DialogFragment {
     private DatabaseReference playlistReference;
     private SongAdapter adapter;
     private List<Song> mSongs = new ArrayList<>();
+    private String currentBandId;
+    private String currentPlaylistId;
 
 
 
@@ -58,12 +61,14 @@ public class SongsFragmentDialog extends DialogFragment {
         // Required empty public constructor
     }
 
-    public static SongsFragmentDialog newInstance(List<Song> songs){
+    public static SongsFragmentDialog newInstance(List<Song> songs, String currentBandID, String currentPlaylistId){
         SongsFragmentDialog fragmentDialog = new SongsFragmentDialog();
         Bundle args = new Bundle();
         args.putParcelableArrayList("list", (ArrayList<Song>) songs);
+        args.putString("currentBandId", currentBandID);
+        args.putString("currentPlaylistId", currentPlaylistId);
         fragmentDialog.setArguments(args);
-        Log.d("SONGS ARRAY FROM DIALOG", String.valueOf(songs.size()));
+        Log.d("SONGS DATA FROM DIALOG FRAGMENT", currentBandID + " " + currentPlaylistId);
         return fragmentDialog;
     }
 
@@ -78,6 +83,9 @@ public class SongsFragmentDialog extends DialogFragment {
         ButterKnife.bind(this, rootView);
 
         mSongs = getArguments().getParcelableArrayList("list");
+        currentBandId = getArguments().getString("currentBandId");
+        currentPlaylistId = getArguments().getString("currentPlaylistId");
+
 
         searchViewSV.setQueryHint(getString(R.string.search));
         searchViewSV.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -94,7 +102,7 @@ public class SongsFragmentDialog extends DialogFragment {
         });
 
 
-        adapter = new SongAdapter(getActivity().getApplicationContext(), mSongs);
+        adapter = new SongAdapter(getActivity().getApplicationContext(), mSongs,currentBandId, currentPlaylistId, mSongs);
 
         listViewLV.setAdapter(adapter);
 

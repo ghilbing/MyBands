@@ -143,14 +143,11 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
                         String mArtist = song.getmArtist();
                         String mName = song.getmName();
                         String mUrlYoutube = song.getmUrlYoutube();
-                        Log.d("SONGS ARRAY FROM ADDSONGSTOPLAYLIST", mUrlYoutube);
                         Song newSong = new Song(mId, mName, mArtist, mUrlYoutube);
                         songsList.add(newSong);
                     }
 
-                    Log.d("SONGS ARRAY FROM ADDSONGSTOPLAYLIST", String.valueOf(songsList.size()));
-
-                    DialogFragment dialogFragment = SongsFragmentDialog.newInstance(songsList);
+                    DialogFragment dialogFragment = SongsFragmentDialog.newInstance(songsList, currentBandIdPref, currentPlaylistId);
                     dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
 
                 }
@@ -168,7 +165,6 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
 
         Query query = FirebaseDatabase.getInstance().getReference().child("PlaylistsSongs").child(currentBandIdPref).child(currentPlaylistId);
         if(!TextUtils.isEmpty(query.toString())) {
-            Log.d("CURRENT VALUES", currentBandIdPref + " " + currentPlaylistId);
 
             FirebaseRecyclerOptions<Song> options = new FirebaseRecyclerOptions.Builder<Song>().setQuery(query,
                     new SnapshotParser<Song>() {
