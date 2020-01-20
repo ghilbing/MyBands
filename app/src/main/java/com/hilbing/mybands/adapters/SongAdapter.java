@@ -3,6 +3,7 @@ package com.hilbing.mybands.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
     @BindView(R.id.songNameTV)
     TextView songNameTV;
     @BindView(R.id.artistNameTV)
-    TextView artistName;
+    TextView artistNameTV;
     @BindView(R.id.youtubeTV)
     TextView youtubeTV;
 
@@ -52,8 +53,9 @@ public class SongAdapter extends ArrayAdapter<Song> {
 
         Song song = songsList.get(position);
         songNameTV.setText(song.getmName());
-        artistName.setText(song.getmArtist());
+        artistNameTV.setText(song.getmArtist());
         youtubeTV.setText(song.getmUrlYoutube());
+        Log.d("URL YOUTUBE SONG ADAPTER", song.getmUrlYoutube());
 
 
         return listItem;

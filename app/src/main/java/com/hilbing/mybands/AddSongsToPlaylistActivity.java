@@ -202,14 +202,6 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
                     holder.songArtistTV.setText(model.getmArtist());
                     holder.youtubeLinkTV.setText(model.getmUrlYoutube());
 
-                    holder.deleteSongIV.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            deleteSong(songKey);
-
-                        }
-                    });
-
                 }
             };
         }
@@ -240,10 +232,6 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
         TextView songArtistTV;
         @BindView(R.id.all_songs_playlist_youtube_link_TV)
         TextView youtubeLinkTV;
-        @BindView(R.id.all_songs_playlist_play_IV)
-        ImageView playSongIV;
-        @BindView(R.id.all_songs_playlist_delete_IV)
-        ImageView deleteSongIV;
 
         public MySongsViewHolder(@NonNull final View itemView)
         {
