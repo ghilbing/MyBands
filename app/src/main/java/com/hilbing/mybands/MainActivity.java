@@ -279,8 +279,6 @@ public class MainActivity extends AppCompatActivity {
         childModelList = new ArrayList<>();
         menuModel = new MenuModel(getResources().getString(R.string.playlists), true, true);
         headerList.add(menuModel);
-        childModel = new MenuModel(getResources().getString(R.string.add_playlist), false, false);
-        childModelList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.my_playlists), false, false);
         childModelList.add(childModel);
 
@@ -391,9 +389,6 @@ public class MainActivity extends AppCompatActivity {
                        else if(subTitle.equals(getResources().getString(R.string.my_songs))){
                            sendUserToMySongsActivity();
                        }
-                       else if(subTitle.equals(getResources().getString(R.string.add_playlist))){
-                           sendUserToAddPlaylistActivity();
-                        }
                        else if(subTitle.equals(getResources().getString(R.string.my_playlists))){
                            sendUserToMyPlaylistsActivity();
                        }

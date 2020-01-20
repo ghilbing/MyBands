@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CreateEventActivity"></activity>
+        <activity android:name=".AddSongsToPlaylistActivity"></activity>
+        <activity android:name=".CreateEventActivity" />
         <activity android:name=".ConcertActivity" />
         <activity android:name=".RehearsalActivity" />
         <activity android:name=".MyPlaylistsActivity" />
@@ -24,8 +25,9 @@
             android:theme="@style/full_screen_dialog" />
         <activity android:name=".VideoUpdateDetailActivity" />
         <activity android:name=".SearchYoutubeUpdateActivity" />
-        <activity android:name=".SongUpdateActivity"
-            android:launchMode="singleTask"/>
+        <activity
+            android:name=".SongUpdateActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".YoutubeDialogActivity"
             android:theme="@style/Transparent"

@@ -162,6 +162,7 @@ public class MyPlaylistsActivity extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull final MyPlaylistsActivity.MyPlaylistsViewHolder holder, int position, @NonNull final Playlist model)
             {
                 final String playlistKey = getRef(position).getKey();
+                final String pName = model.getmPlaylistName();
 
                 holder.playlistNameTV.setText(model.getmPlaylistName());
                 final String creator = model.getmCreator();
@@ -185,6 +186,20 @@ public class MyPlaylistsActivity extends AppCompatActivity {
                     }
                 });
 
+                holder.deletePlaylistIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        deletePlaylist(playlistKey);
+                    }
+                });
+
+                holder.editPlaylistIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editPlaylist(playlistKey, pName);
+                    }
+                });
+
 
             }
         };
@@ -194,6 +209,8 @@ public class MyPlaylistsActivity extends AppCompatActivity {
 
     }
 
+
+
     public class MyPlaylistsViewHolder extends RecyclerView.ViewHolder
     {
         View mView;
@@ -201,11 +218,11 @@ public class MyPlaylistsActivity extends AppCompatActivity {
         TextView playlistNameTV;
         @BindView(R.id.all_playlists_creator_TV)
         TextView playlistCreatorTV;
-        @BindView(R.id.all_songs_edit_IV)
-        ImageView editSongIV;
-        @BindView(R.id.all_songs_delete_IV)
-        ImageView deleteSongIV;
-        @BindView(R.id.all_songs_edition)
+        @BindView(R.id.all_playlists_edit_IV)
+        ImageView editPlaylistIV;
+        @BindView(R.id.all_playlists_delete_IV)
+        ImageView deletePlaylistIV;
+        @BindView(R.id.all_playlists_edition)
         LinearLayout editionLL;
 
         public MyPlaylistsViewHolder(@NonNull final View itemView)
@@ -308,6 +325,25 @@ public class MyPlaylistsActivity extends AppCompatActivity {
         {
             recyclerAdapter.startListening();
         }
+    }
+
+    private void editPlaylist(String playlistKey, String playlistName) {
+        Intent editPlaylistIntent = new Intent(MyPlaylistsActivity.this, AddSongsToPlaylistActivity.class);
+        editPlaylistIntent.putExtra("PLAYLIST_ID", playlistKey);
+        editPlaylistIntent.putExtra("PLAYLIST_NAME",playlistName);
+        startActivity(editPlaylistIntent);
+
+    }
+
+    private void deletePlaylist(String id) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Playlists").child(currentBandIdPref).child(id);
+        databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(MyPlaylistsActivity.this, getResources().getString(R.string.playlist_deleted), Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
 

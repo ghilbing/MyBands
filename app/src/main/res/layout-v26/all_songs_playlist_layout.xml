@@ -25,39 +25,37 @@
         android:orientation="vertical"
         android:layout_margin="5dp">
         <TextView
-            android:id="@+id/all_playlists_name_TV"
+            android:id="@+id/all_songs_playlist_name_TV"
             android:layout_width="wrap_content"
-            android:text="@string/playlists"
+            android:text="@string/song_name"
             android:layout_height="wrap_content"
             android:textStyle="bold"/>
         <TextView
-            android:id="@+id/all_playlists_creator_TV"
+            android:id="@+id/all_songs_playlist_artist_TV"
             android:layout_width="wrap_content"
-            android:text="@string/user_id"
+            android:text="@string/enter_name_of_the_artist_or_band"
             android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/all_songs_playlist_youtube_link_TV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/all_playlists_edition"
+    <ImageView
+        android:id="@+id/all_songs_playlist_play_IV"
         android:layout_width="0dp"
-        android:layout_weight=".5"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:visibility="invisible"
+        android:layout_weight="1"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_play"/>
+
         <ImageView
-            android:id="@+id/all_playlists_edit_IV"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_edit"/>
-        <ImageView
-            android:id="@+id/all_playlists_delete_IV"
+            android:id="@+id/all_songs_playlist_delete_IV"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_delete"/>
-
-    </LinearLayout>
-
 
 
 </LinearLayout>

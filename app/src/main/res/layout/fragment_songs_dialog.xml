@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.SongsFragmentDialog">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/dialog_searchView_SV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </androidx.appcompat.widget.SearchView>
+
+        <ListView
+            android:id="@+id/dialog_listView_songs_LV"
+            android:layout_width="match_parent"
+            android:layout_height="326dp" >
+        </ListView>
+
+        <Button
+            android:id="@+id/dialog_dismiss_BT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttons"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="Dismiss" />
+
+    </LinearLayout>
+
+</FrameLayout>
