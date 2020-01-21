@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +46,10 @@ import com.hilbing.mybands.models.Song;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,6 +96,7 @@ public class CreateEventActivity extends AppCompatActivity  {
     }
 
     private int mYear, mMonth, mDay, mHour, mMin;
+    private long dateInMillis, timeInMillis;
 
     private FirebaseAuth mAuth;
     private DatabaseReference eventsReference;
@@ -265,24 +271,16 @@ public class CreateEventActivity extends AppCompatActivity  {
 
     }
 
-    private void setTime() {
-        final Calendar calendar = Calendar.getInstance();
-        mHour = calendar.get(Calendar.HOUR_OF_DAY);
-        mMin = calendar.get(Calendar.MINUTE);
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfDay, int min) {
-                timeEventET.setText(hourOfDay + ":" + min);
-            }
-        }, mHour, mMin, true);
-        timePickerDialog.show();
-
-
+    private String getDate(long time){
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(time);
+        String date = DateFormat.format("EEE MMM dd hh:mm:ss yyyy", cal).toString();
+        return date;
     }
 
     private void setDate() {
         final Calendar calendar = Calendar.getInstance();
+
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -296,6 +294,50 @@ public class CreateEventActivity extends AppCompatActivity  {
         datePickerDialog.show();
 
     }
+
+    private void setTime() {
+        final Calendar calendar = Calendar.getInstance();
+        mHour = calendar.get(Calendar.HOUR_OF_DAY);
+        mMin = calendar.get(Calendar.MINUTE);
+
+        Calendar calendarInMillis = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMin);
+
+        dateInMillis = calendarInMillis.getTimeInMillis();
+        long todayInMillis = System.currentTimeMillis();
+
+        Log.d("CREATE  EVENT  TIME  IN MILLIS", String.valueOf(dateInMillis));
+        Log.d("CREATE EVENT CURRENT TIMESTAMP", String.valueOf(todayInMillis));
+
+        String dateEvent = getDate(dateInMillis);
+        String today = getDate(todayInMillis);
+
+        Log.d("CREATEEVENTDATE", String.valueOf(dateInMillis));
+        Log.d("TODAY      DATE", String.valueOf(todayInMillis));
+
+
+
+
+
+
+
+
+
+        long difference = Math.abs(System.currentTimeMillis() - dateInMillis);
+        Log.d("DIFFERENCE BETWEEN TIMESTAMPS", String.valueOf(difference));
+
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int min) {
+                timeEventET.setText(hourOfDay + ":" + min);
+            }
+        }, mHour, mMin, true);
+        timePickerDialog.show();
+
+
+    }
+
+
 
     @Override
     protected void onStart() {

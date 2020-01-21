@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
-        Log.d("MainActivitySharedPreferences................................", currentBandIdPref);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -572,6 +571,11 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onStart();
 
+        if(null != recyclerAdapter)
+        {
+            recyclerAdapter.startListening();
+        }
+
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
         Log.d("MainActivitySharedPreferences................................", currentBandIdPref);
@@ -614,6 +618,17 @@ public class MainActivity extends AppCompatActivity {
              }
 
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(null != recyclerAdapter)
+        {
+            recyclerAdapter.stopListening();
+        }
+    }
+
+
 
     //Verify Network connection
     public static boolean isNetworkAvailable(Context context) {
