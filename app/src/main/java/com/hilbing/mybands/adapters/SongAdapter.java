@@ -79,7 +79,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
 
         songsPlaylistReference = FirebaseDatabase.getInstance().getReference().child("PlaylistsSongs").child(currentBandId).child(currentPlaylistId);
 
-        Song song = songsList.get(position);
+        final Song song = songsList.get(position);
         songName = song.getmName();
         songArtist = song.getmArtist();
         songYoutubeUrl = song.getmUrlYoutube();
@@ -90,7 +90,9 @@ public class SongAdapter extends ArrayAdapter<Song> {
         listItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addSongToPlaylist();
+                addSongToPlaylist(song);
+                Toast.makeText(getContext().getApplicationContext(), songName, Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -106,11 +108,11 @@ public class SongAdapter extends ArrayAdapter<Song> {
         return CollectionUtils.isEmpty(songsList) ? 0 :songsList.size();
     }
 
-    private void addSongToPlaylist() {
+    private void addSongToPlaylist(Song song) {
 
         String id = songsPlaylistReference.push().getKey();
 
-        Song song = new Song(id, songName, songArtist, songYoutubeUrl);
+       // Song song = new Song(id, songName, songArtist, songYoutubeUrl);
         songsPlaylistReference.child(id).setValue(song);
         Toast.makeText(getContext().getApplicationContext(), getContext().getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
     }

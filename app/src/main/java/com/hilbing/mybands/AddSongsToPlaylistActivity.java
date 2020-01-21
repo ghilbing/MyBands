@@ -3,6 +3,7 @@ package com.hilbing.mybands;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -174,8 +176,8 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
                             return new Song(
                                     snapshot.child("mId").getValue().toString(),
                                     snapshot.child("mName").getValue().toString(),
-                                    snapshot.child("mUrlYoutube").getValue().toString(),
-                                    snapshot.child("mArtist").getValue().toString());
+                                    snapshot.child("mArtist").getValue().toString(),
+                                    snapshot.child("mUrlYoutube").getValue().toString());
 
                         }
                     }).build();
@@ -198,6 +200,24 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
                     holder.songArtistTV.setText(model.getmArtist());
                     holder.youtubeLinkTV.setText(model.getmUrlYoutube());
 
+                    if(!model.getmUrlYoutube().equals(getResources().getString(R.string.no_link_from_youtube))){
+                        holder.playSongIV.setVisibility(View.VISIBLE);
+                        holder.playSongIV.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                sendUserToYoutubeDialogActivity(model.getmUrlYoutube());
+                            }
+                        });
+                    }
+
+                    holder.deleteSongIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteSong(songKey);
+                        }
+                    });
+
+
                 }
             };
         }
@@ -208,13 +228,20 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
     }
 
     private void deleteSong(String id) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Playlists").child(currentBandIdPref).child(currentPlaylistId).child(id);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("PlaylistsSongs").child(currentBandIdPref).child(currentPlaylistId).child(id);
         databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(AddSongsToPlaylistActivity.this, getResources().getString(R.string.song_deleted), Toast.LENGTH_LONG).show();
             }
         });
+
+    }
+
+    private void sendUserToYoutubeDialogActivity(String url) {
+        Intent youtubeDialogIntent = new Intent(AddSongsToPlaylistActivity.this, YoutubeDialogActivity.class);
+        youtubeDialogIntent.putExtra("VIDEO_ID", url);
+        startActivity(youtubeDialogIntent);
 
     }
 
@@ -228,6 +255,10 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
         TextView songArtistTV;
         @BindView(R.id.all_songs_playlist_youtube_link_TV)
         TextView youtubeLinkTV;
+        @BindView(R.id.all_songs_playlist_play_IV)
+        ImageView playSongIV;
+        @BindView(R.id.all_songs_playlist_delete_IV)
+        ImageView deleteSongIV;
 
         public MySongsViewHolder(@NonNull final View itemView)
         {
@@ -251,38 +282,29 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
 
     }
 
-   /* private void addSongToPlaylist() {
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
 
-        String name = songNameET.getText().toString();
-        String artist = songArtistBandET.getText().toString();
-        String youtubeTitle = songYoutubeTitleET.getText().toString();
-        String youtubeLink = songYoutubeLinkET.getText().toString();
+        int id = item.getItemId();
 
-        if (TextUtils.isEmpty(name))
+        if(id == android.R.id.home)
         {
-            songNameET.setError(getResources().getString(R.string.enter_name_of_the_song));
-            songNameET.requestFocus();
-            return;
+            sendUserToMainActivity();
         }
 
-        if (TextUtils.isEmpty(artist))
-        {
-            songArtistBandET.setError(getResources().getString(R.string.enter_name_of_the_artist_or_band));
-            songArtistBandET.requestFocus();
-            return;
-        } else {
+        return super.onOptionsItemSelected(item);
+    }
 
-            String id = databaseSongs.push().getKey();
+    private void sendUserToMainActivity()
+    {
+        Intent mainIntent = new Intent(AddSongsToPlaylistActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
 
-            Song song = new Song(id, name, artist, youtubeTitle, youtubeLink, currentUser);
-            databaseSongs.child(currentBandIdPref).child(id).setValue(song);
-            songArtistBandET.setText("");
-            songNameET.setText("");
-            songYoutubeTitleET.setText(getResources().getString(R.string.no_title_from_youtube));
-            songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
-            Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
-            )
-    */
+    }
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.hilbing.mybands;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -15,6 +16,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -24,14 +27,23 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.hilbing.mybands.fragments.PlaylistsFragmentDialog;
+import com.hilbing.mybands.fragments.SongsFragmentDialog;
 import com.hilbing.mybands.models.Event;
+import com.hilbing.mybands.models.Playlist;
 import com.hilbing.mybands.models.Song;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,6 +66,8 @@ public class CreateEventActivity extends AppCompatActivity {
     EditText nameEventET;
     @BindView(R.id.create_event_place_ET)
     EditText placeEventET;
+    @BindView(R.id.create_event_select_playlist_BT)
+    Button selectPlaylistBT;
     @BindView(R.id.create_event_playlist_ET)
     EditText playlistET;
     @BindView(R.id.create_event_create_BT)
@@ -61,6 +75,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private String currentBandIdPref;
     private String currentUserId;
+    private List<Playlist> playlistsList = new ArrayList<>();
 
     private int mYear, mMonth, mDay, mHour, mMin;
 
@@ -122,6 +137,15 @@ public class CreateEventActivity extends AppCompatActivity {
             }
         });
 
+        selectPlaylistBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPlaylists();
+            }
+        });
+
+
+
 
         createEventBT.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,9 +154,40 @@ public class CreateEventActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    private void showPlaylists() {
+
+
+        playlistsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    playlistsList.clear();
+
+                    for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
+                        Playlist playlist = songSnapshot.getValue(Playlist.class);
+                        String mId = playlist.getmId();
+                        String mCreator = playlist.getmCreator();
+                        String mName = playlist.getmPlaylistName();
+                        Playlist newPlaylist = new Playlist(mId, mName, mCreator);
+                        playlistsList.add(playlist);
+                    }
+
+                    DialogFragment dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
+                    dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
+
 
     private void createEvent() {
 
@@ -237,15 +292,16 @@ public class CreateEventActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.select_event));
         String[] events = {getResources().getString(R.string.rehearsal), getResources().getString(R.string.concert)};
+        Log.d("CREATE EVENTS ACTIVITY", events[0] + events[1]);
         builder.setItems(events, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 switch (i){
                     case 0:
-                        eventTypeSP.setSelection(1);
+                        eventTypeSP.setSelection(0);
 
                     case 1:
-                        eventTypeSP.setSelection(0);
+                        eventTypeSP.setSelection(1);
                 }
             }
         });
@@ -254,6 +310,20 @@ public class CreateEventActivity extends AppCompatActivity {
         dialog.show();
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home)
+        {
+            sendUserToMainActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void sendUserToMainActivity()

@@ -92,6 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:hint="@string/enter_a_name_for_your_event"
             android:layout_below="@+id/create_event_LL"
             android:background="@drawable/inputs"
             android:padding="10dp"/>
@@ -101,9 +102,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:hint="@string/enter_a_place"
             android:layout_below="@+id/create_event_name_ET"
             android:background="@drawable/inputs"
             android:padding="10dp"/>
+
+        <Button
+            android:id="@+id/create_event_select_playlist_BT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttons"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:text="@string/select_playlist"
+            android:layout_below="@+id/create_event_place_ET"/>
 
         <EditText
             android:id="@+id/create_event_playlist_ET"
@@ -113,7 +125,7 @@
             android:background="@drawable/inputs"
             android:padding="10dp"
             android:hint="@string/select_playlist"
-            android:layout_below="@+id/create_event_place_ET"/>
+            android:layout_below="@+id/create_event_select_playlist_BT"/>
 
         <Button
             android:id="@+id/create_event_create_BT"
@@ -123,6 +135,7 @@
             android:layout_marginTop="6dp"
             android:textColor="@color/white"
             android:textStyle="bold"
+            android:visibility="invisible"
             android:background="@drawable/buttons"
             android:layout_below="@id/create_event_playlist_ET"/>
 
