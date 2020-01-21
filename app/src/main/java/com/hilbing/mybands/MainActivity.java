@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
                                     snapshot.child("mDate").getValue().toString(),
                                     snapshot.child("mTime").getValue().toString(),
                                     snapshot.child("mPlace").getValue().toString(),
+                                    snapshot.child("mPlaylistName").getValue().toString(),
                                     snapshot.child("idPlaylist").getValue().toString(),
                                     snapshot.child("mCurrentUser").getValue().toString());
 
@@ -291,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                     holder.eventPlaceTV.setText(model.getmPlace());
                     holder.eventDateTV.setText(model.getmDate());
                     holder.eventTimeTV.setText(model.getmTime());
-                    holder.eventPlaylistTV.setText(model.getIdPlaylist());
+                    holder.eventPlaylistTV.setText(model.getmPlaylistName());
 
                     holder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override

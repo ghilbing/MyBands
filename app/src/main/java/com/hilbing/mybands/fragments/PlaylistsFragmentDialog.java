@@ -1,6 +1,7 @@
 package com.hilbing.mybands.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
@@ -16,12 +17,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.hilbing.mybands.R;
 import com.hilbing.mybands.adapters.PlaylistAdapter;
 import com.hilbing.mybands.adapters.SongAdapter;
+import com.hilbing.mybands.interfaces.PlaylistClickListener;
 import com.hilbing.mybands.models.Playlist;
 import com.hilbing.mybands.models.Song;
 
@@ -50,6 +53,17 @@ public class PlaylistsFragmentDialog extends DialogFragment {
     private List<Playlist> mPlaylist = new ArrayList<>();
     private String currentBandId;
     private String currentPlaylistId;
+    private Context context;
+
+    private PlaylistClickListener clickListener;
+
+    public PlaylistClickListener getClickListener() {
+        return clickListener;
+    }
+
+    public void setClickListener(PlaylistClickListener clickListener){
+        this.clickListener = clickListener;
+    }
 
 
     public PlaylistsFragmentDialog() {
@@ -92,6 +106,10 @@ public class PlaylistsFragmentDialog extends DialogFragment {
 
         adapter = new PlaylistAdapter(getActivity().getApplicationContext(), mPlaylist,currentBandId, mPlaylist);
 
+        if(null != clickListener){
+            adapter.setClickListener(clickListener);
+        }
+
         listViewLV.setAdapter(adapter);
 
         dismissBT.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +125,7 @@ public class PlaylistsFragmentDialog extends DialogFragment {
 
 
     public static PlaylistsFragmentDialog newInstance(List<Playlist> playlists, String currentBandID){
-        PlaylistsFragmentDialog fragmentDialog = new PlaylistsFragmentDialog();
+        final PlaylistsFragmentDialog fragmentDialog = new PlaylistsFragmentDialog();
         Bundle args = new Bundle();
         args.putParcelableArrayList("list", (ArrayList<Playlist>) playlists);
         args.putString("currentBandId", currentBandID);

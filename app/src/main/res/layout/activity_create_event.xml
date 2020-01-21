@@ -127,6 +127,16 @@
             android:hint="@string/select_playlist"
             android:layout_below="@+id/create_event_select_playlist_BT"/>
 
+        <EditText
+            android:id="@+id/create_event_playlist_id_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/inputs"
+            android:padding="10dp"
+            android:hint="@string/select_playlist"
+            android:layout_below="@+id/create_event_playlist_ET"/>
+
         <Button
             android:id="@+id/create_event_create_BT"
             android:layout_width="match_parent"
@@ -137,7 +147,7 @@
             android:textStyle="bold"
             android:visibility="visible"
             android:background="@drawable/buttons"
-            android:layout_below="@id/create_event_playlist_ET"/>
+            android:layout_below="@id/create_event_playlist_id_ET"/>
 
 
 

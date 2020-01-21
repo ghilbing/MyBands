@@ -16,6 +16,7 @@ import com.google.android.gms.common.util.CollectionUtils;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hilbing.mybands.R;
+import com.hilbing.mybands.interfaces.PlaylistClickListener;
 import com.hilbing.mybands.models.Playlist;
 import com.hilbing.mybands.models.Song;
 
@@ -40,6 +41,16 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
     private String playlistName;
     private String playlistCreator;
     private String playlistId;
+
+    private PlaylistClickListener clickListener;
+
+    public PlaylistClickListener getClickListener() {
+        return clickListener;
+    }
+
+    public void setClickListener(PlaylistClickListener clickListener){
+        this.clickListener = clickListener;
+    }
 
     private DatabaseReference playlistReference;
     private DatabaseReference eventsReference;
@@ -85,6 +96,9 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
             public void onClick(View view) {
                // addPlaylistToEvent(playlist);
 
+                if(getClickListener() != null){
+                    getClickListener().onPlaylistClick(playlist.getmId(), playlist.getmPlaylistName());
+                }
                 Toast.makeText(getContext().getApplicationContext(), playlistName, Toast.LENGTH_SHORT).show();
             }
         });

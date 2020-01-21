@@ -37,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.fragments.PlaylistsFragmentDialog;
 import com.hilbing.mybands.fragments.SongsFragmentDialog;
+import com.hilbing.mybands.interfaces.PlaylistClickListener;
 import com.hilbing.mybands.models.Event;
 import com.hilbing.mybands.models.Playlist;
 import com.hilbing.mybands.models.Song;
@@ -48,7 +49,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CreateEventActivity extends AppCompatActivity {
+public class CreateEventActivity extends AppCompatActivity  {
 
     @BindView(R.id.create_event_toolbar)
     Toolbar toolbar;
@@ -69,13 +70,25 @@ public class CreateEventActivity extends AppCompatActivity {
     @BindView(R.id.create_event_select_playlist_BT)
     Button selectPlaylistBT;
     @BindView(R.id.create_event_playlist_ET)
-    EditText playlistET;
+    EditText playlistNameET;
+    @BindView(R.id.create_event_playlist_id_ET)
+    EditText playlistIdET;
     @BindView(R.id.create_event_create_BT)
     Button createEventBT;
 
     private String currentBandIdPref;
     private String currentUserId;
     private List<Playlist> playlistsList = new ArrayList<>();
+
+    private PlaylistClickListener clickListener;
+
+    public PlaylistClickListener getClickListener() {
+        return clickListener;
+    }
+
+    public void setClickListener(PlaylistClickListener clickListener){
+        this.clickListener = clickListener;
+    }
 
     private int mYear, mMonth, mDay, mHour, mMin;
 
@@ -171,10 +184,18 @@ public class CreateEventActivity extends AppCompatActivity {
                         String mCreator = playlist.getmCreator();
                         String mName = playlist.getmPlaylistName();
                         Playlist newPlaylist = new Playlist(mId, mName, mCreator);
-                        playlistsList.add(playlist);
+                        playlistsList.add(newPlaylist);
                     }
 
-                    DialogFragment dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
+                    PlaylistsFragmentDialog dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
+                    dialogFragment.setClickListener(new PlaylistClickListener() {
+                        @Override
+                        public void onPlaylistClick(String playlistId, String playlistName) {
+                            playlistNameET.setText(playlistName);
+                            playlistIdET.setText(playlistId);
+                            Toast.makeText(getApplicationContext(), playlistId, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
 
                 }
@@ -193,7 +214,8 @@ public class CreateEventActivity extends AppCompatActivity {
 
         String place = placeEventET.getText().toString();
         String name = nameEventET.getText().toString();
-        String playlist = playlistET.getText().toString();
+        String playlist = playlistNameET.getText().toString();
+        String playlistId = playlistIdET.getText().toString();
         String time = timeEventET.getText().toString();
         String date = dateEventET.getText().toString();
         String type = eventTypeSP.getSelectedItem().toString();
@@ -222,20 +244,21 @@ public class CreateEventActivity extends AppCompatActivity {
         }
 
         if(TextUtils.isEmpty(playlist)){
-            playlistET.setError(getResources().getString(R.string.select_a_playlist));
-            playlistET.requestFocus();
+            playlistNameET.setError(getResources().getString(R.string.select_a_playlist));
+            selectPlaylistBT.requestFocus();
         }
         else {
 
             String id = eventsReference.push().getKey();
 
-            Event event = new Event(id, type, name, date, time, place, playlist, currentUserId);
+            Event event = new Event(id, type, name, date, time, place, playlist, playlistId, currentUserId);
             eventsReference.child(currentBandIdPref).child(id).setValue(event);
             dateEventET.setText("");
             timeEventET.setText("");
             placeEventET.setText("");
             nameEventET.setText("");
-            playlistET.setText("");
+            playlistNameET.setText("");
+            playlistIdET.setText("");
 
         }
 
@@ -299,9 +322,11 @@ public class CreateEventActivity extends AppCompatActivity {
                 switch (i){
                     case 0:
                         eventTypeSP.setSelection(0);
+                        break;
 
                     case 1:
                         eventTypeSP.setSelection(1);
+                        break;
                 }
             }
         });

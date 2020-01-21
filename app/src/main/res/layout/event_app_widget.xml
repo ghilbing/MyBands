@@ -2,8 +2,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/widget_recyclerView_RV"
+    <ListView
+        android:id="@+id/widget_listView_LV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

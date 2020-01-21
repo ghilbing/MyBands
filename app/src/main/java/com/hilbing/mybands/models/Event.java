@@ -8,18 +8,20 @@ public class Event {
     public String mTime;
     public String mPlace;
     public String idPlaylist;
+    public String mPlaylistName;
     public String mCurrentUser;
 
     public Event() {
     }
 
-    public Event(String idEvent, String mEventType, String mName, String mDate, String mTime, String mPlace, String idPlaylist, String mCurrentUser) {
+    public Event(String idEvent, String mEventType, String mName, String mDate, String mTime, String mPlace, String mPlaylistName, String idPlaylist, String mCurrentUser) {
         this.idEvent = idEvent;
         this.mEventType = mEventType;
         this.mName = mName;
         this.mDate = mDate;
         this.mTime = mTime;
         this.mPlace = mPlace;
+        this.mPlaylistName = mPlaylistName;
         this.idPlaylist = idPlaylist;
         this.mCurrentUser = mCurrentUser;
     }
@@ -86,5 +88,13 @@ public class Event {
 
     public void setmEventType(String mEventType) {
         this.mEventType = mEventType;
+    }
+
+    public String getmPlaylistName() {
+        return mPlaylistName;
+    }
+
+    public void setmPlaylistName(String mPlaylistName) {
+        this.mPlaylistName = mPlaylistName;
     }
 }
