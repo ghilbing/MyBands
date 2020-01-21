@@ -78,6 +78,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
         ButterKnife.bind(this, listItem);
 
         songsPlaylistReference = FirebaseDatabase.getInstance().getReference().child("PlaylistsSongs").child(currentBandId).child(currentPlaylistId);
+        songsPlaylistReference.keepSynced(true);
 
         final Song song = songsList.get(position);
         songName = song.getmName();

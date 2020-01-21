@@ -584,4 +584,5 @@
     <string name="play_song">Play Song</string>
     <string name="delete_song">Delete song</string>
     <string name="playlist_added">Playlist added to Create Event</string>
+    <string name="event_type">Event type</string>
 </resources>

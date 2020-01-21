@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -24,16 +25,22 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.SnapshotParser;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,10 +48,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.adapters.BandAlertAdapter;
 import com.hilbing.mybands.adapters.ExpandableListAdapter;
 import com.hilbing.mybands.models.Band;
+import com.hilbing.mybands.models.Event;
+import com.hilbing.mybands.models.FindSong;
 import com.hilbing.mybands.models.MenuModel;
 import com.hilbing.mybands.models.MusiciansBands;
 import com.squareup.picasso.Callback;
@@ -67,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationViewNV;
     @BindView(R.id.drawerLayout_DL)
     DrawerLayout drawerLayout;
+    @BindView(R.id.main_events_RV)
+    RecyclerView recyclerView;
+
     private Toolbar mToolbar;
     private CircleImageView navProfileCIV;
     private TextView navUserNameTV;
@@ -78,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference bandsMusiciansReference;
     private DatabaseReference bandsReference;
     private DatabaseReference bandsRequestReference;
+    private DatabaseReference allEventsReference;
+    private FirebaseRecyclerAdapter recyclerAdapter;
     String currentUserID;
     String currentBandId;
     String currentBandIdPref;
@@ -112,6 +127,11 @@ public class MainActivity extends AppCompatActivity {
         bandsMusiciansReference.keepSynced(true);
         bandsReference = FirebaseDatabase.getInstance().getReference().child("Bands");
         bandsReference.keepSynced(true);
+        allEventsReference = FirebaseDatabase.getInstance().getReference().child("Events");
+        allEventsReference.keepSynced(true);
+
+//        recyclerView.setHasFixedSize(true);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         isNetworkAvailable(this);
 
@@ -142,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
+
+           // showEvents();
         }
 
 
@@ -220,6 +242,110 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private void showEvents(){
+
+
+        Query query = allEventsReference.child(currentBandIdPref).orderByChild("mName");
+
+        if(TextUtils.isEmpty(query.toString())) {
+
+            FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
+                    new SnapshotParser<Event>() {
+                        @NonNull
+                        @Override
+                        public Event parseSnapshot(@NonNull DataSnapshot snapshot) {
+                            return new Event(
+                                    snapshot.child("idEvent").getValue().toString(),
+                                    snapshot.child("mEventType").getValue().toString(),
+                                    snapshot.child("mName").getValue().toString(),
+                                    snapshot.child("mDate").getValue().toString(),
+                                    snapshot.child("mTime").getValue().toString(),
+                                    snapshot.child("mPlace").getValue().toString(),
+                                    snapshot.child("idPlaylist").getValue().toString(),
+                                    snapshot.child("mCurrentUser").getValue().toString());
+
+                        }
+                    }).build();
+
+
+            recyclerAdapter = new FirebaseRecyclerAdapter<Event, MainActivity.EventViewHolder>(options) {
+
+                @NonNull
+                @Override
+                public MainActivity.EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_events_layout, parent, false);
+                    return new MainActivity.EventViewHolder(view);
+                }
+
+                @Override
+                protected void onBindViewHolder(@NonNull final MainActivity.EventViewHolder holder, int position, @NonNull final Event model) {
+                    final String eventKey = getRef(position).getKey();
+
+                    holder.eventTypeTV.setText(model.getmEventType());
+                    holder.eventNameTV.setText(model.getmName());
+                    holder.eventPlaceTV.setText(model.getmPlace());
+                    holder.eventDateTV.setText(model.getmDate());
+                    holder.eventTimeTV.setText(model.getmTime());
+                    holder.eventPlaylistTV.setText(model.getIdPlaylist());
+
+                    holder.mView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //   sendUserToPersonActivity(songKey);
+                            //  Toast.makeText(FindMusicianActivity.this, musicianKey, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            };
+
+            recyclerView.setAdapter(recyclerAdapter);
+            recyclerAdapter.startListening();
+        }
+        else
+            {
+            Toast.makeText(this, getString(R.string.no_data_available), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public class EventViewHolder extends RecyclerView.ViewHolder
+    {
+        View mView;
+        @BindView(R.id.all_events_type_TV)
+        TextView eventTypeTV;
+        @BindView(R.id.all_events_name_TV)
+        TextView eventNameTV;
+        @BindView(R.id.all_events_place_TV)
+        TextView eventPlaceTV;
+        @BindView(R.id.all_events_date_TV)
+        TextView eventDateTV;
+        @BindView(R.id.all_events_time_TV)
+        TextView eventTimeTV;
+        @BindView(R.id.all_events_playlist_TV)
+        TextView eventPlaylistTV;
+
+        public EventViewHolder(@NonNull final View itemView)
+        {
+            super(itemView);
+            mView = itemView;
+            ButterKnife.bind(this, itemView);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View view)
+                {
+                    int itemClicked = getAdapterPosition();
+                    Toast.makeText(MainActivity.this, String.valueOf(itemClicked), Toast.LENGTH_LONG).show();
+
+                    return false;
+                }
+            });
+
+        }
+    }
+
 
     private void prepareMenuData() {
 
