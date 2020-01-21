@@ -585,4 +585,6 @@
     <string name="delete_song">Delete song</string>
     <string name="playlist_added">Playlist added to Create Event</string>
     <string name="event_type">Event type</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    android:id="@+id/drawerLayout_DL"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout_DL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:layout_gravity="left"
+    android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-    <include
-        android:id="@+id/main_page_toolbar"
-        layout="@layout/app_bar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
+        <include
+            android:id="@+id/main_page_toolbar"
+            layout="@layout/app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/main_events_RV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -39,9 +44,5 @@
 
     </com.google.android.material.navigation.NavigationView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/main_events_RV"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

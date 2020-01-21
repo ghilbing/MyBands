@@ -116,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+        Log.d("MainActivitySharedPreferences................................", currentBandIdPref);
+
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
@@ -130,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
         allEventsReference = FirebaseDatabase.getInstance().getReference().child("Events");
         allEventsReference.keepSynced(true);
 
-//        recyclerView.setHasFixedSize(true);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         isNetworkAvailable(this);
 
@@ -163,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-           // showEvents();
+            showEvents();
         }
 
 
@@ -246,9 +250,9 @@ public class MainActivity extends AppCompatActivity {
     private void showEvents(){
 
 
-        Query query = allEventsReference.child(currentBandIdPref).orderByChild("mName");
+        Query query = allEventsReference.child(currentBandIdPref);
 
-        if(TextUtils.isEmpty(query.toString())) {
+        if(!TextUtils.isEmpty(query.toString())) {
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
                     new SnapshotParser<Event>() {
@@ -569,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
-        Log.d("MainActivitySharedPreferences", currentBandIdPref);
+        Log.d("MainActivitySharedPreferences................................", currentBandIdPref);
 
         if(TextUtils.isEmpty(currentBandIdPref)){
             bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
