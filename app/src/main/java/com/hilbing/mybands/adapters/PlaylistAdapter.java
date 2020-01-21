@@ -108,7 +108,7 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
 
         // Song song = new Song(id, songName, songArtist, songYoutubeUrl);
         playlistReference.child(id).setValue(playlist);
-        Toast.makeText(getContext().getApplicationContext(), getContext().getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext().getApplicationContext(), getContext().getResources().getString(R.string.playlist_added), Toast.LENGTH_LONG).show();
     }
 
     @Override

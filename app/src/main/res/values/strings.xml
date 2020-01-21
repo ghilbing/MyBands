@@ -583,4 +583,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="play_song">Play Song</string>
     <string name="delete_song">Delete song</string>
+    <string name="playlist_added">Playlist added to Create Event</string>
 </resources>
