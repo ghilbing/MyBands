@@ -127,11 +127,11 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events.clear();
 
-                for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
-                    Event event = songSnapshot.getValue(Event.class);
+                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                    Event event = eventSnapshot.getValue(Event.class);
                     events.add(event);
                 }
-                Log.d("W I D G E T", events.toArray().toString());
+                Log.d("W I D G E T", Integer.toString(events.size()));
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                 ComponentName widget = new ComponentName(context, EventAppWidgetProvider.class);
                 appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(widget), R.id.widget_listView_LV);
