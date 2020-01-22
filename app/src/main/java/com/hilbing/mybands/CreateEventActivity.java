@@ -117,6 +117,9 @@ public class CreateEventActivity extends AppCompatActivity  {
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
 
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
         eventsReference = FirebaseDatabase.getInstance().getReference().child("Events");
         eventsReference.keepSynced(true);
         playlistsReference = FirebaseDatabase.getInstance().getReference().child("Playlists");
@@ -313,12 +316,6 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         Log.d("CREATEEVENTDATE", String.valueOf(dateInMillis));
         Log.d("TODAY      DATE", String.valueOf(todayInMillis));
-
-
-
-
-
-
 
 
 
