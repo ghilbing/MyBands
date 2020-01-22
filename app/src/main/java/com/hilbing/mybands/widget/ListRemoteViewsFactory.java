@@ -1,6 +1,7 @@
 package com.hilbing.mybands.widget;
 
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,10 +53,10 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         currentBandIdPref = sharedPreferences.getString("currentBandIPref", "");
-        eventReference = FirebaseDatabase.getInstance().getReference().child("Events").child(currentBandIdPref);
+        eventReference = FirebaseDatabase.getInstance().getReference().child("Events");
         eventReference.keepSynced(true);
 
-        fetchingEventList();
+        fetchingEventList(currentBandIdPref);
 
     }
 
@@ -76,6 +77,10 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public RemoteViews getViewAt(int i) {
+
+        if(CollectionUtils.isEmpty(events)){
+            return null;
+        }
         // Construct a remote views item based on the app widget item XML file,
         // and set the text based on the position.
         RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.item_event);
@@ -97,7 +102,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public RemoteViews getLoadingView() {
-        return null;
+        return new RemoteViews(context.getPackageName(), R.layout.item_event);
     }
 
     @Override
@@ -116,8 +121,8 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         return true;
     }
 
-    private List<Event> fetchingEventList(){
-        eventReference.addValueEventListener(new ValueEventListener() {
+    private List<Event> fetchingEventList(final String currentBandIdPref){
+        eventReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events.clear();
@@ -126,11 +131,11 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
                     Event event = songSnapshot.getValue(Event.class);
                     events.add(event);
                 }
-
                 Log.d("W I D G E T", events.toArray().toString());
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                ComponentName widget = new ComponentName(context, EventAppWidgetProvider.class);
+                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(widget), R.id.widget_listView_LV);
 
-            //    EventAdapter adapter = new EventAdapter(ListRemoteViewsFactory.this, events, currentBandIdPref);
-                // songsLV.setAdapter(adapter);
             }
 
             @Override
@@ -138,118 +143,9 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
             }
         });
+
         return events;
-    }
-
-
-
-
-
-    //RemoteViewsService.RemoteViewsFactory, SharedPreferences.OnSharedPreferenceChangeListener {
-
-    /*private static final int count = 10;
-    private List<Event> events = new ArrayList<>();
-    private Context context;
-    private int appWidgetId;
-
-    private String currentBandIdPref = "oC92I2DpCdQJ25CueMGjW4UVX83310-January-202012:38";
-
-    private DatabaseReference eventsReference;
-
-
-    public ListRemoteViewsFactory(Context context){
-        this.context = context;
-    //    appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        currentBandIdPref = sharedPreferences.getString("currentBandIPref", "");
-        fetchingEventList(currentBandIdPref);
-    }
-
-
-
-
-    @Override
-    public void onCreate() {
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        eventsReference = FirebaseDatabase.getInstance().getReference().child("Events");
 
     }
 
-    @Override
-    public void onDataSetChanged() {
-
-    }
-
-    @Override
-    public void onDestroy() {
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public int getCount() {
-        return (null == events) ? 0 : events.size();
-    }
-
-    @Override
-    public RemoteViews getViewAt(int i) {
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.item_event);
-        final Event event = events.get(i);
-        final String eventName = event.getmName();
-        remoteViews.setTextViewText(R.id.tv_event, eventName);
-        return null;
-    }
-
-    @Override
-    public RemoteViews getLoadingView() {
-        return null;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 1;
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        if(s.equals("currentBandIdPref")){
-            currentBandIdPref = sharedPreferences.getString("currentBandIdPref", "");
-            fetchingEventList(currentBandIdPref);
-        }
-    }
-
-    private void fetchingEventList(final String currentBandIdPref){
-        eventsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                events.clear();
-
-                for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
-                    Event event = songSnapshot.getValue(Event.class);
-                    events.add(event);
-                }
-
-                Log.d("W I D G E T", events.toArray().toString());
-
-                EventAdapter adapter = new EventAdapter(ListRemoteViewsFactory.this, events, currentBandIdPref);
-               // songsLV.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }*/
 }
