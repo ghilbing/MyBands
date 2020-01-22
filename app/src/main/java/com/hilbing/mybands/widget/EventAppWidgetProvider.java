@@ -53,7 +53,7 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // update each of the app widgets with the remote adapter
-        for (int appWidgetId : appWidgetIds) {
+        for (int appWidgetId = 0; appWidgetId < appWidgetIds.length; appWidgetId++) {
 
             // Sets up the intent that points to the StackViewService that will
             // provide the views for this collection.
