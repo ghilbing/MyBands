@@ -588,4 +588,5 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="empty_view_text">No data to show</string>
+    <string name="no_widget_available">No widget available</string>
 </resources>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:initialKeyguardLayout="@layout/event_app_widget"
-    android:initialLayout="@layout/event_app_widget"
-    android:minWidth="40dp"
-    android:minHeight="40dp"
+    android:initialKeyguardLayout="@layout/item_event_widget"
+    android:initialLayout="@layout/item_event_widget"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
     android:previewImage="@drawable/example_appwidget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"

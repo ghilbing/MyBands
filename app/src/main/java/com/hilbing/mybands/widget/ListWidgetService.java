@@ -13,13 +13,4 @@ public class ListWidgetService extends RemoteViewsService {
     }
 
 
-
-
-
-
-   /* public static final String CURRENT_BAND_ID = "currentBandIdPref";
-    @Override
-    public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new ListRemoteViewsFactory(getApplicationContext());
-    }*/
 }

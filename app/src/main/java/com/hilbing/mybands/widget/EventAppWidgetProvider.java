@@ -33,6 +33,7 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
 
     public static final String TOAST_ACTION  = "com.hilbing.mybands.widget.TOAST_ACTION";
     public static final String EXTRA_ITEM = "com.hilbing.mybands.widget.EXTRA_ITEM";
+    public String currentBandIdPref;
 
     /*public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
@@ -85,17 +86,25 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // update each of the app widgets with the remote adapter
-        for (int i = 0; i < appWidgetIds.length; ++i) {
+        for (int appWidgetId : appWidgetIds) {
 
             // Sets up the intent that points to the StackViewService that will
             // provide the views for this collection.
-            Intent intent = new Intent(context, ListWidgetService.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[appWidgetId]);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+            final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            currentBandIdPref = sharedPreferences.getString("currentBandIPref", "");
+
+            Intent serviceIntent = new Intent(context, ListWidgetService.class);
+            serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
             // When intents are compared, the extras are ignored, so we need to embed the extras
             // into the data so that the extras will not be ignored.
-            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-            rv.setRemoteAdapter(appWidgetIds[i], R.id.widget_listView_LV, intent);
+            rv.setRemoteAdapter(R.id.widget_listView_LV, serviceIntent);
 
             // The empty view is displayed when the collection has no items. It should be a sibling
             // of the collection view.
@@ -111,13 +120,13 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
             // When the user touches a particular view, it will have the effect of
             // broadcasting TOAST_ACTION.
             toastIntent.setAction(EventAppWidgetProvider.TOAST_ACTION);
-            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
+            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[appWidgetId]);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setPendingIntentTemplate(R.id.widget_listView_LV, toastPendingIntent);
 
-            appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
+            appWidgetManager.updateAppWidget(appWidgetIds[appWidgetId], rv);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }

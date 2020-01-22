@@ -52,10 +52,10 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         currentBandIdPref = sharedPreferences.getString("currentBandIPref", "");
-        eventReference = FirebaseDatabase.getInstance().getReference().child("Events");
+        eventReference = FirebaseDatabase.getInstance().getReference().child("Events").child(currentBandIdPref);
         eventReference.keepSynced(true);
 
-        fetchingEventList(currentBandIdPref);
+        fetchingEventList();
 
     }
 
@@ -71,7 +71,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public int getCount() {
-        return 0;
+        return events.size();
     }
 
     @Override
@@ -102,21 +102,22 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return i;
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        //for more eficiency
+        return true;
     }
 
-    private List<Event> fetchingEventList(final String currentBandIdPref){
-        eventReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
+    private List<Event> fetchingEventList(){
+        eventReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events.clear();

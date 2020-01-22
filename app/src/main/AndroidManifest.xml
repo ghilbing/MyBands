@@ -25,6 +25,9 @@
                 android:resource="@xml/event_app_widget_info" />
         </receiver>
 
+        <service android:name=".widget.ListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
         <activity android:name=".AddSongsToPlaylistActivity" />
         <activity android:name=".CreateEventActivity" />
         <activity android:name=".ConcertActivity" />

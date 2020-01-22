@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +36,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RemoteViews;
+import android.widget.RemoteViewsService;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +55,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.adapters.BandAlertAdapter;
+import com.hilbing.mybands.adapters.EventAdapter;
 import com.hilbing.mybands.adapters.ExpandableListAdapter;
 import com.hilbing.mybands.models.Band;
 import com.hilbing.mybands.models.Event;
@@ -86,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView navBandNameTV;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
+    private int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+
+
     private FirebaseAuth mAuth;
     private DatabaseReference usersReference;
     private DatabaseReference bandsMusiciansReference;
@@ -97,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     String currentBandId;
     String currentBandIdPref;
     private boolean openDialog;
+    private EventAdapter eventAdapter;
 
     ExpandableListAdapter expandableListAdapter;
     @BindView(R.id.nav_expandableListView)
@@ -104,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
     List<Band> bands = new ArrayList();
+    private List<Event> events = new ArrayList<>();
 
 
 
@@ -118,6 +128,24 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
+        Intent widgetIntent = getIntent();
+        Bundle extras = widgetIntent.getExtras();
+        if(extras != null)
+        {
+            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        Intent resultValue = new Intent();
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        setResult(RESULT_CANCELED, resultValue);
+
+        if(appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID){
+            Toast.makeText(MainActivity.this, getString(R.string.no_widget_available), Toast.LENGTH_SHORT).show();
+        }
+        else {
+            fetchingEventForWidget(currentBandIdPref);
+        }
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -244,6 +272,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void confirmData(View view){
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
+        remoteViews.setOnClickPendingIntent(R.id.widget_listView_LV, pendingIntent);
+        eventAdapter = new EventAdapter(this, fetchingEventForWidget(currentBandIdPref));
+        remoteViews.setRemoteAdapter(R.id.widget_listView_LV, intent);
+
+
+    }
+
+        private List<Event> fetchingEventForWidget(final String currentBandIdPref){
+            allEventsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    events.clear();
+
+                    for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
+                        Event event = songSnapshot.getValue(Event.class);
+                        events.add(event);
+                    }
+
+                    Log.d("W I D G E T", events.toArray().toString());
+
+                    //    EventAdapter adapter = new EventAdapter(ListRemoteViewsFactory.this, events, currentBandIdPref);
+                    // songsLV.setAdapter(adapter);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            return events;
     }
 
     private void showEvents(){
