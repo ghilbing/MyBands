@@ -385,15 +385,6 @@ public class MySongsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToPersonActivity(String musicianKey)
-    {
-        Intent personIntent = new Intent(MySongsActivity.this, PersonActivity.class);
-        personIntent.putExtra("selectedUser", musicianKey);
-        personIntent.putExtra("currentBandId", currentBandId);
-        startActivity(personIntent);
-        finish();
-    }
-
 
     @Override
     protected void onStop() {

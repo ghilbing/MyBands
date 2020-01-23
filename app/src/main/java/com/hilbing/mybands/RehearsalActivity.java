@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -50,6 +52,11 @@ public class RehearsalActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.rehearsals));
+
         eventsReference = FirebaseDatabase.getInstance().getReference().child("Events");
 
 
@@ -59,12 +66,13 @@ public class RehearsalActivity extends AppCompatActivity {
     private void showEvents() {
 
 
-        Query query = eventsReference.child(currentBandIdPref);
+        Query query = eventsReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis());
 
 
         Log.d("T O D A Y", String.valueOf(System.currentTimeMillis()));
 
         if(!TextUtils.isEmpty(query.toString())) {
+            Log.d("QUERY TO STRING SHOW EVENTS INTO REHEARSALS", query.toString());
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
                     new SnapshotParser<Event>() {
@@ -181,5 +189,28 @@ public class RehearsalActivity extends AppCompatActivity {
         {
             recyclerAdapter.startListening();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home)
+        {
+            sendUserToMainActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sendUserToMainActivity()
+    {
+        Intent mainIntent = new Intent(RehearsalActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+
     }
 }

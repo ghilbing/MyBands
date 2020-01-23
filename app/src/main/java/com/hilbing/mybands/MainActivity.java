@@ -261,12 +261,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void showEvents(){
 
-
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
         Query query = allEventsReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis());
 
 
         if(!TextUtils.isEmpty(query.toString())) {
+            Log.d("QUERY TO STRING SHOW EVENTS INTO MAIN ACTIVITY", query.toString());
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
                     new SnapshotParser<Event>() {
@@ -633,6 +635,7 @@ public class MainActivity extends AppCompatActivity {
             checkIfUserExists();
             checkIfUserBelongsToBand();
             checkIfUserHasARequest();
+            showEvents();
              }
 
     }
