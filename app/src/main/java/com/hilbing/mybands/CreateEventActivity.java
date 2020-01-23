@@ -95,7 +95,7 @@ public class CreateEventActivity extends AppCompatActivity  {
         this.clickListener = clickListener;
     }
 
-    private int mYear, mMonth, mDay, mHour, mMin;
+    private int mYear, mMonth, mDay, mHour, mMin, year, month, dayOfMonth, hourOfDay, min;
     private long dateInMillis, timeInMillis;
 
     private FirebaseAuth mAuth;
@@ -116,6 +116,7 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
+
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
@@ -229,6 +230,7 @@ public class CreateEventActivity extends AppCompatActivity  {
         String date = dateEventET.getText().toString();
         String type = eventTypeSP.getSelectedItem().toString();
 
+
         if(TextUtils.isEmpty(date)){
             dateEventET.setError(getResources().getString(R.string.enter_event_date));
             datePickerIV.requestFocus();
@@ -260,7 +262,7 @@ public class CreateEventActivity extends AppCompatActivity  {
 
             String id = eventsReference.push().getKey();
 
-            Event event = new Event(id, type, name, date, time, place, playlist, playlistId, currentUserId);
+            Event event = new Event(id, type, name, date, time, place, playlist, playlistId, currentUserId, dateInMillis);
             eventsReference.child(currentBandIdPref).child(id).setValue(event);
             dateEventET.setText("");
             timeEventET.setText("");
@@ -283,14 +285,16 @@ public class CreateEventActivity extends AppCompatActivity  {
 
     private void setDate() {
         final Calendar calendar = Calendar.getInstance();
-
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+            public void onDateSet(DatePicker datePicker, int yearDP, int  monthDP, int dayOfMonthDP) {
+                year = yearDP;
+                month = monthDP;
+                dayOfMonth = dayOfMonthDP;
                 dateEventET.setText(dayOfMonth + "/" + (month+1) + "/" + year);
             }
         }, mYear, mMonth, mDay);
@@ -303,12 +307,27 @@ public class CreateEventActivity extends AppCompatActivity  {
         mHour = calendar.get(Calendar.HOUR_OF_DAY);
         mMin = calendar.get(Calendar.MINUTE);
 
-        Calendar calendarInMillis = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMin);
+
+
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDayDP, int minDP) {
+                hourOfDay = hourOfDayDP;
+                min = minDP;
+                timeEventET.setText(hourOfDay + ":" + min);
+            }
+        }, mHour, mMin, true);
+        timePickerDialog.show();
+
+        Calendar calendarInMillis = new GregorianCalendar(year, month, dayOfMonth, hourOfDay, min);
 
         dateInMillis = calendarInMillis.getTimeInMillis();
+        String date = DateFormat.format("dd/MM/yyyy hh:mm", dateInMillis).toString();
         long todayInMillis = System.currentTimeMillis();
 
         Log.d("CREATE  EVENT  TIME  IN MILLIS", String.valueOf(dateInMillis));
+        Log.d("DATE IN MILLIS INTO DATE", date);
         Log.d("CREATE EVENT CURRENT TIMESTAMP", String.valueOf(todayInMillis));
 
         String dateEvent = getDate(dateInMillis);
@@ -321,15 +340,6 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         long difference = Math.abs(System.currentTimeMillis() - dateInMillis);
         Log.d("DIFFERENCE BETWEEN TIMESTAMPS", String.valueOf(difference));
-
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfDay, int min) {
-                timeEventET.setText(hourOfDay + ":" + min);
-            }
-        }, mHour, mMin, true);
-        timePickerDialog.show();
 
 
     }

@@ -67,6 +67,8 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.Reference;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -128,24 +130,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
-
-        Intent widgetIntent = getIntent();
-        Bundle extras = widgetIntent.getExtras();
-        if(extras != null)
-        {
-            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
-
-        Intent resultValue = new Intent();
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        setResult(RESULT_CANCELED, resultValue);
-
-        if(appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID){
-            Toast.makeText(MainActivity.this, getString(R.string.no_widget_available), Toast.LENGTH_SHORT).show();
-        }
-        else {
-            fetchingEventForWidget(currentBandIdPref);
-        }
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -274,48 +258,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void confirmData(View view){
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.widget_layout);
-        remoteViews.setOnClickPendingIntent(R.id.widget_listView_LV, pendingIntent);
-        eventAdapter = new EventAdapter(this, fetchingEventForWidget(currentBandIdPref));
-        remoteViews.setRemoteAdapter(R.id.widget_listView_LV, intent);
-
-
-    }
-
-        private List<Event> fetchingEventForWidget(final String currentBandIdPref){
-            allEventsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    events.clear();
-
-                    for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
-                        Event event = songSnapshot.getValue(Event.class);
-                        events.add(event);
-                    }
-
-                    Log.d("W I D G E T", events.toArray().toString());
-
-                    //    EventAdapter adapter = new EventAdapter(ListRemoteViewsFactory.this, events, currentBandIdPref);
-                    // songsLV.setAdapter(adapter);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-            return events;
-    }
 
     private void showEvents(){
 
 
-        Query query = allEventsReference.child(currentBandIdPref);
+
+        Query query = allEventsReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis());
+
 
         if(!TextUtils.isEmpty(query.toString())) {
 
@@ -333,7 +282,8 @@ public class MainActivity extends AppCompatActivity {
                                     snapshot.child("mPlace").getValue().toString(),
                                     snapshot.child("mPlaylistName").getValue().toString(),
                                     snapshot.child("idPlaylist").getValue().toString(),
-                                    snapshot.child("mCurrentUser").getValue().toString());
+                                    snapshot.child("mCurrentUser").getValue().toString(),
+                                    (Long) snapshot.child("mTimestamp").getValue());
 
                         }
                     }).build();
@@ -371,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
 
             recyclerView.setAdapter(recyclerAdapter);
             recyclerAdapter.startListening();
+            recyclerAdapter.notifyDataSetChanged();
         }
         else
             {
@@ -592,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
                            sendUserToCreateEventActivity();
                        }
                        else if(subTitle.equals(getResources().getString(R.string.rehearsals))){
-                           Toast.makeText(MainActivity.this, "Rehearsals", Toast.LENGTH_LONG).show();
+                           sendUserToRehearsalActivity();
                        }
                        else if(subTitle.equals(getResources().getString(R.string.concerts))){
                            Toast.makeText(MainActivity.this, "Concerts", Toast.LENGTH_LONG).show();
@@ -640,6 +591,7 @@ public class MainActivity extends AppCompatActivity {
         if(null != recyclerAdapter)
         {
             recyclerAdapter.startListening();
+            recyclerAdapter.notifyDataSetChanged();
         }
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
@@ -686,11 +638,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if(null != recyclerAdapter)
+        {
+            recyclerAdapter.startListening();
+            recyclerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if(null != recyclerAdapter)
         {
             recyclerAdapter.stopListening();
+          //  recyclerAdapter.notifyDataSetChanged();
         }
     }
 
@@ -980,6 +943,7 @@ public class MainActivity extends AppCompatActivity {
     {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(settingsIntent);
+        finish();
     }
 
     public void sendUserToProfileActivity()
@@ -1058,6 +1022,13 @@ public class MainActivity extends AppCompatActivity {
         Intent myPlaylistsIntent = new Intent(MainActivity.this, MyPlaylistsActivity.class);
         myPlaylistsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(myPlaylistsIntent);
+        finish();
+    }
+
+    private void sendUserToRehearsalActivity(){
+        Intent rehearsalIntent = new Intent(MainActivity.this, RehearsalActivity.class);
+        rehearsalIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(rehearsalIntent);
         finish();
     }
 

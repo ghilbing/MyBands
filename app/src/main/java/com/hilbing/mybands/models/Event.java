@@ -10,11 +10,12 @@ public class Event {
     public String idPlaylist;
     public String mPlaylistName;
     public String mCurrentUser;
+    public long mTimestamp;
 
     public Event() {
     }
 
-    public Event(String idEvent, String mEventType, String mName, String mDate, String mTime, String mPlace, String mPlaylistName, String idPlaylist, String mCurrentUser) {
+    public Event(String idEvent, String mEventType, String mName, String mDate, String mTime, String mPlace, String mPlaylistName, String idPlaylist, String mCurrentUser, long mTimestamp) {
         this.idEvent = idEvent;
         this.mEventType = mEventType;
         this.mName = mName;
@@ -24,6 +25,7 @@ public class Event {
         this.mPlaylistName = mPlaylistName;
         this.idPlaylist = idPlaylist;
         this.mCurrentUser = mCurrentUser;
+        this.mTimestamp = mTimestamp;
     }
 
     public String getIdEvent() {
@@ -96,5 +98,13 @@ public class Event {
 
     public void setmPlaylistName(String mPlaylistName) {
         this.mPlaylistName = mPlaylistName;
+    }
+
+    public long getmTimestamp() {
+        return mTimestamp;
+    }
+
+    public void setmTimestamp(long mTimestamp) {
+        this.mTimestamp = mTimestamp;
     }
 }
