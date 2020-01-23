@@ -2,6 +2,7 @@ package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -58,6 +59,9 @@ public class RehearsalActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.rehearsals));
 
         eventsReference = FirebaseDatabase.getInstance().getReference().child("Events");
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         showEvents();

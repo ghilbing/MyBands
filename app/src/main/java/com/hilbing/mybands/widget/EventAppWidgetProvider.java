@@ -55,6 +55,9 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
         // update each of the app widgets with the remote adapter
         for (int appWidgetId = 0; appWidgetId < appWidgetIds.length; appWidgetId++) {
 
+            Intent clickIntent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, 0);
+
             // Sets up the intent that points to the StackViewService that will
             // provide the views for this collection.
 
@@ -65,10 +68,14 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
             // into the data so that the extras will not be ignored.
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+            rv.setViewVisibility(R.id.widget_relativeLayout_RL, 1);
             rv.setRemoteAdapter(R.id.widget_listView_LV, intent);
+         //   rv.setOnClickPendingIntent(R.id.widget_listView_LV, pendingIntent);
+
 
             // The empty view is displayed when the collection has no items. It should be a sibling
             // of the collection view.
+
             rv.setEmptyView(R.id.widget_listView_LV, R.id.widget_empty_view_TV);
 
             // This section makes it possible for items to have individualized behavior.

@@ -50,6 +50,9 @@
     <string name="gretel_hilbing">Usuario</string>
     <string name="passwords_are_not_equal">Passwords are not equal</string>
 
+    <string name="facebook_app_id">165384551360310</string>
+    <string name="fb_login_protocol_scheme">fb165384551360310</string>
+
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="bands">Bands</string>
@@ -589,4 +592,6 @@
     <string name="add_widget">Add widget</string>
     <string name="empty_view_text">No data to show</string>
     <string name="no_widget_available">No widget available</string>
+    <string name="facebook_sign_in">Facebook Sign In</string>
+    <string name="please_wait_while_we_are_allowing_you_to_login_to_your_facebook_account">Please, wait while we are allowing you to login to your facebook account</string>
 </resources>

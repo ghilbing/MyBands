@@ -17,6 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -31,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -56,18 +63,18 @@ public class LoginActivity extends AppCompatActivity
     TextView registerTV;
     @BindView(R.id.login_login_BT)
     Button loginBT;
-    @BindView(R.id.login_facebook_IV)
-    ImageView facebookLoginIV;
-    @BindView(R.id.login_twitter_IV)
-    ImageView twitterLoginIV;
+    @BindView(R.id.login_facebook_BT)
+    LoginButton facebookLoginBT;
     @BindView(R.id.login_google_IV)
     ImageView googleLoginIV;
 
     private FirebaseAuth mAuth;
     private DatabaseReference usersReference;
     private ProgressDialog progressDialog;
+    private CallbackManager mCallbackManager;
 
     private static final int RC_SIGN_IN = 1;
+    private static final int FC_SIGN_IN = 2;
     private static final String TAG = LoginActivity.class.getCanonicalName();
     private GoogleApiClient mGoogleSignInClient;
 
@@ -129,6 +136,13 @@ public class LoginActivity extends AppCompatActivity
             }
         });
 
+        facebookLoginBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInFacebook();
+            }
+        });
+
 
     }
 
@@ -166,6 +180,22 @@ public class LoginActivity extends AppCompatActivity
                 progressDialog.dismiss();
             }
         }
+
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        if(!TextUtils.isEmpty(mCallbackManager.toString())){
+
+            // Pass the activity result back to the Facebook SDK
+
+            progressDialog.setTitle(getResources().getString(R.string.facebook_sign_in));
+            progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_allowing_you_to_login_to_your_facebook_account));
+            progressDialog.setCanceledOnTouchOutside(true);
+            progressDialog.show();
+
+
+
+
+        }
+
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct)
@@ -191,7 +221,7 @@ public class LoginActivity extends AppCompatActivity
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             String message = task.getException().getMessage();
-                            senUserToLoginActivity();
+                            sendUserToLoginActivity();
                             Toast.makeText(LoginActivity.this, getResources().getString(R.string.not_authenticated) + " " + message, Toast.LENGTH_LONG).show();
                             progressDialog.dismiss();
 
@@ -202,7 +232,7 @@ public class LoginActivity extends AppCompatActivity
                 });
     }
 
-    private void senUserToLoginActivity()
+    private void sendUserToLoginActivity()
     {
 
         Intent loginIntent = new Intent(LoginActivity.this, LoginActivity.class);
@@ -302,5 +332,59 @@ public class LoginActivity extends AppCompatActivity
         startActivity(mainIntent);
         finish();
     }
+
+
+
+    private void signInFacebook(){
+        // Initialize Facebook Login button
+        mCallbackManager = CallbackManager.Factory.create();
+        facebookLoginBT.setReadPermissions("email", "public_profile");
+        facebookLoginBT.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+                // ...
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+                // ...
+            }
+        });
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            sendUserToMainActivity();
+                            progressDialog.dismiss();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, getResources().getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show();
+                            sendUserToMainActivity();
+                            progressDialog.dismiss();
+
+                        }
+                    }
+                });
+    }
+
 
 }

@@ -51,8 +51,8 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
 
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        currentBandIdPref = sharedPreferences.getString("currentBandIPref", "");
+        final SharedPreferences sharedPreferences = context.getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = sharedPreferences.getString("currentBandIdPref", "");
         eventReference = FirebaseDatabase.getInstance().getReference().child("Events");
         eventReference.keepSynced(true);
 
@@ -122,7 +122,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     }
 
     private List<Event> fetchingEventList(final String currentBandIdPref){
-        eventReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
+        eventReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events.clear();

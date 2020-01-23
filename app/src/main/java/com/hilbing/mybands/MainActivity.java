@@ -789,7 +789,8 @@ public class MainActivity extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if(dataSnapshot.exists()) {
                                                 String request_type = dataSnapshot.child("request_type").getValue().toString();
-                                                if (request_type.equals("received")) {
+                                                if(!TextUtils.isEmpty(request_type) && request_type.equals("received")){
+                                                //if (request_type.equals("received")) {
 
                                                     bandsRequestReference.addValueEventListener(new ValueEventListener() {
                                                         @Override
