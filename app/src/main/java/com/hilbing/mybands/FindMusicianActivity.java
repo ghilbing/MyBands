@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,8 +52,14 @@ public class FindMusicianActivity extends AppCompatActivity {
     RecyclerView recyclerViewRV;
     @BindView(R.id.search_band_name_TV)
     TextView bandNameTV;
+    @BindView(R.id.find_musician_scrollView_SV)
+    ScrollView scrollViewSV;
+    @BindView(R.id.find_musician_message_TV)
+    TextView message;
+
 
     private String currentBandId;
+    private String currentBandIdPref;
 
     private FirebaseRecyclerAdapter recyclerAdapter;
     private DatabaseReference allMusiciansReference;
@@ -65,6 +72,14 @@ public class FindMusicianActivity extends AppCompatActivity {
         setContentView(R.layout.activity_find_musician);
 
         ButterKnife.bind(this);
+
+        if(TextUtils.isEmpty(currentBandIdPref)){
+            message.setVisibility(View.VISIBLE);
+            scrollViewSV.setVisibility(View.INVISIBLE);
+        } else {
+            message.setVisibility(View.INVISIBLE);
+            scrollViewSV.setVisibility(View.VISIBLE);
+        }
 
 
 
@@ -88,7 +103,7 @@ public class FindMusicianActivity extends AppCompatActivity {
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
 
-        if(currentBandId != null) {
+        if(!TextUtils.isEmpty(currentBandId)) {
 
             showMusicians();
 

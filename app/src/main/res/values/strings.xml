@@ -607,4 +607,7 @@
     <string name="long_click_for_more_options">Long click for more options</string>
     <string name="update_band">Update band</string>
     <string name="you_are_not_allowed_to_modify_this_band">You are not allowed to modify this band</string>
+    <string name="you_do_not_belong_to_the_band_any_more">You do not belong to the band any more</string>
+    <string name="updating_band">Updating band</string>
+    <string name="please_wait_while_we_are_updating_your_band">Please, wait while we are updating your band</string>
 </resources>

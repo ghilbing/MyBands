@@ -12,10 +12,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,10 @@ public class MusiciansActivity extends AppCompatActivity {
     RecyclerView musiciansRV;
     @BindView(R.id.musicians_toolbar)
     Toolbar toolbar;
+    @BindView(R.id.musicians_message_TV)
+    TextView message;
+    @BindView(R.id.musicias_scrollview_SV)
+    ScrollView scrollViewSV;
 
     private FirebaseRecyclerAdapter recyclerAdapter;
     private DatabaseReference usersBandsReference;
@@ -77,6 +83,14 @@ public class MusiciansActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandId = preferences.getString("currentBandIdPref", "");
+
+        if(TextUtils.isEmpty(currentBandId)){
+            message.setVisibility(View.VISIBLE);
+            scrollViewSV.setVisibility(View.INVISIBLE);
+        } else {
+            message.setVisibility(View.INVISIBLE);
+            scrollViewSV.setVisibility(View.VISIBLE);
+        }
 
         setSupportActionBar(toolbar);
 

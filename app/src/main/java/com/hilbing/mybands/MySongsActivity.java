@@ -14,12 +14,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +59,10 @@ public class MySongsActivity extends AppCompatActivity {
     RecyclerView recyclerViewRV;
     @BindView(R.id.my_songs_band_name_TV)
     TextView bandNameTV;
+    @BindView(R.id.my_songs_scrolView_SV)
+    ScrollView scrollViewSV;
+    @BindView(R.id.my_songs_message_TV)
+    TextView message;
 
     private String currentBandId;
     private String currentUserId;
@@ -77,6 +83,14 @@ public class MySongsActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandId = preferences.getString("currentBandIdPref", "");
 
+        if(TextUtils.isEmpty(currentBandId)){
+            message.setVisibility(View.VISIBLE);
+            scrollViewSV.setVisibility(View.INVISIBLE);
+        } else {
+            message.setVisibility(View.INVISIBLE);
+            scrollViewSV.setVisibility(View.VISIBLE);
+        }
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -92,7 +106,7 @@ public class MySongsActivity extends AppCompatActivity {
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
 
-        if(currentBandId != null) {
+        if(!TextUtils.isEmpty(currentBandId)) {
 
             showSongs();
 
@@ -100,7 +114,9 @@ public class MySongsActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        bandNameTV.setText(dataSnapshot.child("mBandName").getValue().toString());
+
+                            bandNameTV.setText(dataSnapshot.child("mBandName").getValue().toString());
+
                     }
                 }
 

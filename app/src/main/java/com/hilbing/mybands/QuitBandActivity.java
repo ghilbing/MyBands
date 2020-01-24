@@ -1,13 +1,22 @@
 package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,6 +31,12 @@ public class QuitBandActivity extends AppCompatActivity {
 
     @BindView(R.id.quit_band_BT)
     Button quitBandBT;
+    @BindView(R.id.quit_band_message_TV)
+    TextView message;
+    @BindView(R.id.quit_band_scrollView_SV)
+    ScrollView scrollViewSV;
+    @BindView(R.id.quit_band_toolbar)
+    Toolbar toolbar;
 
     DatabaseReference bandsMusiciansRef;
     FirebaseAuth mAuth;
@@ -40,6 +55,22 @@ public class QuitBandActivity extends AppCompatActivity {
         currentBandId = preferences.getString("currentBandIdPref", "");
 
         mAuth = FirebaseAuth.getInstance();
+
+
+        setSupportActionBar(toolbar);
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setTitle(R.string.quit_band);
+
+        if(TextUtils.isEmpty(currentBandId)){
+            message.setVisibility(View.VISIBLE);
+            scrollViewSV.setVisibility(View.INVISIBLE);
+        } else {
+            message.setVisibility(View.INVISIBLE);
+            scrollViewSV.setVisibility(View.VISIBLE);
+        }
 
         bandsMusiciansRef = FirebaseDatabase.getInstance().getReference().child("BandsMusicians");
         bandsMusiciansRef.keepSynced(true);
@@ -70,12 +101,8 @@ public class QuitBandActivity extends AppCompatActivity {
                         {
                             if(task.isSuccessful())
                             {
-                               /* //  sendRequestBT.setEnabled(true);
-                                CURRENT_STATE = getResources().getString(R.string.not_from_same_band);
-                                //   sendRequestBT.setText(getResources().getString(R.string.add_to_band_request));
-
-                                declineRequestBT.setVisibility(View.INVISIBLE);
-                                declineRequestBT.setEnabled(false);*/
+                                Toast.makeText(QuitBandActivity.this, getResources().getString(R.string.you_do_not_belong_to_the_band_any_more), Toast.LENGTH_LONG).show();
+                                sendUserToMainActivity();
                             }
                         }
                     });
@@ -84,6 +111,28 @@ public class QuitBandActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home)
+        {
+            sendUserToMainActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sendUserToMainActivity() {
+
+        Intent mainIntent = new Intent(QuitBandActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
     }
 
 

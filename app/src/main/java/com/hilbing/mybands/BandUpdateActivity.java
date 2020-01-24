@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -168,6 +169,19 @@ public class BandUpdateActivity extends AppCompatActivity {
             });
         }
 
+        countrySP.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                countryTV.setText(countrySP.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
         imageCIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -224,8 +238,8 @@ public class BandUpdateActivity extends AppCompatActivity {
             return;
         } else {
 
-            progressDialog.setTitle(getResources().getString(R.string.creating_band));
-            progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_creating_your_band));
+            progressDialog.setTitle(getResources().getString(R.string.updating_band));
+            progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_updating_your_band));
             progressDialog.show();
             progressDialog.setCanceledOnTouchOutside(true);
 
@@ -237,7 +251,7 @@ public class BandUpdateActivity extends AppCompatActivity {
             bandMap.put("mBandStory", story);
             bandMap.put("mAvailable", available);
             bandMap.put("mCountry", country);
-            bandsReference.child(currentBandId).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
+            bandsReference.updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
@@ -297,6 +311,14 @@ public class BandUpdateActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri) {
                                 downloadUri = uri.toString();
+                            }
+                        });
+
+                       // currentBandId = currentUserId + bandRandomId;
+                 /*       taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                downloadUri = uri.toString();
                                 HashMap bandImage = new HashMap();
                                 bandImage.put("mBandImage", downloadUri);
                                 bandsReference.child(currentBandId).updateChildren(bandImage).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -314,7 +336,7 @@ public class BandUpdateActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-                        });
+                        });*/
                     }
                 });
 
