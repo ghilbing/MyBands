@@ -600,4 +600,11 @@
     <string name="update_playlist_name">Update Playlist Name</string>
     <string name="please_enter_a_new_name_for_your_playlist">Please, enter a new name for your playlist</string>
     <string name="updating_playlist">Updating playlist</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="please_add_an_image_for_your_band">Please, add an image for your band</string>
+    <string name="please_click_the_circle_to_add_an_image_for_your_band">Please, click the circle to add an image for your band</string>
+    <string name="long_click_for_more_options">Long click for more options</string>
+    <string name="update_band">Update band</string>
+    <string name="you_are_not_allowed_to_modify_this_band">You are not allowed to modify this band</string>
 </resources>

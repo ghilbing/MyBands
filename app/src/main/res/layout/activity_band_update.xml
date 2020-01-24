@@ -8,7 +8,7 @@
     tools:context=".SetUpActivity">
 
     <include
-        android:id="@+id/add_band_toolbar"
+        android:id="@+id/update_band_toolbar"
         layout="@layout/app_bar_layout"
         tools:layout_editor_absoluteX="-8dp"
         tools:layout_editor_absoluteY="16dp" />
@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_band_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/update_band_toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,11 +37,11 @@
             android:padding="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/setup_user_image_CIV">
+            app:layout_constraintTop_toBottomOf="@+id/update_band_toolbar">
 
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/band_image_CIV"
+                android:id="@+id/update_band_image_CIV"
                 android:layout_width="111dp"
                 android:layout_height="102dp"
                 android:layout_gravity="center_horizontal"
@@ -61,7 +61,7 @@
                 android:gravity="center_horizontal"/>
 
             <EditText
-                android:id="@+id/band_name_ET"
+                android:id="@+id/update_band_name_ET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -77,7 +77,7 @@
                 android:autofillHints="" />
 
             <EditText
-                android:id="@+id/band_story_ET"
+                android:id="@+id/update_band_story_ET"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginStart="8dp"
@@ -91,8 +91,16 @@
                 android:padding="10dp"
                 android:autofillHints="" />
 
+            <TextView
+                android:id="@+id/update_country_TV"
+                android:background="@drawable/inputs"
+                android:padding="10dp"
+                android:layout_margin="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <Spinner
-                android:id="@+id/band_country_SP"
+                android:id="@+id/update_band_country_SP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -103,47 +111,36 @@
                 android:padding="0dp" />
 
             <TextView
-                android:id="@+id/where_do_you_live_TV"
+                android:id="@+id/update_where_do_you_live_TV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
                 android:textColor="@color/black"
                 android:text="@string/where_is_the_band_located"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintBottom_toTopOf="@+id/band_country_SP"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.06"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <CheckBox
-                android:id="@+id/band_available_CB"
+                android:id="@+id/update_band_available_CB"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
                 android:text="@string/available"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/band_name_ET" />
+                android:textStyle="bold" />
 
             <Button
-                android:id="@+id/band_save_BT"
+                android:id="@+id/update_band_save_BT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/buttons"
-                android:text="@string/create_band"
+                android:text="@string/update"
                 android:textColor="@color/white"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/band_country_SP" />
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

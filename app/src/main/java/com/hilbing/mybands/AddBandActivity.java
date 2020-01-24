@@ -327,6 +327,7 @@ public class AddBandActivity extends AppCompatActivity {
                 bandMap.put("mBandName", bandName);
                 bandMap.put("mBandStory", story);
                 bandMap.put("mAvailable", available);
+                bandMap.put("mCountry", country);
                 bandDataReference.child(currentBandId).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener()
                 {
                     @Override

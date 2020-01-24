@@ -23,6 +23,6 @@ public class MyBands extends Application {
         built.setLoggingEnabled(true);
         Picasso.setSingletonInstance(built);
 
-
     }
+
 }

@@ -191,10 +191,25 @@ public class MyBandsActivity extends AppCompatActivity {
                 public boolean onLongClick(View view) {
 
                     //get data
-
-
                     int itemClicked = getAdapterPosition();
-                    //  showUpdateDialog(itemClicked, instrument);
+                    bandsRef.child(bandId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+                                String creator = dataSnapshot.child("mBandCreator").getValue().toString();
+                                if(currentUserId.equals(creator)){
+                                    sendUserToBandUpdate(bandId);
+                                } else {
+                                    Toast.makeText(MyBandsActivity.this, getResources().getString(R.string.you_are_not_allowed_to_modify_this_band), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                     return false;
                 }
             });
@@ -204,6 +219,7 @@ public class MyBandsActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     SharedPreferences preferences = getApplicationContext().getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
+                    preferences.edit().clear().commit();
                     editor.putString("currentBandIdPref", bandId);
                     Log.d("//////////////////", bandId);
                     editor.apply();
@@ -212,6 +228,14 @@ public class MyBandsActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+    private void sendUserToBandUpdate(String bandId) {
+        Intent updateBandIntent = new Intent(MyBandsActivity.this, BandUpdateActivity.class);
+        updateBandIntent.putExtra("bandIdSelected", bandId);
+        updateBandIntent.putExtra("from", "myBandsActivity");
+        startActivity(updateBandIntent);
+
     }
 
     @Override

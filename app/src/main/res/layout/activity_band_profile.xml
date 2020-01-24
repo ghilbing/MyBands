@@ -52,6 +52,14 @@
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="2dp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/please_click_the_circle_to_add_an_image_for_your_band"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                android:gravity="center_horizontal"/>
+
             <EditText
                 android:id="@+id/profile_band_name_ET"
                 android:layout_width="match_parent"

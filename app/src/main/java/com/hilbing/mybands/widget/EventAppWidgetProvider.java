@@ -45,6 +45,7 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
             int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
+
             Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
         }
         super.onReceive(context, intent);
@@ -54,6 +55,7 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // update each of the app widgets with the remote adapter
         for (int appWidgetId = 0; appWidgetId < appWidgetIds.length; appWidgetId++) {
+
 
             Intent clickIntent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, 0);
@@ -70,7 +72,9 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
             rv.setViewVisibility(R.id.widget_relativeLayout_RL, 1);
             rv.setRemoteAdapter(R.id.widget_listView_LV, intent);
-         //   rv.setOnClickPendingIntent(R.id.widget_listView_LV, pendingIntent);
+
+
+            //rv.setOnClickPendingIntent(R.id.widget_listView_LV, pendingIntent);
 
 
             // The empty view is displayed when the collection has no items. It should be a sibling
@@ -83,7 +87,7 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
             // cannot set up their own pending intents. Instead, the collection as a whole sets
             // up a pending intent template, and the individual items set a fillInIntent
             // to create unique behavior on an item-by-item basis.
-            Intent toastIntent = new Intent(context, ListWidgetService.class);
+            Intent toastIntent = new Intent(context, EventAppWidgetProvider.class);
             // Set the action for the intent.
             // When the user touches a particular view, it will have the effect of
             // broadcasting TOAST_ACTION.
@@ -92,9 +96,13 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-            rv.setPendingIntentTemplate(R.id.widget_listView_LV, toastPendingIntent);
+            rv.setPendingIntentTemplate(R.id.widget_listView_LV, pendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetIds[appWidgetId], rv);
+            ComponentName w  = new ComponentName(context, EventAppWidgetProvider.class);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(w), R.id.widget_listView_LV);
+
+
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }

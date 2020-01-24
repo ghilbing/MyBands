@@ -25,6 +25,7 @@ import com.hilbing.mybands.adapters.EventAdapter;
 import com.hilbing.mybands.adapters.SongAdapter;
 import com.hilbing.mybands.models.Event;
 import com.hilbing.mybands.models.Song;
+import com.hilbing.mybands.utils.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,8 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
+
+
 
         final SharedPreferences sharedPreferences = context.getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = sharedPreferences.getString("currentBandIdPref", "");

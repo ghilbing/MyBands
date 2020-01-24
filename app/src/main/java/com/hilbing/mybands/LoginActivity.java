@@ -214,6 +214,7 @@ public class LoginActivity extends AppCompatActivity
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             sendUserToMainActivity();
+                            Log.d(TAG, mAuth.getUid());
                             progressDialog.dismiss();
 
                         } else
@@ -222,6 +223,7 @@ public class LoginActivity extends AppCompatActivity
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             String message = task.getException().getMessage();
                             sendUserToLoginActivity();
+                            Log.d(TAG + " Failure", mAuth.getUid());
                             Toast.makeText(LoginActivity.this, getResources().getString(R.string.not_authenticated) + " " + message, Toast.LENGTH_LONG).show();
                             progressDialog.dismiss();
 

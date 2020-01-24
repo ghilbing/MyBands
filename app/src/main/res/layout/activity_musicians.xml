@@ -27,6 +27,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:text="@string/long_click_for_more_options"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/musicians_RV"
         android:layout_width="376dp"

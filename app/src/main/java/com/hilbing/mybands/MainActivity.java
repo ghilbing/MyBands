@@ -292,9 +292,9 @@ public class MainActivity extends AppCompatActivity {
                         holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.concert));
                     }
                     holder.eventNameTV.setText(model.getmName());
-                    holder.eventPlaceTV.setText(model.getmPlace());
-                    holder.eventDateTV.setText(model.getmDate());
-                    holder.eventTimeTV.setText(model.getmTime());
+                    holder.eventPlaceTV.setText(getResources().getString(R.string.location) + ": " + model.getmPlace());
+                    holder.eventDateTV.setText(getResources().getString(R.string.date) + ": " + model.getmDate());
+                    holder.eventTimeTV.setText(getResources().getString(R.string.time) + ": " +model.getmTime());
                     holder.eventPlaylistTV.setText(getString(R.string.playlist_name) + " " + model.getmPlaylistName());
 
                     holder.mView.setOnClickListener(new View.OnClickListener() {

@@ -4,5 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/events"
+    android:layout_margin="1dp"
+    android:padding="2dp"
+    android:background="@drawable/buttons"
+    android:textColor="@color/white"
     android:textStyle="bold" />
 

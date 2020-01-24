@@ -52,6 +52,14 @@
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="2dp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/please_click_the_circle_to_add_an_image_for_your_band"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                android:gravity="center_horizontal"/>
+
             <EditText
                 android:id="@+id/band_name_ET"
                 android:layout_width="match_parent"
@@ -100,6 +108,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
+                android:textColor="@color/black"
                 android:text="@string/where_is_the_band_located"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintBottom_toTopOf="@+id/band_country_SP"
