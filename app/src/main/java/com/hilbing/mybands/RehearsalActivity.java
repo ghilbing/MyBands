@@ -2,6 +2,7 @@ package com.hilbing.mybands;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,19 +59,22 @@ public class RehearsalActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.rehearsals));
 
-        eventsReference = FirebaseDatabase.getInstance().getReference().child("Events");
+        eventsReference = FirebaseDatabase.getInstance().getReference().child("Events").child(currentBandIdPref);
+        eventsReference.keepSynced(true);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-        showEvents();
+        if(!TextUtils.isEmpty(currentBandIdPref)) {
+            Log.d("CURRENT BAND ID PREF FROM REHEARSALS", currentBandIdPref);
+            showEvents();
+        }
     }
 
     private void showEvents() {
 
 
-        Query query = eventsReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis());
+        Query query = eventsReference.orderByChild("mTimestamp").startAt(System.currentTimeMillis());
 
 
         Log.d("T O D A Y", String.valueOf(System.currentTimeMillis()));
@@ -83,6 +87,7 @@ public class RehearsalActivity extends AppCompatActivity {
                         @NonNull
                         @Override
                         public Event parseSnapshot(@NonNull DataSnapshot snapshot) {
+
                             return new Event(
                                     snapshot.child("idEvent").getValue().toString(),
                                     snapshot.child("mEventType").getValue().toString(),
@@ -113,11 +118,16 @@ public class RehearsalActivity extends AppCompatActivity {
                     final String eventKey = getRef(position).getKey();
 
                     holder.eventTypeTV.setText(model.getmEventType());
+                    if(model.getmEventType().equals("Rehearsal")){
+                        holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.rehearsal));
+                    } else {
+                        holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.concert));
+                    }
                     holder.eventNameTV.setText(model.getmName());
                     holder.eventPlaceTV.setText(model.getmPlace());
                     holder.eventDateTV.setText(model.getmDate());
                     holder.eventTimeTV.setText(model.getmTime());
-                    holder.eventPlaylistTV.setText(model.getmPlaylistName());
+                    holder.eventPlaylistTV.setText(getString(R.string.playlist_name) + " " + model.getmPlaylistName());
 
                     holder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -143,6 +153,8 @@ public class RehearsalActivity extends AppCompatActivity {
     public class EventViewHolder extends RecyclerView.ViewHolder
     {
         View mView;
+        @BindView(R.id.all_events_cardView_CV)
+        CardView cardView;
         @BindView(R.id.all_events_type_TV)
         TextView eventTypeTV;
         @BindView(R.id.all_events_name_TV)

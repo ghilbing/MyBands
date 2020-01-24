@@ -10,6 +10,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="8dp"
+    android:background="@drawable/instrumentsvoice"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -37,6 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
         android:text="@string/textview"
         android:textSize="20sp" />
 
@@ -46,6 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:textColor="@color/white"
         android:layout_marginRight="10dp"
         android:text="@string/textview"
         android:textSize="18sp"
@@ -58,6 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
+        android:background="@color/white"
         android:layout_marginRight="10dp"
         android:justificationMode="inter_word" />
 

@@ -92,8 +92,6 @@ public class SongAdapter extends ArrayAdapter<Song> {
             @Override
             public void onClick(View view) {
                 addSongToPlaylist(song);
-                Toast.makeText(getContext().getApplicationContext(), songName, Toast.LENGTH_SHORT).show();
-
 
             }
         });

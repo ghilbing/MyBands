@@ -197,13 +197,14 @@ public class CreateEventActivity extends AppCompatActivity  {
                         playlistsList.add(newPlaylist);
                     }
 
-                    PlaylistsFragmentDialog dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
+                    final PlaylistsFragmentDialog dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
                     dialogFragment.setClickListener(new PlaylistClickListener() {
                         @Override
                         public void onPlaylistClick(String playlistId, String playlistName) {
                             playlistNameET.setText(playlistName);
                             playlistIdET.setText(playlistId);
-                            Toast.makeText(getApplicationContext(), playlistId, Toast.LENGTH_SHORT).show();
+                            dialogFragment.dismiss();
+                           // Toast.makeText(getApplicationContext(), playlistId, Toast.LENGTH_SHORT).show();
                         }
                     });
                     dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
@@ -324,23 +325,6 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         dateInMillis = calendarInMillis.getTimeInMillis();
         String date = DateFormat.format("dd/MM/yyyy hh:mm", dateInMillis).toString();
-        long todayInMillis = System.currentTimeMillis();
-
-        Log.d("CREATE  EVENT  TIME  IN MILLIS", String.valueOf(dateInMillis));
-        Log.d("DATE IN MILLIS INTO DATE", date);
-        Log.d("CREATE EVENT CURRENT TIMESTAMP", String.valueOf(todayInMillis));
-
-        String dateEvent = getDate(dateInMillis);
-        String today = getDate(todayInMillis);
-
-        Log.d("CREATEEVENTDATE", String.valueOf(dateInMillis));
-        Log.d("TODAY      DATE", String.valueOf(todayInMillis));
-
-
-
-        long difference = Math.abs(System.currentTimeMillis() - dateInMillis);
-        Log.d("DIFFERENCE BETWEEN TIMESTAMPS", String.valueOf(difference));
-
 
     }
 

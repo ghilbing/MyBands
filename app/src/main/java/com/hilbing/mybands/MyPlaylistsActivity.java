@@ -3,6 +3,7 @@ package com.hilbing.mybands;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -49,6 +50,9 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -72,6 +76,7 @@ public class MyPlaylistsActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference playlistReference;
+    private DatabaseReference playlistSongsReference;
     private DatabaseReference songsReference;
     private DatabaseReference usersReference;
 
@@ -109,6 +114,8 @@ public class MyPlaylistsActivity extends AppCompatActivity {
 
         playlistReference = FirebaseDatabase.getInstance().getReference().child("Playlists");
         playlistReference.keepSynced(true);
+        playlistSongsReference = FirebaseDatabase.getInstance().getReference().child("PlaylistsSongs");
+        playlistSongsReference.keepSynced(true);
         songsReference = FirebaseDatabase.getInstance().getReference().child("Songs");
         songsReference.keepSynced(true);
         usersReference = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -163,8 +170,19 @@ public class MyPlaylistsActivity extends AppCompatActivity {
             {
                 final String playlistKey = getRef(position).getKey();
                 final String pName = model.getmPlaylistName();
+                final String playlistId = model.getmId();
 
                 holder.playlistNameTV.setText(model.getmPlaylistName());
+
+                holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        showUpdateDialog(playlistId);
+                        return false;
+                    }
+                });
+
+
                 final String creator = model.getmCreator();
                 usersReference.child(creator).addValueEventListener(new ValueEventListener()
                 {
@@ -186,10 +204,12 @@ public class MyPlaylistsActivity extends AppCompatActivity {
                     }
                 });
 
+
+
                 holder.deletePlaylistIV.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        deletePlaylist(playlistKey);
+                        deletePlaylist(playlistId);
                     }
                 });
 
@@ -237,9 +257,8 @@ public class MyPlaylistsActivity extends AppCompatActivity {
 
                     //get data
 
-
                     int itemClicked = getAdapterPosition();
-                    //  showUpdateDialog(itemClicked, instrument);
+
                     return false;
                 }
             });
@@ -252,6 +271,60 @@ public class MyPlaylistsActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+    private void showUpdateDialog(final String playlistId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.update_playlist_name));
+        builder.setMessage(getResources().getString(R.string.please_enter_a_new_name_for_your_playlist));
+        final EditText input = new EditText(this);
+        builder.setView(input);
+        builder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final String playlistNewName = input.getText().toString();
+                if(TextUtils.isEmpty(playlistNewName)){
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.please_enter_a_playlist_name), Toast.LENGTH_LONG).show();
+                }
+                else {
+                    progressDialog.setTitle(getResources().getString(R.string.updating_playlist));
+                    progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_creating_your_new_playlist));
+                    progressDialog.show();
+                    progressDialog.setCanceledOnTouchOutside(true);
+
+                    if(!TextUtils.isEmpty(playlistId)) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("mPlaylistName", playlistNewName);
+                        map.put("mCreator", currentUserId);
+                        playlistReference.child(currentBandIdPref).child(playlistId).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    progressDialog.dismiss();
+                                } else {
+                                    String message = task.getException().getMessage();
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        });
+                    }
+
+                }
+            }
+        });
+
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+
     }
 
     private void createPlaylist() {
@@ -336,13 +409,29 @@ public class MyPlaylistsActivity extends AppCompatActivity {
     }
 
     private void deletePlaylist(String id) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Playlists").child(currentBandIdPref).child(id);
-        databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        playlistReference.child(currentBandIdPref).child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(MyPlaylistsActivity.this, getResources().getString(R.string.playlist_deleted), Toast.LENGTH_LONG).show();
+                if(task.isSuccessful()) {
+                    Toast.makeText(MyPlaylistsActivity.this, getResources().getString(R.string.playlist_deleted), Toast.LENGTH_LONG).show();
+                } else {
+                    String message = task.getException().getMessage();
+                    Toast.makeText(MyPlaylistsActivity.this, message, Toast.LENGTH_LONG).show();
+                }
             }
         });
+
+        playlistSongsReference.child(currentBandIdPref).child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+
+                }
+            }
+        });
+
+
 
     }
 

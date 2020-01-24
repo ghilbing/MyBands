@@ -99,7 +99,7 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
                 if(getClickListener() != null){
                     getClickListener().onPlaylistClick(playlist.getmId(), playlist.getmPlaylistName());
                 }
-                Toast.makeText(getContext().getApplicationContext(), playlistName, Toast.LENGTH_SHORT).show();
+
             }
         });
 

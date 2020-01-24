@@ -4,40 +4,26 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RemoteViews;
-import android.widget.RemoteViewsService;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,23 +40,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.hilbing.mybands.adapters.BandAlertAdapter;
 import com.hilbing.mybands.adapters.EventAdapter;
 import com.hilbing.mybands.adapters.ExpandableListAdapter;
 import com.hilbing.mybands.models.Band;
 import com.hilbing.mybands.models.Event;
-import com.hilbing.mybands.models.FindSong;
 import com.hilbing.mybands.models.MenuModel;
-import com.hilbing.mybands.models.MusiciansBands;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.lang.ref.Reference;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -178,7 +157,10 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-            showEvents();
+            if(!TextUtils.isEmpty(currentBandIdPref)) {
+                Log.d("CURRENT BAND ID PREF FROM MAIN ACTIVITY", currentBandIdPref);
+                showEvents();
+            }
         }
 
 
@@ -268,7 +250,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(!TextUtils.isEmpty(query.toString())) {
-            Log.d("QUERY TO STRING SHOW EVENTS INTO MAIN ACTIVITY", query.toString());
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
                     new SnapshotParser<Event>() {
@@ -305,11 +286,16 @@ public class MainActivity extends AppCompatActivity {
                     final String eventKey = getRef(position).getKey();
 
                     holder.eventTypeTV.setText(model.getmEventType());
+                    if(model.getmEventType().equals("Rehearsal")){
+                        holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.rehearsal));
+                    } else {
+                        holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.concert));
+                    }
                     holder.eventNameTV.setText(model.getmName());
                     holder.eventPlaceTV.setText(model.getmPlace());
                     holder.eventDateTV.setText(model.getmDate());
                     holder.eventTimeTV.setText(model.getmTime());
-                    holder.eventPlaylistTV.setText(model.getmPlaylistName());
+                    holder.eventPlaylistTV.setText(getString(R.string.playlist_name) + " " + model.getmPlaylistName());
 
                     holder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -335,6 +321,8 @@ public class MainActivity extends AppCompatActivity {
     public class EventViewHolder extends RecyclerView.ViewHolder
     {
         View mView;
+        @BindView(R.id.all_events_cardView_CV)
+        CardView cardView;
         @BindView(R.id.all_events_type_TV)
         TextView eventTypeTV;
         @BindView(R.id.all_events_name_TV)
@@ -440,12 +428,6 @@ public class MainActivity extends AppCompatActivity {
         menuModel = new MenuModel(getResources().getString(R.string.events), true, true);
         headerList.add(menuModel);
         childModel = new MenuModel(getResources().getString(R.string.create_event), false, false);
-        childModelList.add(childModel);
-        childModel = new MenuModel(getResources().getString(R.string.rehearsals), false, false);
-        childModelList.add(childModel);
-        childModel = new MenuModel(getResources().getString(R.string.concerts), false, false);
-        childModelList.add(childModel);
-        childModel = new MenuModel(getResources().getString(R.string.common_places), false, false);
         childModelList.add(childModel);
         if(menuModel.hasChildren)
         {

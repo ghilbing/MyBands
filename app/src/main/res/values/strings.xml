@@ -594,4 +594,10 @@
     <string name="no_widget_available">No widget available</string>
     <string name="facebook_sign_in">Facebook Sign In</string>
     <string name="please_wait_while_we_are_allowing_you_to_login_to_your_facebook_account">Please, wait while we are allowing you to login to your facebook account</string>
+    <string name="location">location</string>
+    <string name="playlist_name">Playlist Name:</string>
+    <string name="update_playlist">Update playlist</string>
+    <string name="update_playlist_name">Update Playlist Name</string>
+    <string name="please_enter_a_new_name_for_your_playlist">Please, enter a new name for your playlist</string>
+    <string name="updating_playlist">Updating playlist</string>
 </resources>

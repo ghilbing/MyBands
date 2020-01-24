@@ -135,6 +135,7 @@
             android:background="@drawable/inputs"
             android:padding="10dp"
             android:hint="@string/select_playlist"
+            android:visibility="invisible"
             android:layout_below="@+id/create_event_playlist_ET"/>
 
         <Button

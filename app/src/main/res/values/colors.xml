@@ -8,5 +8,7 @@
     <color name="recyclerChat">#DEC5A5</color>
     <color name="currentUserIdColor">#986464</color>
     <color name="dividerColor">#B0B0B0</color>
+    <color name="rehearsal">#F1F0E3</color>
+    <color name="concert">#ECB8B8</color>
 
 </resources>
