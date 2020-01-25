@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateEventActivity">
+
+    <include
+        android:id="@+id/update_event_toolbar"
+        layout="@layout/app_bar_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/update_event_toolbar">
+
+        <Spinner
+            android:id="@+id/update_event_event_type_SP"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:entries="@array/events_array"/>
+
+        <LinearLayout
+            android:id="@+id/update_event_LL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/update_event_event_type_SP"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/update_event_date_ET"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:enabled="false"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/inputs"
+                    android:padding="10dp"
+                    android:hint="@string/enter_event_date" />
+                <ImageView
+                    android:id="@+id/update_event_date_picker_IV"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/select_date"
+                    android:src="@drawable/ic_date"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/update_event_time_ET"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:enabled="false"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/inputs"
+                    android:padding="10dp"
+                    android:hint="@string/enter_event_time" />
+                <ImageView
+                    android:id="@+id/update_event_time_picker_IV"
+                    android:contentDescription="@string/select_time"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_time"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/update_event_name_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/enter_a_name_for_your_event"
+            android:layout_below="@+id/update_event_LL"
+            android:background="@drawable/inputs"
+            android:padding="10dp"/>
+
+        <EditText
+            android:id="@+id/update_event_place_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/enter_a_place"
+            android:layout_below="@+id/update_event_name_ET"
+            android:background="@drawable/inputs"
+            android:padding="10dp"/>
+
+        <Button
+            android:id="@+id/update_event_select_playlist_BT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttons"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:text="@string/select_playlist"
+            android:layout_below="@+id/update_event_place_ET"/>
+
+        <EditText
+            android:id="@+id/update_event_playlist_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/inputs"
+            android:padding="10dp"
+            android:hint="@string/select_playlist"
+            android:layout_below="@+id/update_event_select_playlist_BT"/>
+
+        <EditText
+            android:id="@+id/update_event_playlist_id_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/inputs"
+            android:padding="10dp"
+            android:hint="@string/select_playlist"
+            android:visibility="invisible"
+            android:layout_below="@+id/update_event_playlist_ET"/>
+
+        <Button
+            android:id="@+id/update_event_create_BT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update_event"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="visible"
+            android:background="@drawable/buttons"
+            android:layout_below="@id/update_event_playlist_id_ET"/>
+
+
+
+    </RelativeLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

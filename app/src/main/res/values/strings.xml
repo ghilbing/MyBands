@@ -610,4 +610,12 @@
     <string name="you_do_not_belong_to_the_band_any_more">You do not belong to the band any more</string>
     <string name="updating_band">Updating band</string>
     <string name="please_wait_while_we_are_updating_your_band">Please, wait while we are updating your band</string>
+    <string name="your_band_is_updated_succesfully">updated</string>
+    <string name="update_event">Update event</string>
+    <string name="updating_event">Updating event</string>
+    <string name="please_wait_while_we_are_updating_your_event">Please, wait while we are updating your event</string>
+    <string name="your_event_is_updated_succesfully">Your event is updated successfully</string>
+    <string name="please_update_time_too">Please, update time too!</string>
+    <string name="please_update_date_too">Please, update date too!</string>
+    <string name="event_deleted_successfully">Event deleted successfully</string>
 </resources>

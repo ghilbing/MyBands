@@ -62,8 +62,6 @@ public class BandUpdateActivity extends AppCompatActivity {
     CheckBox availableCB;
     @BindView(R.id.update_band_story_ET)
     EditText bandStoryET;
-    @BindView(R.id.update_country_TV)
-    TextView countryTV;
     @BindView(R.id.update_band_country_SP)
     Spinner countrySP;
     @BindView(R.id.update_band_save_BT)
@@ -85,6 +83,7 @@ public class BandUpdateActivity extends AppCompatActivity {
     private String story;
     private String country;
     private boolean available;
+    private String bandProfileImage;
 
 
     @Override
@@ -137,11 +136,11 @@ public class BandUpdateActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        final String bandProfileImage = dataSnapshot.child("mBandImage").getValue().toString();
-                        boolean mAvailable = (boolean) dataSnapshot.child("mAvailable").getValue();
-                        String bandName = dataSnapshot.child("mBandName").getValue().toString();
-                        String bandStory = dataSnapshot.child("mBandStory").getValue().toString();
-                        String bandCountry = dataSnapshot.child("mCountry").getValue().toString();
+                        bandProfileImage = dataSnapshot.child("mBandImage").getValue().toString();
+                        available = (boolean) dataSnapshot.child("mAvailable").getValue();
+                        bandName = dataSnapshot.child("mBandName").getValue().toString();
+                        story = dataSnapshot.child("mBandStory").getValue().toString();
+                        country = dataSnapshot.child("mCountry").getValue().toString();
 
                         Picasso.get().load(bandProfileImage).networkPolicy(NetworkPolicy.OFFLINE).into(imageCIV, new Callback() {
                             @Override
@@ -155,10 +154,10 @@ public class BandUpdateActivity extends AppCompatActivity {
                             }
                         });
 
-                        availableCB.setChecked(mAvailable);
+                        availableCB.setChecked(available);
                         bandNameET.setText(bandName);
-                        bandStoryET.setText(bandStory);
-                        countryTV.setText(bandCountry);
+                        bandStoryET.setText(story);
+                        countrySP.setSelection(getIndexSpinner(countrySP, country));
                     }
                 }
 
@@ -169,17 +168,6 @@ public class BandUpdateActivity extends AppCompatActivity {
             });
         }
 
-        countrySP.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                countryTV.setText(countrySP.getSelectedItem().toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
 
         imageCIV.setOnClickListener(new View.OnClickListener() {
@@ -245,7 +233,12 @@ public class BandUpdateActivity extends AppCompatActivity {
 
             HashMap bandMap = new HashMap();
             bandMap.put("mBandId", currentBandId);
-            bandMap.put("mBandImage", downloadUri);
+            if(!TextUtils.isEmpty(downloadUri)){
+                bandMap.put("mBandImage", downloadUri);
+            }
+            else {
+                bandMap.put("mBandImage", bandProfileImage);
+            }
             bandMap.put("mBandCreator", currentUserId);
             bandMap.put("mBandName", bandName);
             bandMap.put("mBandStory", story);
@@ -256,12 +249,14 @@ public class BandUpdateActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         //  sendUserToMainActivity();
-                        Toast.makeText(BandUpdateActivity.this, getResources().getString(R.string.your_band_is_created_succesfully), Toast.LENGTH_LONG).show();
+                        Toast.makeText(BandUpdateActivity.this, getResources().getString(R.string.your_band_is_updated_succesfully), Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
+                        sendUserToMyBandsActivity();
                     } else {
                         String message = task.getException().getMessage();
                         Toast.makeText(BandUpdateActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
+                        sendUserToMyBandsActivity();
                     }
                 }
             });
@@ -306,37 +301,37 @@ public class BandUpdateActivity extends AppCompatActivity {
                 uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        currentBandId = currentUserId + bandRandomId;
+                        currentBandId = currentUserId;
                         taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
                                 downloadUri = uri.toString();
+                                progressDialog.dismiss();
+                                if(!TextUtils.isEmpty(downloadUri)){
+                                    HashMap bandMap = new HashMap();
+                                    bandMap.put("mBandImage", downloadUri);
+                                    bandsReference.updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
+                                        @Override
+                                        public void onComplete(@NonNull Task task) {
+                                            Picasso.get().load(downloadUri).networkPolicy(NetworkPolicy.OFFLINE).into(imageCIV, new Callback() {
+                                                @Override
+                                                public void onSuccess() {
+
+                                                }
+
+                                                @Override
+                                                public void onError(Exception e) {
+                                                    Picasso.get().load(downloadUri).placeholder(R.drawable.profile).into(imageCIV);
+                                                }
+                                            });
+                                        }
+                                    });
+
+
+                                }
                             }
                         });
 
-                       // currentBandId = currentUserId + bandRandomId;
-                 /*       taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                downloadUri = uri.toString();
-                                HashMap bandImage = new HashMap();
-                                bandImage.put("mBandImage", downloadUri);
-                                bandsReference.child(currentBandId).updateChildren(bandImage).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            sendUserToBandUpdateActivity(currentBandId);
-                                            progressDialog.dismiss();
-                                            Toast.makeText(BandUpdateActivity.this, getResources().getString(R.string.image_stored_in_database_successfully), Toast.LENGTH_LONG).show();
-                                        } else {
-                                            progressDialog.dismiss();
-                                            String message = task.getException().getMessage();
-                                            Toast.makeText(BandUpdateActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
-                            }
-                        });*/
                     }
                 });
 
@@ -378,15 +373,12 @@ public class BandUpdateActivity extends AppCompatActivity {
 
     }
 
-
-    private void sendUserToBandUpdateActivity(String currentBandId) {
-        Intent selfIntent = new Intent(BandUpdateActivity.this, BandUpdateActivity.class);
-        selfIntent.putExtra("currentBandId", currentBandId);
-        selfIntent.putExtra("from", "selfIntent");
-        selfIntent.putExtra("uri", downloadUri);
-        selfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(selfIntent);
+    private void sendUserToMyBandsActivity() {
+        Intent mainIntent = new Intent(BandUpdateActivity.this, MyBandsActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
         finish();
+
     }
 
 

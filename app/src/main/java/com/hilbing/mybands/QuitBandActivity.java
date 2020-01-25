@@ -102,6 +102,8 @@ public class QuitBandActivity extends AppCompatActivity {
                             if(task.isSuccessful())
                             {
                                 Toast.makeText(QuitBandActivity.this, getResources().getString(R.string.you_do_not_belong_to_the_band_any_more), Toast.LENGTH_LONG).show();
+                                SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+                                preferences.edit().clear().commit();
                                 sendUserToMainActivity();
                             }
                         }

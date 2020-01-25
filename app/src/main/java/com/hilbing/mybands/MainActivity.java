@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,8 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -249,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
         Query query = allEventsReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis());
 
 
+
         if(!TextUtils.isEmpty(query.toString())) {
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
@@ -267,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
                                     snapshot.child("idPlaylist").getValue().toString(),
                                     snapshot.child("mCurrentUser").getValue().toString(),
                                     (Long) snapshot.child("mTimestamp").getValue());
+
 
                         }
                     }).build();
@@ -297,11 +303,26 @@ public class MainActivity extends AppCompatActivity {
                     holder.eventTimeTV.setText(getResources().getString(R.string.time) + ": " +model.getmTime());
                     holder.eventPlaylistTV.setText(getString(R.string.playlist_name) + " " + model.getmPlaylistName());
 
-                    holder.mView.setOnClickListener(new View.OnClickListener() {
+                    String user = model.getmCurrentUser();
+                    if(!user.equals(currentUserID)){
+                        holder.editionLL.setVisibility(View.INVISIBLE);
+                    } else {
+                        holder.editionLL.setVisibility(View.VISIBLE);
+                    }
+
+
+                    holder.editIV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //   sendUserToPersonActivity(songKey);
-                            //  Toast.makeText(FindMusicianActivity.this, musicianKey, Toast.LENGTH_LONG).show();
+                               sendUserToUpdateEvent(eventKey);
+                        }
+                    });
+
+
+                    holder.deleteIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteEvent(eventKey);
                         }
                     });
                 }
@@ -315,6 +336,34 @@ public class MainActivity extends AppCompatActivity {
             {
             Toast.makeText(this, getString(R.string.no_data_available), Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void deleteEvent(String eventKey) {
+
+        allEventsReference.child(currentBandIdPref).child(eventKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.event_deleted_successfully), Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    String message = task.getException().getMessage();
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+    }
+
+    private void sendUserToUpdateEvent(String eventKey) {
+
+        Intent updateEventIntent = new Intent(MainActivity.this, UpdateEventActivity.class);
+        updateEventIntent.putExtra("eventKey", eventKey);
+        startActivity(updateEventIntent);
+
 
     }
 
@@ -335,6 +384,13 @@ public class MainActivity extends AppCompatActivity {
         TextView eventTimeTV;
         @BindView(R.id.all_events_playlist_TV)
         TextView eventPlaylistTV;
+        @BindView(R.id.all_events_edit_IV)
+        ImageView editIV;
+        @BindView(R.id.all_events_delete_IV)
+        ImageView deleteIV;
+        @BindView(R.id.all_events_edition)
+        LinearLayout editionLL;
+
 
         public EventViewHolder(@NonNull final View itemView)
         {
@@ -843,14 +899,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void sendUserToMainActivity() {
-        Intent mainActivityIntent = new Intent(MainActivity.this, MainActivity.class);
-        mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        mainActivityIntent.putExtra("currentBandId", currentBandId);
-        startActivity(mainActivityIntent);
-        finish();
-
-    }
 
     private void checkIfUserExists()
     {

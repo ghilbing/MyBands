@@ -100,7 +100,7 @@ public class EventAppWidgetProvider extends AppWidgetProvider {
 
             appWidgetManager.updateAppWidget(appWidgetIds[appWidgetId], rv);
             ComponentName w  = new ComponentName(context, EventAppWidgetProvider.class);
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(w), R.id.widget_listView_LV);
+           // appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(w), R.id.widget_listView_LV);
 
 
         }

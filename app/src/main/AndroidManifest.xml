@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BandUpdateActivity"></activity>
+        <activity android:name=".UpdateEventActivity"></activity>
+        <activity android:name=".BandUpdateActivity" />
 
         <receiver
             android:name=".widget.EventAppWidgetProvider"

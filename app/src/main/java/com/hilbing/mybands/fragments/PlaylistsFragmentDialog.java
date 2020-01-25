@@ -55,6 +55,9 @@ public class PlaylistsFragmentDialog extends DialogFragment {
     private String currentPlaylistId;
     private Context context;
 
+    private boolean isStateAlreadySaved = false;
+    private boolean pendingShowDialog = false;
+
     private PlaylistClickListener clickListener;
 
     public PlaylistClickListener getClickListener() {
@@ -132,5 +135,6 @@ public class PlaylistsFragmentDialog extends DialogFragment {
         fragmentDialog.setArguments(args);
         return fragmentDialog;
     }
+
 
 }

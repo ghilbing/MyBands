@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -30,6 +31,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -84,8 +86,10 @@ public class CreateEventActivity extends AppCompatActivity  {
     private String currentBandIdPref;
     private String currentUserId;
     private List<Playlist> playlistsList = new ArrayList<>();
+    private boolean savedInstanceStateDone;
 
     private PlaylistClickListener clickListener;
+
 
     public PlaylistClickListener getClickListener() {
         return clickListener;
@@ -163,7 +167,9 @@ public class CreateEventActivity extends AppCompatActivity  {
         selectPlaylistBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPlaylists();
+                if(!savedInstanceStateDone) {
+                    showPlaylists();
+                }
             }
         });
 
@@ -178,6 +184,9 @@ public class CreateEventActivity extends AppCompatActivity  {
         });
 
     }
+
+
+
 
     private void showPlaylists() {
 
@@ -197,19 +206,22 @@ public class CreateEventActivity extends AppCompatActivity  {
                         playlistsList.add(newPlaylist);
                     }
 
-                    final PlaylistsFragmentDialog dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
-                    dialogFragment.setClickListener(new PlaylistClickListener() {
-                        @Override
-                        public void onPlaylistClick(String playlistId, String playlistName) {
-                            playlistNameET.setText(playlistName);
-                            playlistIdET.setText(playlistId);
-                            dialogFragment.dismiss();
-                           // Toast.makeText(getApplicationContext(), playlistId, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
 
-                }
+
+                        final PlaylistsFragmentDialog dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
+                        dialogFragment.setClickListener(new PlaylistClickListener() {
+                            @Override
+                            public void onPlaylistClick(String playlistId, String playlistName) {
+                                playlistNameET.setText(playlistName);
+                                playlistIdET.setText(playlistId);
+                                dialogFragment.dismiss();
+                                // Toast.makeText(getApplicationContext(), playlistId, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
+                    }
+
+
             }
 
             @Override
@@ -296,7 +308,7 @@ public class CreateEventActivity extends AppCompatActivity  {
                 year = yearDP;
                 month = monthDP;
                 dayOfMonth = dayOfMonthDP;
-                dateEventET.setText(dayOfMonth + "/" + (month+1) + "/" + year);
+                dateEventET.setText((month+1) + "/" + dayOfMonth + "/" + year);
             }
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
@@ -333,6 +345,7 @@ public class CreateEventActivity extends AppCompatActivity  {
     @Override
     protected void onStart() {
         super.onStart();
+        savedInstanceStateDone = false;
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
         if(TextUtils.isEmpty(currentBandIdPref)){
@@ -371,6 +384,12 @@ public class CreateEventActivity extends AppCompatActivity  {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        savedInstanceStateDone = true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
 
@@ -392,4 +411,11 @@ public class CreateEventActivity extends AppCompatActivity  {
         finish();
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        savedInstanceStateDone = false;
+    }
+
 }
