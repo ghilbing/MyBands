@@ -618,4 +618,5 @@
     <string name="please_update_time_too">Please, update time too!</string>
     <string name="please_update_date_too">Please, update date too!</string>
     <string name="event_deleted_successfully">Event deleted successfully</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

@@ -31,6 +31,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hilbing.mybands.fragments.MapFragment;
 import com.hilbing.mybands.fragments.PlaylistsFragmentDialog;
 import com.hilbing.mybands.fragments.SongsFragmentDialog;
 import com.hilbing.mybands.interfaces.PlaylistClickListener;
@@ -82,6 +84,8 @@ public class CreateEventActivity extends AppCompatActivity  {
     EditText playlistIdET;
     @BindView(R.id.create_event_create_BT)
     Button createEventBT;
+    @BindView(R.id.google_maps_IV)
+    ImageView googleMapsIV;
 
     private String currentBandIdPref;
     private String currentUserId;
@@ -89,6 +93,9 @@ public class CreateEventActivity extends AppCompatActivity  {
     private boolean savedInstanceStateDone;
 
     private PlaylistClickListener clickListener;
+
+    private FragmentManager fragmentManager = getSupportFragmentManager();
+    private MapFragment mapFragmentDialog = new MapFragment();
 
 
     public PlaylistClickListener getClickListener() {
@@ -174,12 +181,18 @@ public class CreateEventActivity extends AppCompatActivity  {
         });
 
 
-
-
         createEventBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createEvent();
+            }
+        });
+
+        googleMapsIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialogFragment = MapFragment.newInstance();
+                dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
             }
         });
 
