@@ -7,11 +7,13 @@ import androidx.cardview.widget.CardView;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.text.Editable;
@@ -47,6 +49,11 @@ import com.hilbing.mybands.interfaces.PlaylistClickListener;
 import com.hilbing.mybands.models.Event;
 import com.hilbing.mybands.models.Playlist;
 import com.hilbing.mybands.models.Song;
+import com.hilbing.mybands.utils.HttpDataHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -91,6 +98,9 @@ public class CreateEventActivity extends AppCompatActivity  {
     private String currentUserId;
     private List<Playlist> playlistsList = new ArrayList<>();
     private boolean savedInstanceStateDone;
+    private ProgressDialog progressDialog;
+    private double lat;
+    private double lng;
 
     private PlaylistClickListener clickListener;
 
@@ -136,6 +146,8 @@ public class CreateEventActivity extends AppCompatActivity  {
         eventsReference.keepSynced(true);
         playlistsReference = FirebaseDatabase.getInstance().getReference().child("Playlists");
         playlistsReference.keepSynced(true);
+
+        progressDialog = new ProgressDialog(this);
 
 
         datePickerIV.setOnClickListener(new View.OnClickListener() {
@@ -191,11 +203,69 @@ public class CreateEventActivity extends AppCompatActivity  {
         googleMapsIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment dialogFragment = MapFragment.newInstance();
-                dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
+                String place = placeEventET.getText().toString();
+                if (!TextUtils.isEmpty(place)) {
+
+                    new ShowMap().execute(place);
+                    // DialogFragment dialogFragment = MapFragment.newInstance();
+                    // dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
+                }
             }
         });
 
+    }
+
+    private class ShowMap extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage(getResources().getString(R.string.please_wait));
+            progressDialog.setCanceledOnTouchOutside(false);
+           // progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String response;
+            try{
+                String address = strings[0];
+                HttpDataHandler httpDataHandler = new HttpDataHandler();
+                String url = String.format(getResources().getString(R.string.maps_googleapis), address);
+                response = httpDataHandler.getHTTPData(url);
+                return response;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+           return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try{
+                JSONObject jsonObject = new JSONObject(s);
+                String latitude = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lat").toString();
+                String longitude = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lng").toString();
+                Log.d("GEOLOCATION . . . . . . . . . ", latitude + " " + longitude);
+
+                lat = Double.valueOf(latitude);
+                lng = Double.valueOf(longitude);
+                Toast.makeText(CreateEventActivity.this, latitude + " " + longitude, Toast.LENGTH_LONG).show();
+
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
