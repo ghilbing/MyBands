@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             if(!savedInstanceStateDone) {
-                                showMapEvent(model.getmLat(), model.getmLng());
+                              //  showMapEvent(model.getmLat(), model.getmLng());
                             }
                         }
                     });
