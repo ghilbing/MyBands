@@ -318,7 +318,7 @@ public class AddBandActivity extends AppCompatActivity {
             bandMap.put("mBandStory", story);
             bandMap.put("mAvailable", available);
             bandMap.put("mCountry", country);
-            bandDataReference.child(currentBandId).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
+            bandDataReference.child(uriString).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
