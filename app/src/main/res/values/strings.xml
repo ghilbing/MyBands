@@ -83,6 +83,8 @@
     <string name="search">Search...</string>
     <string name="select_musician">Select musician...</string>
 
+    <string name="enter_address_city_or_zip_code">Enter Address, City or Zip Code</string>
+
     <string name="youtube_api_key">AIzaSyAblCydvFwrbq-w7XnBLxuNoSkr0jU8FaU</string>
     <string name="player_error">Error initializing YouTube player: %s</string>
     <string name="seek_to">Jump To</string>
@@ -621,4 +623,5 @@
     <string name="title_activity_maps">Map</string>
     <string name="please_wait">Please, wait ...</string>
     <string name="maps_googleapis">https://maps.googleapis.com/maps/api/geocode/json?address=%s</string>
+    <string name="please_select_a_place">Please, select a place</string>
 </resources>

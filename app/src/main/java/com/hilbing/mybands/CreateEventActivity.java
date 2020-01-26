@@ -3,10 +3,9 @@ package com.hilbing.mybands;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -15,12 +14,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,23 +29,21 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hilbing.mybands.fragments.MapFragment;
+import com.hilbing.mybands.fragments.EventMapFragment;
 import com.hilbing.mybands.fragments.PlaylistsFragmentDialog;
-import com.hilbing.mybands.fragments.SongsFragmentDialog;
 import com.hilbing.mybands.interfaces.PlaylistClickListener;
 import com.hilbing.mybands.models.Event;
 import com.hilbing.mybands.models.Playlist;
-import com.hilbing.mybands.models.Song;
 import com.hilbing.mybands.utils.HttpDataHandler;
 
 import org.json.JSONArray;
@@ -57,7 +52,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -66,6 +60,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CreateEventActivity extends AppCompatActivity  {
+    public static final String TAG = CreateEventActivity.class.getCanonicalName();
 
     @BindView(R.id.create_event_toolbar)
     Toolbar toolbar;
@@ -105,7 +100,8 @@ public class CreateEventActivity extends AppCompatActivity  {
     private PlaylistClickListener clickListener;
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
-    private MapFragment mapFragmentDialog = new MapFragment();
+    private EventMapFragment eventMapFragmentDialog = new EventMapFragment();
+    private static final int ERROR_DIALOG_REQUEST = 9001;
 
 
     public PlaylistClickListener getClickListener() {
@@ -118,6 +114,9 @@ public class CreateEventActivity extends AppCompatActivity  {
 
     private int mYear, mMonth, mDay, mHour, mMin, year, month, dayOfMonth, hourOfDay, min;
     private long dateInMillis, timeInMillis;
+    private String addressLine;
+    private double addressLat;
+    private double addressLng;
 
     private FirebaseAuth mAuth;
     private DatabaseReference eventsReference;
@@ -137,6 +136,15 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
+
+        Intent googleMaps = getIntent();
+        if(!TextUtils.isEmpty(googleMaps.getExtras().toString())){
+            addressLine = googleMaps.getExtras().getString("addressLine");
+            addressLat = googleMaps.getDoubleExtra("addressLat",0.0);
+            addressLng = googleMaps.getDoubleExtra("addressLng", 0.0);
+            playlistIdET.setText(addressLine);
+            Log.i(TAG, googleMaps.getExtras().toString());
+        }
 
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
@@ -200,18 +208,52 @@ public class CreateEventActivity extends AppCompatActivity  {
             }
         });
 
+
+
+        //Google maps
+
+
+
+
         googleMapsIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String place = placeEventET.getText().toString();
+             //   if(isServiceOK()){
+                    init();
+              //  }
+
+                /*String place = placeEventET.getText().toString();
                 if (!TextUtils.isEmpty(place)) {
 
                     new ShowMap().execute(place);
-                    // DialogFragment dialogFragment = MapFragment.newInstance();
+                    // DialogFragment dialogFragment = EventMapFragment.newInstance();
                     // dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
-                }
+                }*/
             }
         });
+
+    }
+
+    private void init(){
+        Intent intent = new Intent(CreateEventActivity.this, MapActivity.class);
+        startActivity(intent);
+    }
+
+    public boolean isServiceOK(){
+        Log.d("", "isServiceOK: checking google services version");
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(CreateEventActivity.this);
+        if(available == ConnectionResult.SUCCESS){
+            //
+            Log.d("", "isServicesOK: Google Play Services is Working");
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            Log.d("", "isServiceOk: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(CreateEventActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        } else {
+            Toast.makeText(this, "We can't make map request", Toast.LENGTH_LONG).show();
+        }
+        return false;
+
 
     }
 
@@ -435,7 +477,8 @@ public class CreateEventActivity extends AppCompatActivity  {
             Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.you_need_to_belong_to_a_band), Toast.LENGTH_LONG).show();
             sendUserToMainActivity();
         } else {
-            showAlertDialog();
+
+          //  showAlertDialog();
         }
 
     }

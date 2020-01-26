@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hilbing.mybands.R;
-import com.hilbing.mybands.models.Song;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,7 +28,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends DialogFragment implements OnMapReadyCallback {
+public class EventMapFragment extends DialogFragment implements OnMapReadyCallback {
 
     SupportMapFragment mapFragment;
     GoogleMap mMap;
@@ -41,12 +36,12 @@ public class MapFragment extends DialogFragment implements OnMapReadyCallback {
     @BindView(R.id.map)
     FrameLayout map;
 
-    public MapFragment() {
+    public EventMapFragment() {
         // Required empty public constructor
     }
 
-    public static MapFragment newInstance(){
-        MapFragment fragmentDialog = new MapFragment();
+    public static EventMapFragment newInstance(){
+        EventMapFragment fragmentDialog = new EventMapFragment();
         Bundle args = new Bundle();
        // args.putParcelableArrayList("list", (ArrayList<Song>) songs);
        // args.putString("currentBandId", currentBandID);
