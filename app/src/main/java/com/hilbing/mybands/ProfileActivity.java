@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -114,6 +116,9 @@ public class ProfileActivity extends AppCompatActivity
                     phoneTV.setText(userPhone);
                     countryTV.setText(userCountry);
                     statusTV.setText(userStatus);
+                } else {
+                    Toast.makeText(ProfileActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+                    sendUserToMainActivity();
                 }
             }
 
@@ -173,7 +178,7 @@ public class ProfileActivity extends AppCompatActivity
         Intent mainIntent = new Intent(ProfileActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
+
 
     }
 
@@ -181,6 +186,6 @@ public class ProfileActivity extends AppCompatActivity
         Intent myBandsIntent = new Intent(ProfileActivity.this, MyBandsActivity.class);
         myBandsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(myBandsIntent);
-        finish();
+
     }
 }

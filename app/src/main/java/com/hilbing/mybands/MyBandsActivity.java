@@ -95,12 +95,10 @@ public class MyBandsActivity extends AppCompatActivity {
         Query query = FirebaseDatabase.getInstance().getReference().child("BandsMusicians").child(currentUserId);
 
         FirebaseRecyclerOptions<UsersBands> options = new FirebaseRecyclerOptions.Builder<UsersBands>().setQuery(query,
-                new SnapshotParser<UsersBands>()
-                {
+                new SnapshotParser<UsersBands>() {
                     @NonNull
                     @Override
-                    public UsersBands parseSnapshot(@NonNull DataSnapshot snapshot)
-                    {
+                    public UsersBands parseSnapshot(@NonNull DataSnapshot snapshot) {
                         return new UsersBands(
                                 snapshot.child("date").getValue().toString());
 
@@ -108,31 +106,25 @@ public class MyBandsActivity extends AppCompatActivity {
                 }).build();
 
 
-        recyclerAdapter = new FirebaseRecyclerAdapter<UsersBands, MyBandsViewHolder>(options)
-        {
+        recyclerAdapter = new FirebaseRecyclerAdapter<UsersBands, MyBandsViewHolder>(options) {
 
             @NonNull
             @Override
-            public MyBandsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-            {
+            public MyBandsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_bands_per_musician, parent, false);
                 return new MyBandsViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final MyBandsViewHolder holder, int position, @NonNull final UsersBands model)
-            {
+            protected void onBindViewHolder(@NonNull final MyBandsViewHolder holder, int position, @NonNull final UsersBands model) {
 
 
                 holder.bandId = getRef(position).getKey();
                 holder.dateTV.setText(model.getmDate());
-                bandsRef.child(holder.bandId).addValueEventListener(new ValueEventListener()
-                {
+                bandsRef.child(holder.bandId).addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                    {
-                        if(dataSnapshot.exists())
-                        {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
                             final String bandName = String.valueOf(dataSnapshot.child("mBandName").getValue());
                             final String bandImage = String.valueOf(dataSnapshot.child("mBandImage").getValue());
 
@@ -151,11 +143,14 @@ public class MyBandsActivity extends AppCompatActivity {
 
 
                         }
+                        else {
+                            Toast.makeText(MyBandsActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+                            sendUserToMainActivity();
+                        }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError)
-                    {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
@@ -169,8 +164,7 @@ public class MyBandsActivity extends AppCompatActivity {
 
     }
 
-    public class MyBandsViewHolder extends RecyclerView.ViewHolder
-    {
+    public class MyBandsViewHolder extends RecyclerView.ViewHolder {
         View mView;
         @BindView(R.id.all_bands_per_musician_name_TV)
         TextView bandNameTV;
@@ -180,8 +174,7 @@ public class MyBandsActivity extends AppCompatActivity {
         TextView dateTV;
         String bandId;
 
-        public MyBandsViewHolder(@NonNull final View itemView)
-        {
+        public MyBandsViewHolder(@NonNull final View itemView) {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
@@ -195,13 +188,16 @@ public class MyBandsActivity extends AppCompatActivity {
                     bandsRef.child(bandId).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists()){
+                            if (dataSnapshot.exists()) {
                                 String creator = dataSnapshot.child("mBandCreator").getValue().toString();
-                                if(currentUserId.equals(creator)){
+                                if (currentUserId.equals(creator)) {
                                     sendUserToBandUpdate(bandId);
                                 } else {
                                     Toast.makeText(MyBandsActivity.this, getResources().getString(R.string.you_are_not_allowed_to_modify_this_band), Toast.LENGTH_LONG).show();
                                 }
+                            } else {
+                                Toast.makeText(MyBandsActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+                                sendUserToMainActivity();
                             }
                         }
 
@@ -239,26 +235,22 @@ public class MyBandsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(MyBandsActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mainIntent.putExtra("currentBandId", currentBandId);
         startActivity(mainIntent);
-        finish();
 
     }
 }

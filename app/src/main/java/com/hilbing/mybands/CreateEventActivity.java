@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
@@ -59,7 +60,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CreateEventActivity extends AppCompatActivity  {
+public class CreateEventActivity extends AppCompatActivity {
     public static final String TAG = CreateEventActivity.class.getCanonicalName();
 
     @BindView(R.id.create_event_toolbar)
@@ -108,7 +109,7 @@ public class CreateEventActivity extends AppCompatActivity  {
         return clickListener;
     }
 
-    public void setClickListener(PlaylistClickListener clickListener){
+    public void setClickListener(PlaylistClickListener clickListener) {
         this.clickListener = clickListener;
     }
 
@@ -139,14 +140,14 @@ public class CreateEventActivity extends AppCompatActivity  {
         currentUserId = mAuth.getCurrentUser().getUid();
 
         Intent googleMaps = getIntent();
-        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+        if (!TextUtils.isEmpty(String.valueOf(addressLine))) {
             addressLine = googleMaps.getStringExtra("addressLine");
             addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
             addressLng = googleMaps.getDoubleExtra("longitude", 0.0);
             placeEventET.setText(addressLine);
             Log.i("VALUES RECEIVED FROM THE INTENT", addressLat + " " + addressLng + " " + addressLine);
         } else {
-            Toast.makeText(CreateEventActivity.this, "Empty", Toast.LENGTH_LONG).show();
+            //  Toast.makeText(CreateEventActivity.this, "Empty", Toast.LENGTH_LONG).show();
         }
 
 
@@ -197,7 +198,7 @@ public class CreateEventActivity extends AppCompatActivity  {
         selectPlaylistBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!savedInstanceStateDone) {
+                if (!savedInstanceStateDone) {
                     showPlaylists();
                 }
             }
@@ -212,21 +213,20 @@ public class CreateEventActivity extends AppCompatActivity  {
         });
 
 
-
         //Google maps
 
         googleMapsIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                    init();
+                init();
 
             }
         });
 
     }
 
-    private void init(){
+    private void init() {
         Intent intent = new Intent(CreateEventActivity.this, MapActivity.class);
         intent.putExtra("FROM", "CREATE_ACTIVITY");
         startActivity(intent);
@@ -237,63 +237,6 @@ public class CreateEventActivity extends AppCompatActivity  {
         super.onNewIntent(intent);
         setIntent(intent);
     }
-
-
-  /*  private class ShowMap extends AsyncTask<String, Void, String>{
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.setMessage(getResources().getString(R.string.please_wait));
-            progressDialog.setCanceledOnTouchOutside(false);
-           // progressDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String response;
-            try{
-                String address = strings[0];
-                HttpDataHandler httpDataHandler = new HttpDataHandler();
-                String url = String.format(getResources().getString(R.string.maps_googleapis), address);
-                response = httpDataHandler.getHTTPData(url);
-                return response;
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-           return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            try{
-                JSONObject jsonObject = new JSONObject(s);
-                String latitude = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
-                        .getJSONObject("location").get("lat").toString();
-                String longitude = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
-                        .getJSONObject("location").get("lng").toString();
-                Log.d("GEOLOCATION . . . . . . . . . ", latitude + " " + longitude);
-
-                lat = Double.valueOf(latitude);
-                lng = Double.valueOf(longitude);
-                Toast.makeText(CreateEventActivity.this, latitude + " " + longitude, Toast.LENGTH_LONG).show();
-
-                if(progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
-
-
 
     private void showPlaylists() {
 
@@ -314,19 +257,18 @@ public class CreateEventActivity extends AppCompatActivity  {
                     }
 
 
-
-                        final PlaylistsFragmentDialog dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
-                        dialogFragment.setClickListener(new PlaylistClickListener() {
-                            @Override
-                            public void onPlaylistClick(String playlistId, String playlistName) {
-                                playlistNameET.setText(playlistName);
-                                playlistIdET.setText(playlistId);
-                                dialogFragment.dismiss();
-                                // Toast.makeText(getApplicationContext(), playlistId, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
-                    } else {
+                    final PlaylistsFragmentDialog dialogFragment = PlaylistsFragmentDialog.newInstance(playlistsList, currentBandIdPref);
+                    dialogFragment.setClickListener(new PlaylistClickListener() {
+                        @Override
+                        public void onPlaylistClick(String playlistId, String playlistName) {
+                            playlistNameET.setText(playlistName);
+                            playlistIdET.setText(playlistId);
+                            dialogFragment.dismiss();
+                            // Toast.makeText(getApplicationContext(), playlistId, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
+                } else {
                     Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.you_need_to_add_playlists), Toast.LENGTH_LONG).show();
                     sendUserToMyPlaylistActivity();
                 }
@@ -364,12 +306,12 @@ public class CreateEventActivity extends AppCompatActivity  {
         double lng = addressLng;
 
 
-        if(TextUtils.isEmpty(date)){
+        if (TextUtils.isEmpty(date)) {
             dateEventET.setError(getResources().getString(R.string.enter_event_date));
             datePickerIV.requestFocus();
         }
 
-        if(TextUtils.isEmpty(time)){
+        if (TextUtils.isEmpty(time)) {
             timeEventET.setError(getResources().getString(R.string.enter_event_time));
             timePickerIV.requestFocus();
 
@@ -377,27 +319,26 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         if (TextUtils.isEmpty(place))
             Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
-            googleMapsIV.requestFocus();
+        googleMapsIV.requestFocus();
         {
             /*placeEventET.setError(getResources().getString(R.string.enter_a_place));
             placeEventET.requestFocus();
             return;*/
         }
 
-        if(TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             nameEventET.setError(getResources().getString(R.string.enter_a_name_for_your_event));
             nameEventET.requestFocus();
         }
 
-        if(TextUtils.isEmpty(playlist)){
+        if (TextUtils.isEmpty(playlist)) {
             playlistNameET.setError(getResources().getString(R.string.select_a_playlist));
             selectPlaylistBT.requestFocus();
         }
-        if(TextUtils.isEmpty(addressLine)){
+        if (TextUtils.isEmpty(addressLine)) {
             Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
             googleMapsIV.requestFocus();
-        }
-        else {
+        } else {
 
             String id = eventsReference.push().getKey();
 
@@ -415,7 +356,7 @@ public class CreateEventActivity extends AppCompatActivity  {
 
     }
 
-    private String getDate(long time){
+    private String getDate(long time) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(time);
         String date = DateFormat.format("EEE MMM dd hh:mm:ss yyyy", cal).toString();
@@ -430,11 +371,11 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker datePicker, int yearDP, int  monthDP, int dayOfMonthDP) {
+            public void onDateSet(DatePicker datePicker, int yearDP, int monthDP, int dayOfMonthDP) {
                 year = yearDP;
                 month = monthDP;
                 dayOfMonth = dayOfMonthDP;
-                dateEventET.setText((month+1) + "/" + dayOfMonth + "/" + year);
+                dateEventET.setText((month + 1) + "/" + dayOfMonth + "/" + year);
             }
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
@@ -445,9 +386,6 @@ public class CreateEventActivity extends AppCompatActivity  {
         final Calendar calendar = Calendar.getInstance();
         mHour = calendar.get(Calendar.HOUR_OF_DAY);
         mMin = calendar.get(Calendar.MINUTE);
-
-
-
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -466,20 +404,18 @@ public class CreateEventActivity extends AppCompatActivity  {
 
     }
 
-
-
     @Override
     protected void onStart() {
         super.onStart();
         savedInstanceStateDone = false;
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
-        if(TextUtils.isEmpty(currentBandIdPref)){
+        if (TextUtils.isEmpty(currentBandIdPref)) {
             Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.you_need_to_belong_to_a_band), Toast.LENGTH_LONG).show();
             sendUserToMainActivity();
         } else {
 
-          //  showAlertDialog();
+            //  showAlertDialog();
         }
 
     }
@@ -493,7 +429,7 @@ public class CreateEventActivity extends AppCompatActivity  {
         builder.setItems(events, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                switch (i){
+                switch (i) {
                     case 0:
                         eventTypeSP.setSelection(0);
                         break;
@@ -545,25 +481,21 @@ public class CreateEventActivity extends AppCompatActivity  {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(CreateEventActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 
@@ -571,7 +503,7 @@ public class CreateEventActivity extends AppCompatActivity  {
     protected void onResume() {
         super.onResume();
         Intent googleMaps = getIntent();
-        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+        if (!TextUtils.isEmpty(String.valueOf(addressLine))) {
             addressLine = googleMaps.getStringExtra("addressLine");
             addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
             addressLng = googleMaps.getDoubleExtra("longitude", 0.0);

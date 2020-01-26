@@ -54,14 +54,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "MapActivity.class";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final float ZOOM = 15f;
-    private PlaceAutocompleteAdapter adapter;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71,136));
 
     @BindView(R.id.map_input_search_ET)
     EditText mSearchTextET;
@@ -90,7 +88,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Intent fromIntent = getIntent();
         fromIntentString = fromIntent.getStringExtra("FROM");
 
-
         init();
     }
 
@@ -105,10 +102,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Toast.makeText(this, "Map is ready", Toast.LENGTH_LONG).show();
         Log.d("MAPACTIVITY", "onMapReady");
         mMap = googleMap;
-        if(mLocationPermissionGranted){
+        if (mLocationPermissionGranted) {
             getDeviceLocation();
-            if(ActivityCompat.checkSelfPermission(this, FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.checkSelfPermission(this, FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             mMap.setMyLocationEnabled(true);
@@ -118,25 +115,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void init(){
+    private void init() {
 
-       /* mGoogleApiClient = new GoogleApiClient
-                .Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this, this)
-                .build();
-
-        adapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient, LAT_LNG_BOUNDS, null);
-        mSearchTextET.setAdapter(adapter);*/
-        //changing the enter behavior for searching
         mSearchTextET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
 
 
                     geoLocation();
@@ -153,36 +140,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
 
-
         hideSoftKeyboard();
     }
 
-    private void geoLocation(){
+    private void geoLocation() {
         String searchString = mSearchTextET.getText().toString();
         Geocoder geocoder = new Geocoder(MapActivity.this);
         List<Address> list = new ArrayList<>();
-        try{
+        try {
             list = geocoder.getFromLocationName(searchString, 1);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        if(list.size()>0){
+        if (list.size() > 0) {
             Address address = list.get(0);
             Log.d(TAG, address.toString());
-                final String addressLine = address.getAddressLine(0);
-                final double addressLat = address.getLatitude();
-                final double addressLng = address.getLongitude();
+            final String addressLine = address.getAddressLine(0);
+            final double addressLat = address.getLatitude();
+            final double addressLng = address.getLongitude();
 
 
             moveCamera(new LatLng(addressLat, addressLng), ZOOM, addressLine);
             saveAddressBT.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(TextUtils.isEmpty(addressLine)){
+                    if (TextUtils.isEmpty(addressLine)) {
                         Toast.makeText(MapActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
-                    } else if(fromIntentString.equals("CREATE_ACTIVITY")) {
+                    } else if (fromIntentString.equals("CREATE_ACTIVITY")) {
                         sendAddressToCreateEventActivity(addressLine, addressLat, addressLng);
-                    } else if (fromIntentString.equals("UPDATE_ACTIVITY")){
+                    } else if (fromIntentString.equals("UPDATE_ACTIVITY")) {
                         sendAddressToUpdateEventActivity(addressLine, addressLat, addressLng);
                     }
                 }
@@ -209,46 +195,46 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
-    private void getDeviceLocation(){
+    private void getDeviceLocation() {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        try{
-            if(mLocationPermissionGranted){
+        try {
+            if (mLocationPermissionGranted) {
                 Task location = fusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             Log.d(TAG, "foundLocation");
                             Location currentLocation = (Location) task.getResult();
                             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                             moveCamera(latLng, ZOOM, "Location");
-                        }else {
+                        } else {
                             Log.d(TAG, "notFoundLocation");
 
                         }
                     }
                 });
             }
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title){
+    private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, latLng.latitude + " " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         mMap.clear();
 
-        if(!title.equals("Location")){
+        if (!title.equals("Location")) {
             MarkerOptions options = new MarkerOptions().position(latLng).title(title);
             mMap.addMarker(options);
         }
         hideSoftKeyboard();
     }
 
-    private void initMap(){
+    private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapActivity.this);
     }
@@ -270,11 +256,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
-        switch (requestCode){
-            case LOCATION_PERMISSION_RQ:{
-                if(grantResults.length > 0){
-                    for (int i = 0; i < grantResults.length ; i++) {
-                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+        switch (requestCode) {
+            case LOCATION_PERMISSION_RQ: {
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             mLocationPermissionGranted = false;
                             return;
                         }
@@ -288,8 +274,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-
-    private void hideSoftKeyboard(){
+    private void hideSoftKeyboard() {
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
@@ -297,7 +282,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onPause() {
         super.onPause();
-        if(mGoogleApiClient != null && mGoogleApiClient.isConnected()){
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.stopAutoManage(this);
             mGoogleApiClient.disconnect();
         }

@@ -101,7 +101,7 @@ public class MyPlaylistsActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
-        if(TextUtils.isEmpty(currentBandIdPref)){
+        if (TextUtils.isEmpty(currentBandIdPref)) {
             message.setVisibility(View.VISIBLE);
             scrollViewSV.setVisibility(View.INVISIBLE);
         } else {
@@ -455,7 +455,6 @@ public class MyPlaylistsActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(MyPlaylistsActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 

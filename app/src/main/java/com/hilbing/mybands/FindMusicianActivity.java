@@ -66,8 +66,7 @@ public class FindMusicianActivity extends AppCompatActivity {
     private DatabaseReference bandsReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_musician);
 
@@ -76,20 +75,13 @@ public class FindMusicianActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
-        if(TextUtils.isEmpty(currentBandIdPref)){
+        if (TextUtils.isEmpty(currentBandIdPref)) {
             message.setVisibility(View.VISIBLE);
             scrollViewSV.setVisibility(View.INVISIBLE);
         } else {
             message.setVisibility(View.INVISIBLE);
             scrollViewSV.setVisibility(View.VISIBLE);
         }
-
-
-/*        Intent intent = getIntent();
-        if(intent != null) {
-            currentBandId = intent.getStringExtra("currentBandId");
-        }*/
-
 
 
         setSupportActionBar(toolbar);
@@ -105,7 +97,7 @@ public class FindMusicianActivity extends AppCompatActivity {
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
 
-        if(!TextUtils.isEmpty(currentBandIdPref)) {
+        if (!TextUtils.isEmpty(currentBandIdPref)) {
 
             showMusicians();
 
@@ -114,6 +106,9 @@ public class FindMusicianActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         bandNameTV.setText(dataSnapshot.child("mBandName").getValue().toString());
+                    } else {
+                        Toast.makeText(FindMusicianActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+                        sendUserToMainActivity();
                     }
                 }
 
@@ -141,16 +136,14 @@ public class FindMusicianActivity extends AppCompatActivity {
 
     }
 
-    private void showMusicians(){
+    private void showMusicians() {
         Query query = allMusiciansReference.orderByChild("mUserName");
 
         FirebaseRecyclerOptions<FindMusician> options = new FirebaseRecyclerOptions.Builder<FindMusician>().setQuery(query,
-                new SnapshotParser<FindMusician>()
-                {
+                new SnapshotParser<FindMusician>() {
                     @NonNull
                     @Override
-                    public FindMusician parseSnapshot(@NonNull DataSnapshot snapshot)
-                    {
+                    public FindMusician parseSnapshot(@NonNull DataSnapshot snapshot) {
                         return new FindMusician(
                                 snapshot.child("mUserProfileImage").getValue().toString(),
                                 snapshot.child("mUserName").getValue().toString(),
@@ -160,21 +153,17 @@ public class FindMusicianActivity extends AppCompatActivity {
                 }).build();
 
 
-
-        recyclerAdapter = new FirebaseRecyclerAdapter<FindMusician, FindMusicianViewHolder>(options)
-        {
+        recyclerAdapter = new FirebaseRecyclerAdapter<FindMusician, FindMusicianViewHolder>(options) {
 
             @NonNull
             @Override
-            public FindMusicianViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-            {
+            public FindMusicianViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_musicians_layout, parent, false);
                 return new FindMusicianViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final FindMusicianViewHolder holder, int position, @NonNull final FindMusician model)
-            {
+            protected void onBindViewHolder(@NonNull final FindMusicianViewHolder holder, int position, @NonNull final FindMusician model) {
                 final String musicianKey = getRef(position).getKey();
 
                 holder.fullNameTV.setText(model.getmUserName());
@@ -208,76 +197,69 @@ public class FindMusicianActivity extends AppCompatActivity {
     }
 
 
-    private void searchMusicians(String searchString)
-    {
+    private void searchMusicians(String searchString) {
 
-            Query query = allMusiciansReference.orderByChild("mUserName").startAt(searchString).endAt(searchString + "u\uf8ff");
+        Query query = allMusiciansReference.orderByChild("mUserName").startAt(searchString).endAt(searchString + "u\uf8ff");
 
-            FirebaseRecyclerOptions<FindMusician> options = new FirebaseRecyclerOptions.Builder<FindMusician>().setQuery(query,
-                    new SnapshotParser<FindMusician>()
-                    {
-                        @NonNull
-                        @Override
-                        public FindMusician parseSnapshot(@NonNull DataSnapshot snapshot)
-                        {
-                            return new FindMusician(
-                                    snapshot.child("mUserProfileImage").getValue().toString(),
-                                    snapshot.child("mUserName").getValue().toString(),
-                                    snapshot.child("mUserStatus").getValue().toString());
+        FirebaseRecyclerOptions<FindMusician> options = new FirebaseRecyclerOptions.Builder<FindMusician>().setQuery(query,
+                new SnapshotParser<FindMusician>() {
+                    @NonNull
+                    @Override
+                    public FindMusician parseSnapshot(@NonNull DataSnapshot snapshot) {
+                        return new FindMusician(
+                                snapshot.child("mUserProfileImage").getValue().toString(),
+                                snapshot.child("mUserName").getValue().toString(),
+                                snapshot.child("mUserStatus").getValue().toString());
 
-                        }
-                    }).build();
+                    }
+                }).build();
 
 
-            recyclerAdapter = new FirebaseRecyclerAdapter<FindMusician, FindMusicianViewHolder>(options)
-            {
+        recyclerAdapter = new FirebaseRecyclerAdapter<FindMusician, FindMusicianViewHolder>(options) {
 
-                @NonNull
-                @Override
-                public FindMusicianViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-                {
-                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_musicians_layout, parent, false);
-                    return new FindMusicianViewHolder(view);
-                }
+            @NonNull
+            @Override
+            public FindMusicianViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_musicians_layout, parent, false);
+                return new FindMusicianViewHolder(view);
+            }
 
-                @Override
-                protected void onBindViewHolder(@NonNull final FindMusicianViewHolder holder, int position, @NonNull final FindMusician model)
-                {
-                    final String musicianKey = getRef(position).getKey();
+            @Override
+            protected void onBindViewHolder(@NonNull final FindMusicianViewHolder holder, int position, @NonNull final FindMusician model) {
+                final String musicianKey = getRef(position).getKey();
 
-                    holder.fullNameTV.setText(model.getmUserName());
-                    Picasso.get().load(model.getmUserProfileImage()).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileCIV, new Callback() {
-                        @Override
-                        public void onSuccess() {
+                holder.fullNameTV.setText(model.getmUserName());
+                Picasso.get().load(model.getmUserProfileImage()).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profileCIV, new Callback() {
+                    @Override
+                    public void onSuccess() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onError(Exception e) {
-                            Picasso.get().load(model.getmUserProfileImage()).placeholder(R.drawable.profile).into(holder.profileCIV);
-                        }
-                    });
+                    @Override
+                    public void onError(Exception e) {
+                        Picasso.get().load(model.getmUserProfileImage()).placeholder(R.drawable.profile).into(holder.profileCIV);
+                    }
+                });
 
-                    holder.statusTV.setText(model.getmUserStatus());
+                holder.statusTV.setText(model.getmUserStatus());
 
-                    holder.mView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            sendUserToPersonActivity(musicianKey);
-                          //  Toast.makeText(FindMusicianActivity.this, musicianKey, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            };
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sendUserToPersonActivity(musicianKey);
+                        //  Toast.makeText(FindMusicianActivity.this, musicianKey, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        };
 
-            recyclerViewRV.setAdapter(recyclerAdapter);
-            recyclerAdapter.startListening();
+        recyclerViewRV.setAdapter(recyclerAdapter);
+        recyclerAdapter.startListening();
 
     }
 
 
-    public class FindMusicianViewHolder extends RecyclerView.ViewHolder
-    {
+    public class FindMusicianViewHolder extends RecyclerView.ViewHolder {
         View mView;
         @BindView(R.id.all_musicians_full_name_TV)
         TextView fullNameTV;
@@ -286,17 +268,14 @@ public class FindMusicianActivity extends AppCompatActivity {
         @BindView(R.id.all_musicians_status_TV)
         TextView statusTV;
 
-        public FindMusicianViewHolder(@NonNull final View itemView)
-        {
+        public FindMusicianViewHolder(@NonNull final View itemView) {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener()
-            {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public boolean onLongClick(View view)
-                {
+                public boolean onLongClick(View view) {
                     int itemClicked = getAdapterPosition();
 
                     return false;
@@ -307,34 +286,30 @@ public class FindMusicianActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToPersonActivity(String musicianKey)
-    {
+    private void sendUserToPersonActivity(String musicianKey) {
         Intent personIntent = new Intent(FindMusicianActivity.this, PersonActivity.class);
         personIntent.putExtra("selectedUser", musicianKey);
         personIntent.putExtra("currentBandId", currentBandIdPref);
         startActivity(personIntent);
-        finish();
+
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.stopListening();
         }
     }
@@ -344,18 +319,15 @@ public class FindMusicianActivity extends AppCompatActivity {
         super.onStart();
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.startListening();
         }
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(FindMusicianActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 }

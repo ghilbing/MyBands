@@ -98,7 +98,6 @@ public class VideoUpdateDetailActivity extends YouTubeBaseActivity implements Yo
         songIntent.putExtra("YouTubeTitle", videoTitle);
         songIntent.putExtra("SONG_ID", songId);
         startActivity(songIntent);
-        finish();
 
     }
 

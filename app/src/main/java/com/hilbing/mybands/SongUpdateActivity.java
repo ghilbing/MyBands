@@ -68,13 +68,12 @@ public class SongUpdateActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_update);
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             songNameET.setText(savedInstanceState.getString("Song"));
             songArtistBandET.setText(savedInstanceState.getString("Artist"));
         }
@@ -98,20 +97,20 @@ public class SongUpdateActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         songId = intent.getStringExtra("SONG_ID");
-        if(TextUtils.isEmpty(songId)){
+        if (TextUtils.isEmpty(songId)) {
             songNameET.setText(savedInstanceState.getString("Song"));
             songArtistBandET.setText(savedInstanceState.getString("Artist"));
         }
         videoURL = intent.getStringExtra("YouTubeURL");
 
 
-        if(!TextUtils.isEmpty(videoURL)){
+        if (!TextUtils.isEmpty(videoURL)) {
             songYoutubeLinkET.setText(videoURL);
         } else {
             songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
         }
 
-        if(!TextUtils.isEmpty(songId)) {
+        if (!TextUtils.isEmpty(songId)) {
 
             songsReference.child(songId).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -166,27 +165,23 @@ public class SongUpdateActivity extends AppCompatActivity {
         String youtubeLink = songYoutubeLinkET.getText().toString();
         String youtubeTitle = songYoutubeTitleET.getText().toString();
 
-        if (TextUtils.isEmpty(name))
-        {
+        if (TextUtils.isEmpty(name)) {
             songNameET.setError(getResources().getString(R.string.enter_name_of_the_song));
             songNameET.requestFocus();
             return;
         }
 
-        if (TextUtils.isEmpty(artist))
-        {
+        if (TextUtils.isEmpty(artist)) {
             songArtistBandET.setError(getResources().getString(R.string.enter_name_of_the_artist_or_band));
             songArtistBandET.requestFocus();
             return;
         }
 
-        if (TextUtils.isEmpty(youtubeLink) && TextUtils.isEmpty(youtubeTitle))
-        {
+        if (TextUtils.isEmpty(youtubeLink) && TextUtils.isEmpty(youtubeTitle)) {
             songYoutubeTitleET.setError(getResources().getString(R.string.please_select_a_video));
             searchSongBT.requestFocus();
             return;
-        }
-        else {
+        } else {
 
             progressDialog.setTitle(getResources().getString(R.string.song_update));
             progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_updating_your_song));
@@ -205,9 +200,7 @@ public class SongUpdateActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         progressDialog.dismiss();
-                    }
-                    else
-                    {
+                    } else {
                         String message = task.getException().getMessage();
                         Toast.makeText(SongUpdateActivity.this, message, Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
@@ -226,13 +219,11 @@ public class SongUpdateActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
@@ -250,7 +241,7 @@ public class SongUpdateActivity extends AppCompatActivity {
         videoURL = getIntent().getStringExtra("YouTubeURL");
         songTitleYoutube = getIntent().getStringExtra("YouTubeTitle");
 
-        if(!TextUtils.isEmpty(videoURL) && !TextUtils.isEmpty(songTitleYoutube)){
+        if (!TextUtils.isEmpty(videoURL) && !TextUtils.isEmpty(songTitleYoutube)) {
             songYoutubeLinkET.setText(videoURL);
             songYoutubeTitleET.setText(songTitleYoutube);
         } else {
@@ -279,12 +270,10 @@ public class SongUpdateActivity extends AppCompatActivity {
         songId = savedInstanceState.getString("SongId");
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(SongUpdateActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 }

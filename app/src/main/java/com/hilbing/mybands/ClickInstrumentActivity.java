@@ -61,12 +61,10 @@ public class ClickInstrumentActivity extends AppCompatActivity {
         deleteUpdateUserInstrumentReference = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId).child(instrumentKey);
         deleteUpdateUserInstrumentReference.keepSynced(true);
 
-        usersInstrumentsReference.addValueEventListener(new ValueEventListener()
-        {
+        usersInstrumentsReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists()) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
                     instrumentSP.setSelection(getIndexSpinner(instrumentSP, instrumentKey));
                     databaseUserId = dataSnapshot.child(currentUserId).getKey();
 
@@ -79,17 +77,14 @@ public class ClickInstrumentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
 
-        deleteBT.setOnClickListener(new View.OnClickListener()
-        {
+        deleteBT.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 deleteInstrument();
             }
         });
@@ -98,8 +93,7 @@ public class ClickInstrumentActivity extends AppCompatActivity {
     }
 
 
-    private void deleteInstrument()
-    {
+    private void deleteInstrument() {
 
         deleteUpdateUserInstrumentReference.removeValue();
         deleteUpdateInstrumentUserReference.removeValue();
@@ -108,12 +102,9 @@ public class ClickInstrumentActivity extends AppCompatActivity {
 
     }
 
-    private int getIndexSpinner(Spinner spinner, String string)
-    {
-        for (int i = 0; i < spinner.getCount() ; i++)
-        {
-            if(spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string))
-            {
+    private int getIndexSpinner(Spinner spinner, String string) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string)) {
                 return i;
             }
         }
@@ -121,12 +112,11 @@ public class ClickInstrumentActivity extends AppCompatActivity {
         return 0;
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
 
         Intent mainIntent = new Intent(ClickInstrumentActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
+
     }
 }

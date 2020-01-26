@@ -117,6 +117,9 @@ public class MySongsActivity extends AppCompatActivity {
 
                             bandNameTV.setText(dataSnapshot.child("mBandName").getValue().toString());
 
+                    } else {
+                        Toast.makeText(MySongsActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+                        sendUserToMainActivity();
                     }
                 }
 
@@ -438,7 +441,6 @@ public class MySongsActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(MySongsActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 }

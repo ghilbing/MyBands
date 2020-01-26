@@ -43,8 +43,7 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AddInstrumentActivity extends AppCompatActivity
-{
+public class AddInstrumentActivity extends AppCompatActivity {
 
     @BindView(R.id.update_instrument_toolbar)
     Toolbar toolbar;
@@ -69,8 +68,7 @@ public class AddInstrumentActivity extends AppCompatActivity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_instrument);
         ButterKnife.bind(this);
@@ -81,12 +79,10 @@ public class AddInstrumentActivity extends AppCompatActivity
 
         Intent intentGetData = getIntent();
         Bundle bundle = intentGetData.getExtras();
-        if(bundle != null)
-        {
+        if (bundle != null) {
             String intentString = bundle.getString("mUserId");
             currentUserId = intentString;
-        }
-        else {
+        } else {
 
             mAuth = FirebaseAuth.getInstance();
             currentUserId = mAuth.getCurrentUser().getUid();
@@ -111,11 +107,9 @@ public class AddInstrumentActivity extends AppCompatActivity
         linearLayoutManager.setStackFromEnd(true);
         instrumentsAddedRV.setLayoutManager(linearLayoutManager);
 
-        addBT.setOnClickListener(new View.OnClickListener()
-        {
+        addBT.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
 
                 progressDialog.setTitle(getResources().getString(R.string.add_instrument));
                 progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_updating_your_instruments));
@@ -131,40 +125,34 @@ public class AddInstrumentActivity extends AppCompatActivity
 
     }
 
-    private void displayAllInstruments()
-    {
+    private void displayAllInstruments() {
         Query query = FirebaseDatabase.getInstance().getReference().child("users_instruments").child(currentUserId);
 
         FirebaseRecyclerOptions<UsersInstruments> options = new FirebaseRecyclerOptions.Builder<UsersInstruments>().setQuery(query,
-                new SnapshotParser<UsersInstruments>()
-                {
-            @NonNull
-            @Override
-            public UsersInstruments parseSnapshot(@NonNull DataSnapshot snapshot)
-            {
-                return new UsersInstruments(
-                        snapshot.child("mUserId").getValue().toString(),
-                        snapshot.child("mUserName").getValue().toString(),
-                        snapshot.child("mInstrumentName").getValue().toString());
+                new SnapshotParser<UsersInstruments>() {
+                    @NonNull
+                    @Override
+                    public UsersInstruments parseSnapshot(@NonNull DataSnapshot snapshot) {
+                        return new UsersInstruments(
+                                snapshot.child("mUserId").getValue().toString(),
+                                snapshot.child("mUserName").getValue().toString(),
+                                snapshot.child("mInstrumentName").getValue().toString());
 
-            }
-        }).build();
+                    }
+                }).build();
 
 
-        recyclerAdapter = new FirebaseRecyclerAdapter<UsersInstruments, InstrumentViewHolder>(options)
-        {
+        recyclerAdapter = new FirebaseRecyclerAdapter<UsersInstruments, InstrumentViewHolder>(options) {
 
             @NonNull
             @Override
-            public InstrumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-            {
+            public InstrumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_instruments_per_user, parent, false);
                 return new InstrumentViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull InstrumentViewHolder holder, int position, @NonNull final UsersInstruments model)
-            {
+            protected void onBindViewHolder(@NonNull InstrumentViewHolder holder, int position, @NonNull final UsersInstruments model) {
                 final String instrumentKey = getRef(position).getKey();
 
                 holder.instrumentNameTV.setText(model.getmUserInstrument());
@@ -192,8 +180,7 @@ public class AddInstrumentActivity extends AppCompatActivity
 
     }
 
-    public class InstrumentViewHolder extends RecyclerView.ViewHolder
-    {
+    public class InstrumentViewHolder extends RecyclerView.ViewHolder {
         View mView;
         @BindView(R.id.instrument_item_TV)
         TextView instrumentNameTV;
@@ -202,8 +189,7 @@ public class AddInstrumentActivity extends AppCompatActivity
         @BindView(R.id.instrument_userNameTV)
         TextView userNameTV;
 
-        public InstrumentViewHolder(@NonNull final View itemView)
-        {
+        public InstrumentViewHolder(@NonNull final View itemView) {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
@@ -213,10 +199,8 @@ public class AddInstrumentActivity extends AppCompatActivity
                 public boolean onLongClick(View view) {
 
                     //get data
-
-
                     int itemClicked = getAdapterPosition();
-                  //  showUpdateDialog(itemClicked, instrument);
+                    //  showUpdateDialog(itemClicked, instrument);
                     return false;
                 }
             });
@@ -225,8 +209,7 @@ public class AddInstrumentActivity extends AppCompatActivity
     }
 
 
-    private void deleteInstrument(String instrument, String userId)
-    {
+    private void deleteInstrument(String instrument, String userId) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user_instruments").child(currentUserId);
         databaseReference.keepSynced(true);
         databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -237,8 +220,7 @@ public class AddInstrumentActivity extends AppCompatActivity
         });
     }
 
-    private boolean updateInstrument(String instrument, String userId, String userName)
-    {
+    private boolean updateInstrument(String instrument, String userId, String userName) {
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user_instruments").child(currentUserId);
         databaseReference.keepSynced(true);
@@ -249,12 +231,9 @@ public class AddInstrumentActivity extends AppCompatActivity
 
     }
 
-    private int getIndexSpinner(Spinner spinner, String string)
-    {
-        for (int i = 0; i < spinner.getCount() ; i++)
-        {
-            if(spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string))
-            {
+    private int getIndexSpinner(Spinner spinner, String string) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string)) {
                 return i;
             }
         }
@@ -263,17 +242,12 @@ public class AddInstrumentActivity extends AppCompatActivity
     }
 
 
-    private void addUsersForInstrumentsToDataBase()
-    {
-        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
-        {
+    private void addUsersForInstrumentsToDataBase() {
+        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    if(dataSnapshot.hasChild("mUserName"))
-                    {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("mUserName")) {
                         String name = dataSnapshot.child("mUserName").getValue().toString();
                         String instrument = instrumentsSP.getSelectedItem().toString();
 
@@ -282,17 +256,13 @@ public class AddInstrumentActivity extends AppCompatActivity
                         instrumentMap.put("mUserName", name);
                         instrumentMap.put("mInstrumentName", instrument);
 
-                        instrumentsUsersReference.child(instrument).child(currentUserId).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener()
-                        {
+                        instrumentsUsersReference.child(instrument).child(currentUserId).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener() {
                             @Override
-                            public void onComplete(@NonNull Task task)
-                            {
-                                if (task.isSuccessful()){
+                            public void onComplete(@NonNull Task task) {
+                                if (task.isSuccessful()) {
                                     Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.instrument_added_successfully), Toast.LENGTH_LONG).show();
                                     progressDialog.dismiss();
-                                }
-                                else
-                                {
+                                } else {
                                     String message = task.getException().getMessage();
                                     Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                                     progressDialog.dismiss();
@@ -304,8 +274,7 @@ public class AddInstrumentActivity extends AppCompatActivity
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -313,17 +282,12 @@ public class AddInstrumentActivity extends AppCompatActivity
 
     }
 
-    private void addInstrumentsPlayedByUserToDataBase()
-    {
-        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
-        {
+    private void addInstrumentsPlayedByUserToDataBase() {
+        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    if(dataSnapshot.hasChild("mUserName"))
-                    {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("mUserName")) {
                         String name = dataSnapshot.child("mUserName").getValue().toString();
                         String instrument = instrumentsSP.getSelectedItem().toString();
 
@@ -332,17 +296,13 @@ public class AddInstrumentActivity extends AppCompatActivity
                         instrumentMap.put("mUserName", name);
                         instrumentMap.put("mInstrumentName", instrument);
 
-                        usersInstrumentsReference.child(currentUserId).child(instrument).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener()
-                        {
+                        usersInstrumentsReference.child(currentUserId).child(instrument).updateChildren(instrumentMap).addOnCompleteListener(new OnCompleteListener() {
                             @Override
-                            public void onComplete(@NonNull Task task)
-                            {
-                                if (task.isSuccessful()){
+                            public void onComplete(@NonNull Task task) {
+                                if (task.isSuccessful()) {
                                     Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.instrument_added_successfully), Toast.LENGTH_LONG).show();
                                     progressDialog.dismiss();
-                                }
-                                else
-                                {
+                                } else {
                                     String message = task.getException().getMessage();
                                     Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                                     progressDialog.dismiss();
@@ -354,113 +314,34 @@ public class AddInstrumentActivity extends AppCompatActivity
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
 
-
-    }
-
-
-    private void deleteSingerFromDataBase(String userId)
-    {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Singers").child(userId);
-        databaseReference.keepSynced(true);
-        databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
-        {
-            @Override
-            public void onComplete(@NonNull Task<Void> task)
-            {
-                if(task.isSuccessful()) {
-                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.singer_deleted_from_singers), Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-    }
-
-    private void addUserToSingersDatabase() {
-        userDataReference.child(currentUserId).addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    String fullName = dataSnapshot.child("mUserName").getValue().toString();
-                    boolean available = (boolean) dataSnapshot.child("mUserAvailable").getValue();
-
-                    HashMap singerMap = new HashMap();
-                    singerMap.put("mUserId", currentUserId);
-                    singerMap.put("mUserName", fullName);
-                    singerMap.put("mUserAvailable", available);
-
-                    singersReference.child(currentUserId).updateChildren(singerMap).addOnCompleteListener(new OnCompleteListener()
-                    {
-                        @Override
-                        public void onComplete(@NonNull Task task)
-                        {
-                            if(task.isSuccessful())
-                            {
-                                Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.singer_database_updated), Toast.LENGTH_LONG).show();
-                            }
-                            else
-                            {
-                                String message = task.getException().getMessage();
-                                Toast.makeText(AddInstrumentActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
-
-            }
-        });
 
     }
 
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(AddInstrumentActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 
-    private void saveUserSingerToDataBase()
-    {
-
-    }
 
     @Override
     protected void onStart() {

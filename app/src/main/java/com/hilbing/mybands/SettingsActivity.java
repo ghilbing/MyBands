@@ -44,8 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SettingsActivity extends AppCompatActivity
-{
+public class SettingsActivity extends AppCompatActivity {
 
     @BindView(R.id.settings_toolbar)
     Toolbar toolbar;
@@ -81,8 +80,7 @@ public class SettingsActivity extends AppCompatActivity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -101,17 +99,14 @@ public class SettingsActivity extends AppCompatActivity
         settingsUserReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
         settingsUserReference.keepSynced(true);
 
-        settingsUserReference.addValueEventListener(new ValueEventListener()
-        {
+        settingsUserReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
                     userProfileImage = dataSnapshot.child("mUserProfileImage").getValue().toString();
                     boolean userAvailable = (boolean) dataSnapshot.child("mUserAvailable").getValue();
-                    boolean userSinger = (boolean)dataSnapshot.child("mUserSinger").getValue();
-                    boolean userComposer = (boolean)dataSnapshot.child("mUserComposer").getValue();
+                    boolean userSinger = (boolean) dataSnapshot.child("mUserSinger").getValue();
+                    boolean userComposer = (boolean) dataSnapshot.child("mUserComposer").getValue();
                     String userName = dataSnapshot.child("mUserName").getValue().toString();
                     String userPhone = dataSnapshot.child("mUserPhone").getValue().toString();
                     String userStatus = dataSnapshot.child("mUserStatus").getValue().toString();
@@ -142,8 +137,7 @@ public class SettingsActivity extends AppCompatActivity
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -155,19 +149,16 @@ public class SettingsActivity extends AppCompatActivity
             }
         });
 
-        updateBT.setOnClickListener(new View.OnClickListener()
-        {
+        updateBT.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 validateAccountInformation();
             }
         });
 
     }
 
-    private void sendUserToGallery()
-    {
+    private void sendUserToGallery() {
 
         Intent galleryIntent = new Intent();
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -175,8 +166,7 @@ public class SettingsActivity extends AppCompatActivity
         startActivityForResult(galleryIntent, GALLERY);
     }
 
-    private void validateAccountInformation()
-    {
+    private void validateAccountInformation() {
         String userName = userNameET.getText().toString();
         String userImage = userProfileImage;
         boolean available = availableCB.isChecked();
@@ -186,46 +176,26 @@ public class SettingsActivity extends AppCompatActivity
         String country = countriesSP.getSelectedItem().toString();
         String status = userStatusET.getText().toString();
 
-        if(TextUtils.isEmpty(userName))
-        {
+        if (TextUtils.isEmpty(userName)) {
             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_your_full_name), Toast.LENGTH_LONG).show();
-        }
-        else if (TextUtils.isEmpty(userImage))
-        {
+        } else if (TextUtils.isEmpty(userImage)) {
             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_profile_image), Toast.LENGTH_LONG).show();
-        }
-
-        else if(TextUtils.isEmpty(phone))
-        {
+        } else if (TextUtils.isEmpty(phone)) {
             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_your_phone), Toast.LENGTH_LONG).show();
-        }
-
-        else if(TextUtils.isEmpty(country))
-        {
+        } else if (TextUtils.isEmpty(country)) {
             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_the_country_where_you_live), Toast.LENGTH_LONG).show();
-        }
-
-        else if(TextUtils.isEmpty(status))
-        {
+        } else if (TextUtils.isEmpty(status)) {
             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_your_status), Toast.LENGTH_LONG).show();
-        }
-
-        else if(TextUtils.isEmpty(userName))
-        {
+        } else if (TextUtils.isEmpty(userName)) {
             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.please_enter_your_full_name), Toast.LENGTH_LONG).show();
-        }
-        else
-        {
+        } else {
             updateAccountInformation(userName, available, singer, composer, phone, country, status, userProfileImage);
         }
 
 
-
-
     }
 
-    private void updateAccountInformation(String userName, boolean available, boolean singer, boolean composer, String phone, String country, String status, String userProfileImage)
-    {
+    private void updateAccountInformation(String userName, boolean available, boolean singer, boolean composer, String phone, String country, String status, String userProfileImage) {
         HashMap userProfileInfo = new HashMap();
         userProfileInfo.put("mUserName", userName);
         userProfileInfo.put("mUserPhone", phone);
@@ -239,13 +209,10 @@ public class SettingsActivity extends AppCompatActivity
         settingsUserReference.updateChildren(userProfileInfo).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
-                if(task.isSuccessful())
-                {
+                if (task.isSuccessful()) {
                     Toast.makeText(SettingsActivity.this, getResources().getString(R.string.account_settings_updated_successfully), Toast.LENGTH_LONG).show();
                     sendUserToMainActivity();
-                }
-                else
-                {
+                } else {
                     String message = task.getException().getMessage();
                     Toast.makeText(SettingsActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                 }
@@ -254,12 +221,9 @@ public class SettingsActivity extends AppCompatActivity
 
     }
 
-    private int getIndexSpinner(Spinner spinner, String string)
-    {
-        for (int i = 0; i < spinner.getCount() ; i++)
-        {
-            if(spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string))
-            {
+    private int getIndexSpinner(Spinner spinner, String string) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string)) {
                 return i;
             }
         }
@@ -269,19 +233,16 @@ public class SettingsActivity extends AppCompatActivity
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == GALLERY && resultCode == RESULT_OK && data != null)
-        {
+        if (requestCode == GALLERY && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
-            CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(this);
+            CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1, 1).start(this);
         }
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
-        {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
-            if(resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
 
                 progressDialog.setTitle(getResources().getString(R.string.profile_image));
                 progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_updating_your_profile_image));
@@ -303,7 +264,7 @@ public class SettingsActivity extends AppCompatActivity
                                 settingsUserReference.child("mUserProfileImage").setValue(downloadUri).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
+                                        if (task.isSuccessful()) {
                                             sendUserToSettingsActivity();
                                             progressDialog.dismiss();
                                             Toast.makeText(SettingsActivity.this, getResources().getString(R.string.image_stored_in_database_successfully), Toast.LENGTH_LONG).show();
@@ -319,41 +280,36 @@ public class SettingsActivity extends AppCompatActivity
                     }
                 });
 
-            } else
-            {
+            } else {
                 progressDialog.dismiss();
-                Toast.makeText(SettingsActivity.this, getResources().getString(R.string.error_occurred_image_cannot_be_cropped_please_try_again),Toast.LENGTH_LONG).show();
+                Toast.makeText(SettingsActivity.this, getResources().getString(R.string.error_occurred_image_cannot_be_cropped_please_try_again), Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private void sendUserToSettingsActivity()
-    {
+    private void sendUserToSettingsActivity() {
 
         Intent selfIntent = new Intent(SettingsActivity.this, SettingsActivity.class);
         selfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(selfIntent);
-        finish();
+
 
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(SettingsActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
+
 
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 

@@ -120,7 +120,7 @@ public class UpdateEventActivity extends AppCompatActivity {
         return clickListener;
     }
 
-    public void setClickListener(PlaylistClickListener clickListener){
+    public void setClickListener(PlaylistClickListener clickListener) {
         this.clickListener = clickListener;
     }
 
@@ -150,7 +150,7 @@ public class UpdateEventActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Intent googleMaps = getIntent();
-        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+        if (!TextUtils.isEmpty(String.valueOf(addressLine))) {
             addressLine = googleMaps.getStringExtra("addressLine");
             addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
             addressLng = googleMaps.getDoubleExtra("longitude", 0.0);
@@ -184,13 +184,12 @@ public class UpdateEventActivity extends AppCompatActivity {
         }
 
 
-
         datePickerIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dateSelected = true;
                 setDate();
-                if(dateSelected && !timeSelected){
+                if (dateSelected && !timeSelected) {
                     Toast.makeText(UpdateEventActivity.this, getResources().getString(R.string.please_update_time_too), Toast.LENGTH_LONG).show();
                     timePickerIV.requestFocus();
                 }
@@ -203,7 +202,7 @@ public class UpdateEventActivity extends AppCompatActivity {
             public void onClick(View view) {
                 dateSelected = true;
                 setTime();
-                if(!dateSelected && timeSelected){
+                if (!dateSelected && timeSelected) {
                     Toast.makeText(UpdateEventActivity.this, getResources().getString(R.string.please_update_date_too), Toast.LENGTH_LONG).show();
                     datePickerIV.requestFocus();
                 }
@@ -231,7 +230,7 @@ public class UpdateEventActivity extends AppCompatActivity {
         selectPlaylistBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!savedInstanceStateDone) {
+                if (!savedInstanceStateDone) {
                     showPlaylists();
                 }
             }
@@ -252,14 +251,12 @@ public class UpdateEventActivity extends AppCompatActivity {
 
                 init();
 
-
-
             }
         });
 
     }
 
-    private void init(){
+    private void init() {
         Intent intent = new Intent(UpdateEventActivity.this, MapActivity.class);
         intent.putExtra("FROM", "UPDATE_ACTIVITY");
         intent.putExtra("LNG", addressLngFB);
@@ -274,10 +271,6 @@ public class UpdateEventActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
     private void showDataFromFirebase(String eventId) {
 
         eventsReference = FirebaseDatabase.getInstance().getReference().child("Events").child(currentBandIdPref).child(eventId);
@@ -286,7 +279,7 @@ public class UpdateEventActivity extends AppCompatActivity {
         eventsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     idPlaylist = dataSnapshot.child("idPlaylist").getValue().toString();
                     currentUserId = dataSnapshot.child("mCurrentUser").getValue().toString();
                     mDate = dataSnapshot.child("mDate").getValue().toString();
@@ -377,14 +370,12 @@ public class UpdateEventActivity extends AppCompatActivity {
         mName = nameEventET.getText().toString();
         mDate = dateEventET.getText().toString();
         mTime = timeEventET.getText().toString();
-        if(TextUtils.isEmpty(addressLine))
-        {
+        if (TextUtils.isEmpty(addressLine)) {
             mPlace = addressLineFB;
             addressLineS = addressLineFB;
             latS = addressLatFB;
             lngS = addressLngFB;
-        }
-        else {
+        } else {
             mPlace = addressLine;
             addressLineS = addressLine;
             latS = addressLat;
@@ -395,14 +386,12 @@ public class UpdateEventActivity extends AppCompatActivity {
         mPlaylistName = playlistNameET.getText().toString();
 
 
-        if(dateInMillis == 0){
+        if (dateInMillis == 0) {
             timeS = mTimestamp;
+        } else {
+            timeS = dateInMillis;
+            Log.d("TIMESTAMP INSIDE IF FROM FIREBASE///////////", String.valueOf(timeS));
         }
-            else  {
-                timeS = dateInMillis;
-                Log.d("TIMESTAMP INSIDE IF FROM FIREBASE///////////", String.valueOf(timeS));
-            }
-
 
 
         if (TextUtils.isEmpty(mName)) {
@@ -422,20 +411,19 @@ public class UpdateEventActivity extends AppCompatActivity {
             timePickerIV.requestFocus();
             return;
         }
-        if (TextUtils.isEmpty(mPlace)){
+        if (TextUtils.isEmpty(mPlace)) {
             placeEventET.setError(getResources().getString(R.string.enter_a_place));
             placeEventET.requestFocus();
 
         }
-        if (TextUtils.isEmpty(mPlaylistName)){
+        if (TextUtils.isEmpty(mPlaylistName)) {
             playlistNameET.setError(getResources().getString(R.string.select_a_playlist));
             selectPlaylistBT.requestFocus();
-        }if(TextUtils.isEmpty(addressLine)){
+        }
+        if (TextUtils.isEmpty(addressLine)) {
             Toast.makeText(UpdateEventActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
             googleMapsIV.requestFocus();
-        }
-
-        else {
+        } else {
 
             progressDialog.setTitle(getResources().getString(R.string.updating_event));
             progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_updating_your_event));
@@ -478,7 +466,6 @@ public class UpdateEventActivity extends AppCompatActivity {
     }
 
 
-
     private void setDate() {
         final Calendar calendar = Calendar.getInstance();
         mYear = calendar.get(Calendar.YEAR);
@@ -487,11 +474,11 @@ public class UpdateEventActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker datePicker, int yearDP, int  monthDP, int dayOfMonthDP) {
+            public void onDateSet(DatePicker datePicker, int yearDP, int monthDP, int dayOfMonthDP) {
                 year = yearDP;
                 month = monthDP;
                 dayOfMonth = dayOfMonthDP;
-                dateEventET.setText(dayOfMonth + "/" + (month+1) + "/" + year);
+                dateEventET.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
             }
         }, mYear, mMonth, mDay);
         Log.d("YEAR VALUE >>>>>>>>>>>>>>>.", String.valueOf(year));
@@ -507,8 +494,6 @@ public class UpdateEventActivity extends AppCompatActivity {
         final Calendar calendar = Calendar.getInstance();
         mHour = calendar.get(Calendar.HOUR_OF_DAY);
         mMin = calendar.get(Calendar.MINUTE);
-
-
 
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
@@ -534,7 +519,7 @@ public class UpdateEventActivity extends AppCompatActivity {
         savedInstanceStateDone = false;
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
-        if(TextUtils.isEmpty(currentBandIdPref)){
+        if (TextUtils.isEmpty(currentBandIdPref)) {
             Toast.makeText(UpdateEventActivity.this, getResources().getString(R.string.you_need_to_belong_to_a_band), Toast.LENGTH_LONG).show();
             sendUserToMainActivity();
 
@@ -543,25 +528,21 @@ public class UpdateEventActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(UpdateEventActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 
@@ -598,7 +579,7 @@ public class UpdateEventActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Intent googleMaps = getIntent();
-        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+        if (!TextUtils.isEmpty(String.valueOf(addressLine))) {
             addressLine = googleMaps.getStringExtra("addressLine");
             addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
             addressLng = googleMaps.getDoubleExtra("longitude", 0.0);

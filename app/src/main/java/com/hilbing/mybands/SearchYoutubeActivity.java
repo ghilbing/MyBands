@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.hilbing.mybands.adapters.RecyclerItemClickListener;
@@ -84,7 +85,8 @@ public class SearchYoutubeActivity extends AppCompatActivity {
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
+                    @Override
+                    public void onItemClick(View view, int position) {
                         Intent intent = new Intent(SearchYoutubeActivity.this, VideoDetailActivity.class);
                         intent.putExtra("VIDEO", videos.get(position));
                         startActivity(intent);
@@ -144,7 +146,7 @@ public class SearchYoutubeActivity extends AppCompatActivity {
             });
         }
 
-        if(sharedPreferences.contains(PREFS_SEARCH)) {
+        if (sharedPreferences.contains(PREFS_SEARCH)) {
             final String dataArr[] = sharedPreferences.getString(PREFS_SEARCH, null).split(";");
             ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<String>(this, R.layout.dropdown, dataArr);
             searchAutoComplete.setAdapter(autocompleteAdapter);
@@ -160,9 +162,9 @@ public class SearchYoutubeActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 youtubeAPICall(query);
 
-                if(sharedPreferences.contains(PREFS_SEARCH)) {
+                if (sharedPreferences.contains(PREFS_SEARCH)) {
                     // check if this query already exist
-                    if(!Arrays.asList(sharedPreferences.getString(PREFS_SEARCH, null).split(";")).contains(query)){
+                    if (!Arrays.asList(sharedPreferences.getString(PREFS_SEARCH, null).split(";")).contains(query)) {
                         sharedPreferences
                                 .edit()
                                 .putString(PREFS_SEARCH, sharedPreferences.getString(PREFS_SEARCH, null) + ";" + query)
@@ -191,7 +193,7 @@ public class SearchYoutubeActivity extends AppCompatActivity {
         searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
-                String queryString=(String)adapterView.getItemAtPosition(itemIndex);
+                String queryString = (String) adapterView.getItemAtPosition(itemIndex);
                 searchAutoComplete.setText("" + queryString);
             }
         });
@@ -221,7 +223,7 @@ public class SearchYoutubeActivity extends AppCompatActivity {
         YoutubeAPI youtubeAPI = retrofit.create(YoutubeAPI.class);
 
         Call<SOAnswersResponse> call = youtubeAPI.getAnswers(key, part, query, "video", 20);
-        Log.d("RETROFIT",youtubeAPI.getAnswers(key, part, query, "video", 20).request().url().toString());
+        Log.d("RETROFIT", youtubeAPI.getAnswers(key, part, query, "video", 20).request().url().toString());
         call.enqueue(new Callback<SOAnswersResponse>() {
             @Override
             public void onResponse(Call<SOAnswersResponse> call, Response<SOAnswersResponse> response) {
@@ -230,7 +232,6 @@ public class SearchYoutubeActivity extends AppCompatActivity {
                 adapter.getVideos().addAll(videos);
                 adapter.notifyDataSetChanged();
             }
-
 
 
             @Override

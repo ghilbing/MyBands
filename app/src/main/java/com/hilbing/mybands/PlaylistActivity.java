@@ -83,7 +83,6 @@ public class PlaylistActivity extends AppCompatActivity {
         currentUserId = mAuth.getCurrentUser().getUid();
 
 
-
         progressDialog = new ProgressDialog(this);
 
         setSupportActionBar(toolbar);
@@ -96,7 +95,7 @@ public class PlaylistActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
-        if(TextUtils.isEmpty(currentBandIdPref)){
+        if (TextUtils.isEmpty(currentBandIdPref)) {
             message.setVisibility(View.VISIBLE);
             scrollViewSV.setVisibility(View.INVISIBLE);
         } else {
@@ -122,14 +121,11 @@ public class PlaylistActivity extends AppCompatActivity {
         final String playlistName = namePlaylistET.getText().toString();
 
 
-        if (TextUtils.isEmpty(playlistName))
-        {
+        if (TextUtils.isEmpty(playlistName)) {
             namePlaylistET.setError(getResources().getString(R.string.enter_a_name_for_a_new_playlist));
             namePlaylistET.requestFocus();
             return;
-        }
-        else
-        {
+        } else {
 
             progressDialog.setTitle(getResources().getString(R.string.creating_playlist));
             progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_creating_your_new_playlist));
@@ -142,7 +138,7 @@ public class PlaylistActivity extends AppCompatActivity {
             playlistReference.child(currentBandIdPref).child(id).setValue(playlist).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         getSupportActionBar().setTitle(playlistName);
                         createPlaylistBT.setVisibility(View.INVISIBLE);
                         sendUserToMainActivity();
@@ -160,27 +156,23 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
 
-
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(PlaylistActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
+
 
     }
 }

@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -78,7 +79,7 @@ public class SongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             songNameET.setText(savedInstanceState.getString("Song"));
             songArtistBandET.setText(savedInstanceState.getString("Artist"));
         }
@@ -101,7 +102,7 @@ public class SongActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
-        if(TextUtils.isEmpty(currentBandIdPref)){
+        if (TextUtils.isEmpty(currentBandIdPref)) {
             message.setVisibility(View.VISIBLE);
             layout.setVisibility(View.INVISIBLE);
         } else {
@@ -113,9 +114,9 @@ public class SongActivity extends AppCompatActivity {
         databaseSongs.keepSynced(true);
 
 
-       // songYoutubeLinkET.setText(R.string.no_data_available);
+        // songYoutubeLinkET.setText(R.string.no_data_available);
 
-        if(!TextUtils.isEmpty(videoURL)){
+        if (!TextUtils.isEmpty(videoURL)) {
             songYoutubeLinkET.setText(videoURL);
         } else {
             songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
@@ -159,15 +160,13 @@ public class SongActivity extends AppCompatActivity {
         String youtubeTitle = songYoutubeTitleET.getText().toString();
         String youtubeLink = songYoutubeLinkET.getText().toString();
 
-        if (TextUtils.isEmpty(name))
-        {
+        if (TextUtils.isEmpty(name)) {
             songNameET.setError(getResources().getString(R.string.enter_name_of_the_song));
             songNameET.requestFocus();
             return;
         }
 
-        if (TextUtils.isEmpty(artist))
-        {
+        if (TextUtils.isEmpty(artist)) {
             songArtistBandET.setError(getResources().getString(R.string.enter_name_of_the_artist_or_band));
             songArtistBandET.requestFocus();
             return;
@@ -186,7 +185,7 @@ public class SongActivity extends AppCompatActivity {
 
     }
 
-    private void showUpdateDialog(final String id, String name, String artist, String youtubeTitle, String youtubeLink){
+    private void showUpdateDialog(final String id, String name, String artist, String youtubeTitle, String youtubeLink) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.update_dialog_song, null);
@@ -243,11 +242,10 @@ public class SongActivity extends AppCompatActivity {
         });
 
 
-
     }
 
 
-    private boolean updateSong(String id, String name, String artist, String youtubeTitle, String youtube, String currentUser){
+    private boolean updateSong(String id, String name, String artist, String youtubeTitle, String youtube, String currentUser) {
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Songs").child(currentBandIdPref).child(id);
         Song song = new Song(id, name, artist, youtubeTitle, youtube, currentUser);
@@ -284,13 +282,11 @@ public class SongActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
@@ -308,7 +304,7 @@ public class SongActivity extends AppCompatActivity {
         videoURL = getIntent().getStringExtra("YouTubeURL");
         songTitleYoutube = getIntent().getStringExtra("YouTubeTitle");
 
-        if(!TextUtils.isEmpty(videoURL) && !TextUtils.isEmpty(songTitleYoutube)){
+        if (!TextUtils.isEmpty(videoURL) && !TextUtils.isEmpty(songTitleYoutube)) {
             songYoutubeLinkET.setText(videoURL);
             songYoutubeTitleET.setText(songTitleYoutube);
         } else {
@@ -335,8 +331,7 @@ public class SongActivity extends AppCompatActivity {
         songArtistBandET.setText(savedInstanceState.getString("Artist"));
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(SongActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);

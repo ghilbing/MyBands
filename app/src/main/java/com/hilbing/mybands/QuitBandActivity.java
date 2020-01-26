@@ -64,7 +64,7 @@ public class QuitBandActivity extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setTitle(R.string.quit_band);
 
-        if(TextUtils.isEmpty(currentBandId)){
+        if (TextUtils.isEmpty(currentBandId)) {
             message.setVisibility(View.VISIBLE);
             scrollViewSV.setVisibility(View.INVISIBLE);
         } else {
@@ -86,28 +86,32 @@ public class QuitBandActivity extends AppCompatActivity {
 
     }
 
-    private void quitBand()
-    {
-        bandsMusiciansRef.child(currentUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
-        {
+    private void quitBand() {
+        bandsMusiciansRef.child(currentUserId).child(currentBandId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task)
-            {
-                if(task.isSuccessful())
-                {
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
                     bandsMusiciansRef.child(currentBandId).child(currentUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task)
-                        {
-                            if(task.isSuccessful())
-                            {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
                                 Toast.makeText(QuitBandActivity.this, getResources().getString(R.string.you_do_not_belong_to_the_band_any_more), Toast.LENGTH_LONG).show();
                                 SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
                                 preferences.edit().clear().commit();
                                 sendUserToMainActivity();
                             }
+                            else {
+                                String message = task.getException().getMessage();
+                                Toast.makeText(QuitBandActivity.this, message, Toast.LENGTH_LONG).show();
+                                sendUserToMainActivity();
+                            }
                         }
                     });
+                }
+                else {
+                    String message = task.getException().getMessage();
+                    Toast.makeText(QuitBandActivity.this, message, Toast.LENGTH_LONG).show();
+                    sendUserToMainActivity();
                 }
             }
         });
@@ -116,13 +120,11 @@ public class QuitBandActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
@@ -134,7 +136,7 @@ public class QuitBandActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(QuitBandActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
+
     }
 
 
