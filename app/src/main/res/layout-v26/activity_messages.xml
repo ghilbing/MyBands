@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/lightsmoke"
     tools:context=".MessagesActivity">
 
     <include
@@ -21,7 +22,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/recyclerChat"
         android:layout_above="@+id/message_linear_layout_LL"
         android:layout_below="@+id/message_toolbar" />
 
@@ -58,9 +58,9 @@
             android:layout_weight="1"
             android:contentDescription="@string/send_message"
             android:src="@drawable/ic_send" />
-        
+
     </LinearLayout>
-        
+
 
 
 

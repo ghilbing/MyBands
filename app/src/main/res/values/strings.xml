@@ -627,4 +627,5 @@
     <string name="please_select_a_place">Please, select a place</string>
     <string name="you_need_to_add_songs">You need to add songs</string>
     <string name="event_map">Event map</string>
+    <string name="please_click_the_circle_to_add_a_profile_image">Please, click the circle to add a profile image</string>
 </resources>

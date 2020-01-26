@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/instrumentsvoice"
+    android:background="@drawable/lightsmoke"
     tools:context=".PlaylistActivity">
 
     <include
         android:id="@+id/playlist_toolbar"
         layout="@layout/app_bar_layout"
-        tools:layout_editor_absoluteX="-8dp"
-        tools:layout_editor_absoluteY="16dp" />
+        />
 
     <TextView
         android:id="@+id/playlist_message"

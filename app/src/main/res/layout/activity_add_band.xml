@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
+    android:background="@drawable/lightsmoke"
+
     tools:context=".SetUpActivity">
 
     <include
         android:id="@+id/add_band_toolbar"
         layout="@layout/app_bar_layout"
-        tools:layout_editor_absoluteX="-8dp"
-        tools:layout_editor_absoluteY="16dp" />
+        />
 
     <ScrollView
         android:layout_width="0dp"

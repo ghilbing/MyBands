@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/instrumentsvoice"
+    android:background="@drawable/lightsmoke"
     tools:context=".MySongsDialogActivity">
 
         <include
@@ -31,6 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:textColor="@color/white"
                 android:text="@string/search_for_songs"
                 android:textStyle="bold" />
 
@@ -40,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
+                android:textColor="@color/white"
                 android:text="@string/songs"
                 android:textSize="20sp"
                 android:textStyle="bold" />

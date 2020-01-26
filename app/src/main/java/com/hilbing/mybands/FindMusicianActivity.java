@@ -73,6 +73,9 @@ public class FindMusicianActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
         if(TextUtils.isEmpty(currentBandIdPref)){
             message.setVisibility(View.VISIBLE);
             scrollViewSV.setVisibility(View.INVISIBLE);
@@ -82,11 +85,10 @@ public class FindMusicianActivity extends AppCompatActivity {
         }
 
 
-
-        Intent intent = getIntent();
+/*        Intent intent = getIntent();
         if(intent != null) {
             currentBandId = intent.getStringExtra("currentBandId");
-        }
+        }*/
 
 
 
@@ -103,11 +105,11 @@ public class FindMusicianActivity extends AppCompatActivity {
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
 
-        if(!TextUtils.isEmpty(currentBandId)) {
+        if(!TextUtils.isEmpty(currentBandIdPref)) {
 
             showMusicians();
 
-            bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
+            bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -322,7 +324,7 @@ public class FindMusicianActivity extends AppCompatActivity {
     {
         Intent personIntent = new Intent(FindMusicianActivity.this, PersonActivity.class);
         personIntent.putExtra("selectedUser", musicianKey);
-        personIntent.putExtra("currentBandId", currentBandId);
+        personIntent.putExtra("currentBandId", currentBandIdPref);
         startActivity(personIntent);
         finish();
     }
@@ -340,6 +342,8 @@ public class FindMusicianActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
         if(null != recyclerAdapter)
         {
             recyclerAdapter.startListening();
