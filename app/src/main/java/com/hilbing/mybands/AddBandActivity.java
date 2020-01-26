@@ -8,7 +8,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -90,6 +92,7 @@ public class AddBandActivity extends AppCompatActivity {
     final static int GALLERY = 1;
     private String downloadUri;
     private String uriString;
+    private String currentBandIdPref;
 
 
     @Override
@@ -107,8 +110,11 @@ public class AddBandActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
 
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
         Intent intent = getIntent();
-        currentBandId = intent.getStringExtra("currentBandId");
+        currentBandId = currentBandIdPref;
         downloadUri = intent.getStringExtra("uri");
 
         userDataReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
@@ -235,6 +241,9 @@ public class AddBandActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         currentBandId = currentUserId + bandRandomId;
+                        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("SHARED_PREFS", currentBandId);
                         taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
@@ -318,7 +327,7 @@ public class AddBandActivity extends AppCompatActivity {
             bandMap.put("mBandStory", story);
             bandMap.put("mAvailable", available);
             bandMap.put("mCountry", country);
-            bandDataReference.child(uriString).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
+            bandDataReference.child(currentBandIdPref).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
@@ -337,11 +346,11 @@ public class AddBandActivity extends AppCompatActivity {
             SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
             saveCurrentDate = currentDate.format(calForDate.getTime());
 
-            bandsMusiciansRef.child(currentUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+            bandsMusiciansRef.child(currentUserId).child(currentBandIdPref).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        bandsMusiciansRef.child(currentBandId).child(currentUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        bandsMusiciansRef.child(currentBandIdPref).child(currentUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
@@ -397,7 +406,7 @@ public class AddBandActivity extends AppCompatActivity {
     private void sendUserToAddBandActivity() {
 
         Intent selfIntent = new Intent(AddBandActivity.this, AddBandActivity.class);
-        selfIntent.putExtra("currentBandId", currentBandId);
+        selfIntent.putExtra("currentBandId", currentBandIdPref);
         selfIntent.putExtra("uri", downloadUri);
         selfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(selfIntent);

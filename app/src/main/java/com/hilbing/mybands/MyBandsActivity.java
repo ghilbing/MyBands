@@ -141,12 +141,8 @@ public class MyBandsActivity extends AppCompatActivity {
                                 }
                             });
 
+                        }
 
-                        }
-                        else {
-                            Toast.makeText(MyBandsActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
-                            sendUserToMainActivity();
-                        }
                     }
 
                     @Override
@@ -195,9 +191,6 @@ public class MyBandsActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(MyBandsActivity.this, getResources().getString(R.string.you_are_not_allowed_to_modify_this_band), Toast.LENGTH_LONG).show();
                                 }
-                            } else {
-                                Toast.makeText(MyBandsActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
-                                sendUserToMainActivity();
                             }
                         }
 
