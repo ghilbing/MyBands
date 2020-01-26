@@ -117,6 +117,7 @@ public class CreateEventActivity extends AppCompatActivity  {
     private String addressLine;
     private double addressLat;
     private double addressLng;
+    private long mTimestamp;
 
     private FirebaseAuth mAuth;
     private DatabaseReference eventsReference;
@@ -138,12 +139,14 @@ public class CreateEventActivity extends AppCompatActivity  {
         currentUserId = mAuth.getCurrentUser().getUid();
 
         Intent googleMaps = getIntent();
-        if(!TextUtils.isEmpty(googleMaps.getExtras().toString())){
-            addressLine = googleMaps.getExtras().getString("addressLine");
-            addressLat = googleMaps.getDoubleExtra("addressLat",0.0);
-            addressLng = googleMaps.getDoubleExtra("addressLng", 0.0);
-            playlistIdET.setText(addressLine);
-            Log.i(TAG, googleMaps.getExtras().toString());
+        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+            addressLine = googleMaps.getStringExtra("addressLine");
+            addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
+            addressLng = googleMaps.getDoubleExtra("longitude", 0.0);
+            placeEventET.setText(addressLine);
+            Log.i("VALUES RECEIVED FROM THE INTENT", addressLat + " " + addressLng + " " + addressLine);
+        } else {
+            Toast.makeText(CreateEventActivity.this, "Empty", Toast.LENGTH_LONG).show();
         }
 
 
@@ -194,9 +197,9 @@ public class CreateEventActivity extends AppCompatActivity  {
         selectPlaylistBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!savedInstanceStateDone) {
+                //if(!savedInstanceStateDone) {
                     showPlaylists();
-                }
+              //  }
             }
         });
 
@@ -212,23 +215,14 @@ public class CreateEventActivity extends AppCompatActivity  {
 
         //Google maps
 
-
-
-
         googleMapsIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             //   if(isServiceOK()){
+
                     init();
-              //  }
 
-                /*String place = placeEventET.getText().toString();
-                if (!TextUtils.isEmpty(place)) {
 
-                    new ShowMap().execute(place);
-                    // DialogFragment dialogFragment = EventMapFragment.newInstance();
-                    // dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
-                }*/
+
             }
         });
 
@@ -239,23 +233,12 @@ public class CreateEventActivity extends AppCompatActivity  {
         startActivity(intent);
     }
 
-    public boolean isServiceOK(){
-        Log.d("", "isServiceOK: checking google services version");
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(CreateEventActivity.this);
-        if(available == ConnectionResult.SUCCESS){
-            //
-            Log.d("", "isServicesOK: Google Play Services is Working");
-        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)){
-            Log.d("", "isServiceOk: an error occured but we can fix it");
-            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(CreateEventActivity.this, available, ERROR_DIALOG_REQUEST);
-            dialog.show();
-        } else {
-            Toast.makeText(this, "We can't make map request", Toast.LENGTH_LONG).show();
-        }
-        return false;
-
-
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
+
 
     private class ShowMap extends AsyncTask<String, Void, String>{
 
@@ -367,6 +350,9 @@ public class CreateEventActivity extends AppCompatActivity  {
         String time = timeEventET.getText().toString();
         String date = dateEventET.getText().toString();
         String type = eventTypeSP.getSelectedItem().toString();
+        String addressLine = placeEventET.getText().toString();
+        double lat = addressLat;
+        double lng = addressLng;
 
 
         if(TextUtils.isEmpty(date)){
@@ -396,11 +382,15 @@ public class CreateEventActivity extends AppCompatActivity  {
             playlistNameET.setError(getResources().getString(R.string.select_a_playlist));
             selectPlaylistBT.requestFocus();
         }
+        if(TextUtils.isEmpty(addressLine)){
+            Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
+            googleMapsIV.requestFocus();
+        }
         else {
 
             String id = eventsReference.push().getKey();
 
-            Event event = new Event(id, type, name, date, time, place, playlist, playlistId, currentUserId, dateInMillis);
+            Event event = new Event(id, type, name, date, time, place, playlist, playlistId, currentUserId, dateInMillis, addressLine, lat, lng);
             eventsReference.child(currentBandIdPref).child(id).setValue(event);
             dateEventET.setText("");
             timeEventET.setText("");
@@ -483,6 +473,7 @@ public class CreateEventActivity extends AppCompatActivity  {
 
     }
 
+
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.select_event));
@@ -512,7 +503,34 @@ public class CreateEventActivity extends AppCompatActivity  {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        outState.putString("mDate", dateEventET.getText().toString());
+        outState.putString("mTime", timeEventET.getText().toString());
+        outState.putLong("mTimestamp", dateInMillis);
+        outState.putString("mEventName", nameEventET.getText().toString());
+        outState.putString("mEventType", eventTypeSP.getSelectedItem().toString());
         savedInstanceStateDone = true;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        dateEventET.setText(savedInstanceState.getString("mDate"));
+        timeEventET.setText(savedInstanceState.getString("mTime"));
+        mTimestamp = savedInstanceState.getLong("mTimestamp");
+        nameEventET.setText(savedInstanceState.getString("mEventName"));
+        eventTypeSP.setSelection(getIndexSpinner(eventTypeSP, savedInstanceState.getString("mEventType")));
+        placeEventET.setText(addressLine);
+    }
+
+    private int getIndexSpinner(Spinner spinner, String string) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(string)) {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     @Override
@@ -541,6 +559,16 @@ public class CreateEventActivity extends AppCompatActivity  {
     @Override
     protected void onResume() {
         super.onResume();
+        Intent googleMaps = getIntent();
+        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+            addressLine = googleMaps.getStringExtra("addressLine");
+            addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
+            addressLng = googleMaps.getDoubleExtra("longitude", 0.0);
+            placeEventET.setText(addressLine);
+            Log.i("VALUES RECEIVED FROM THE INTENT", addressLat + " " + addressLng + " " + addressLine);
+        } else {
+            Toast.makeText(CreateEventActivity.this, "Empty", Toast.LENGTH_LONG).show();
+        }
         savedInstanceStateDone = false;
     }
 

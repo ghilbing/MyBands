@@ -11,11 +11,16 @@ public class Event {
     public String mPlaylistName;
     public String mCurrentUser;
     public long mTimestamp;
+    public String mAddressLine;
+    public double mLat;
+    public double mLng;
 
     public Event() {
     }
 
-    public Event(String idEvent, String mEventType, String mName, String mDate, String mTime, String mPlace, String mPlaylistName, String idPlaylist, String mCurrentUser, long mTimestamp) {
+    public Event(String idEvent, String mEventType, String mName, String mDate, String mTime,
+                 String mPlace, String mPlaylistName, String idPlaylist, String mCurrentUser,
+                 long mTimestamp, String mAddressLine, double mLat, double mLng) {
         this.idEvent = idEvent;
         this.mEventType = mEventType;
         this.mName = mName;
@@ -26,6 +31,9 @@ public class Event {
         this.idPlaylist = idPlaylist;
         this.mCurrentUser = mCurrentUser;
         this.mTimestamp = mTimestamp;
+        this.mAddressLine = mAddressLine;
+        this.mLat = mLat;
+        this.mLng = mLng;
     }
 
     public String getIdEvent() {
@@ -106,5 +114,29 @@ public class Event {
 
     public void setmTimestamp(long mTimestamp) {
         this.mTimestamp = mTimestamp;
+    }
+
+    public String getmAddressLine() {
+        return mAddressLine;
+    }
+
+    public void setmAddressLine(String mAddressLine) {
+        this.mAddressLine = mAddressLine;
+    }
+
+    public double getmLat() {
+        return mLat;
+    }
+
+    public void setmLat(double mLat) {
+        this.mLat = mLat;
+    }
+
+    public double getmLng() {
+        return mLng;
+    }
+
+    public void setmLng(double mLng) {
+        this.mLng = mLng;
     }
 }

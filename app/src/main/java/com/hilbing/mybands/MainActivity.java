@@ -271,7 +271,10 @@ public class MainActivity extends AppCompatActivity {
                                     snapshot.child("mPlaylistName").getValue().toString(),
                                     snapshot.child("idPlaylist").getValue().toString(),
                                     snapshot.child("mCurrentUser").getValue().toString(),
-                                    (Long) snapshot.child("mTimestamp").getValue());
+                                    (Long) snapshot.child("mTimestamp").getValue(),
+                                    snapshot.child("mAddressLine").getValue().toString(),
+                                    (Double) snapshot.child("mLat").getValue(),
+                                    (Double) snapshot.child("mLng").getValue());
 
 
                         }

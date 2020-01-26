@@ -108,6 +108,7 @@
             android:id="@+id/create_event_place_ET"
             android:layout_width="0dp"
             android:layout_weight="6"
+            android:enabled="false"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:hint="@string/enter_a_place"

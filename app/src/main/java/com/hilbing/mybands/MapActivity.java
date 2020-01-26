@@ -185,7 +185,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void sendAddressToCreateEventActivity(String addressLine, double latitude, double longitude) {
         Intent intent = new Intent(MapActivity.this, CreateEventActivity.class);
-        intent.putExtra("addresLine", addressLine);
+        intent.putExtra("addressLine", addressLine);
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         Log.d("VALUES FROM GOOGLE MAPAS", addressLine + " " + String.valueOf(latitude) + " " + String.valueOf(longitude));
@@ -222,6 +222,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void moveCamera(LatLng latLng, float zoom, String title){
         Log.d(TAG, latLng.latitude + " " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        mMap.clear();
 
         if(!title.equals("Location")){
             MarkerOptions options = new MarkerOptions().position(latLng).title(title);

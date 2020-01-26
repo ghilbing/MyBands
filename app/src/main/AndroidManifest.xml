@@ -58,7 +58,8 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".UpdateEventActivity" />
+        <activity android:name=".UpdateEventActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".BandUpdateActivity" />
 
         <receiver
@@ -78,7 +79,8 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity android:name=".AddSongsToPlaylistActivity" />
-        <activity android:name=".CreateEventActivity" />
+        <activity android:name=".CreateEventActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".ConcertActivity" />
         <activity android:name=".RehearsalActivity" />
         <activity android:name=".MyPlaylistsActivity" />
