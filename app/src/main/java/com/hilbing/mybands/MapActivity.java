@@ -76,6 +76,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private GoogleApiClient mGoogleApiClient;
+    private String fromIntentString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         ButterKnife.bind(this);
 
         getLocationPermission();
+
+        Intent fromIntent = getIntent();
+        fromIntentString = fromIntent.getStringExtra("FROM");
+
 
         init();
     }
@@ -175,8 +180,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 public void onClick(View view) {
                     if(TextUtils.isEmpty(addressLine)){
                         Toast.makeText(MapActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
-                    } else {
+                    } else if(fromIntentString.equals("CREATE_ACTIVITY")) {
                         sendAddressToCreateEventActivity(addressLine, addressLat, addressLng);
+                    } else if (fromIntentString.equals("UPDATE_ACTIVITY")){
+                        sendAddressToUpdateEventActivity(addressLine, addressLat, addressLng);
                     }
                 }
             });
@@ -191,6 +198,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Log.d("VALUES FROM GOOGLE MAPAS", addressLine + " " + String.valueOf(latitude) + " " + String.valueOf(longitude));
         startActivity(intent);
 
+    }
+
+    private void sendAddressToUpdateEventActivity(String addressLine, double latitude, double longitude) {
+        Intent intent = new Intent(MapActivity.this, UpdateEventActivity.class);
+        intent.putExtra("addressLine", addressLine);
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+        Log.d("VALUES FROM GOOGLE MAPAS", addressLine + " " + String.valueOf(latitude) + " " + String.valueOf(longitude));
+        startActivity(intent);
     }
 
     private void getDeviceLocation(){

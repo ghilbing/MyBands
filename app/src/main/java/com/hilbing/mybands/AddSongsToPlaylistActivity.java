@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -78,6 +79,7 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference playlistReference;
     private DatabaseReference songsReference;
+    private boolean savedInstanceStateDone;
 
     private FirebaseRecyclerAdapter recyclerAdapter;
 
@@ -118,8 +120,10 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
         addSongBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showSongs();
-                //addSongToPlaylist();
+                if(!savedInstanceStateDone) {
+                    showSongs();
+                }
+
             }
         });
 
@@ -152,6 +156,9 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
                     DialogFragment dialogFragment = SongsFragmentDialog.newInstance(songsList, currentBandIdPref, currentPlaylistId);
                     dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
 
+                } else {
+                    Toast.makeText(AddSongsToPlaylistActivity.this, getResources().getString(R.string.you_need_to_add_songs), Toast.LENGTH_LONG).show();
+                    sendUserToSongsActivity();
                 }
             }
 
@@ -161,6 +168,12 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void sendUserToSongsActivity() {
+        Intent songIntent = new Intent(AddSongsToPlaylistActivity.this, SongActivity.class);
+        startActivity(songIntent);
+        finish();
     }
 
     private void displayMySongsFromPlaylist() {
@@ -294,6 +307,24 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        savedInstanceStateDone = false;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        savedInstanceStateDone = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        savedInstanceStateDone = false;
     }
 
     private void sendUserToMainActivity()

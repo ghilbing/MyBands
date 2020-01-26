@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -81,6 +82,8 @@ public class UpdateEventActivity extends AppCompatActivity {
     EditText playlistIdET;
     @BindView(R.id.update_event_create_BT)
     Button updateEventBT;
+    @BindView(R.id.update_google_maps_IV)
+    ImageView googleMapsIV;
 
     private String currentBandIdPref;
     private String currentUserId;
@@ -96,11 +99,22 @@ public class UpdateEventActivity extends AppCompatActivity {
     private long mTimestamp;
     private boolean dateSelected = false;
     private boolean timeSelected = false;
+    private boolean savedInstanceStateDone;
+    private String addressLine;
+    private double addressLat;
+    private double addressLng;
+
+    private String addressLineFB;
+    private double addressLatFB;
+    private double addressLngFB;
 
 
     private List<Playlist> playlistsList = new ArrayList<>();
 
     private PlaylistClickListener clickListener;
+    private String addressLineS;
+    private double latS;
+    private double lngS;
 
     public PlaylistClickListener getClickListener() {
         return clickListener;
@@ -134,6 +148,17 @@ public class UpdateEventActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.update_event));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        Intent googleMaps = getIntent();
+        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+            addressLine = googleMaps.getStringExtra("addressLine");
+            addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
+            addressLng = googleMaps.getDoubleExtra("longitude", 0.0);
+            placeEventET.setText(addressLine);
+            Log.i("VALUES RECEIVED FROM THE INTENT", addressLat + " " + addressLng + " " + addressLine);
+        } else {
+            Toast.makeText(UpdateEventActivity.this, "Empty", Toast.LENGTH_LONG).show();
+        }
 
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
@@ -206,7 +231,9 @@ public class UpdateEventActivity extends AppCompatActivity {
         selectPlaylistBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPlaylists();
+                if(!savedInstanceStateDone) {
+                    showPlaylists();
+                }
             }
         });
 
@@ -217,8 +244,37 @@ public class UpdateEventActivity extends AppCompatActivity {
             }
         });
 
+        //Google maps
+
+        googleMapsIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                init();
+
+
+
+            }
+        });
 
     }
+
+    private void init(){
+        Intent intent = new Intent(UpdateEventActivity.this, MapActivity.class);
+        intent.putExtra("FROM", "UPDATE_ACTIVITY");
+        intent.putExtra("LNG", addressLngFB);
+        intent.putExtra("LAT", addressLatFB);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+
+
 
 
 
@@ -240,6 +296,9 @@ public class UpdateEventActivity extends AppCompatActivity {
                     mPlaylistName = dataSnapshot.child("mPlaylistName").getValue().toString();
                     mTime = dataSnapshot.child("mTime").getValue().toString();
                     mTimestamp = (long) dataSnapshot.child("mTimestamp").getValue();
+                    addressLineFB = dataSnapshot.child("mAddressLine").getValue().toString();
+                    addressLatFB = (double) dataSnapshot.child("mLat").getValue();
+                    addressLngFB = (double) dataSnapshot.child("mLng").getValue();
                     Log.d("TIMESTAMP.......................", String.valueOf(mTimestamp));
 
                     dateEventET.setText(mDate);
@@ -318,10 +377,23 @@ public class UpdateEventActivity extends AppCompatActivity {
         mName = nameEventET.getText().toString();
         mDate = dateEventET.getText().toString();
         mTime = timeEventET.getText().toString();
-        mPlace = placeEventET.getText().toString();
+        if(TextUtils.isEmpty(addressLine))
+        {
+            mPlace = addressLineFB;
+            addressLineS = addressLineFB;
+            latS = addressLatFB;
+            lngS = addressLngFB;
+        }
+        else {
+            mPlace = addressLine;
+            addressLineS = addressLine;
+            latS = addressLat;
+            lngS = addressLng;
+        }
         idPlaylist = playlistIdET.getText().toString();
         mEventType = eventTypeSP.getSelectedItem().toString();
         mPlaylistName = playlistNameET.getText().toString();
+
 
         if(dateInMillis == 0){
             timeS = mTimestamp;
@@ -358,6 +430,9 @@ public class UpdateEventActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(mPlaylistName)){
             playlistNameET.setError(getResources().getString(R.string.select_a_playlist));
             selectPlaylistBT.requestFocus();
+        }if(TextUtils.isEmpty(addressLine)){
+            Toast.makeText(UpdateEventActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
+            googleMapsIV.requestFocus();
         }
 
         else {
@@ -378,6 +453,9 @@ public class UpdateEventActivity extends AppCompatActivity {
             eventMap.put("mPlaylistName", mPlaylistName);
             eventMap.put("mTime", mTime);
             eventMap.put("mTimestamp", timeS);
+            eventMap.put("mLat", latS);
+            eventMap.put("mLng", lngS);
+            eventMap.put("mAddressLine", addressLineS);
 
             eventsReference.updateChildren(eventMap).addOnCompleteListener(new OnCompleteListener() {
                 @Override
@@ -453,6 +531,7 @@ public class UpdateEventActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        savedInstanceStateDone = false;
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
         if(TextUtils.isEmpty(currentBandIdPref)){
@@ -486,7 +565,48 @@ public class UpdateEventActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        outState.putString("mDate", dateEventET.getText().toString());
+        outState.putString("mTime", timeEventET.getText().toString());
+        outState.putLong("mTimestamp", dateInMillis);
+        outState.putString("mEventName", nameEventET.getText().toString());
+        outState.putString("mEventType", eventTypeSP.getSelectedItem().toString());
+        outState.putString("mAddressLine", addressLineFB);
+        outState.putDouble("mLng", addressLngFB);
+        outState.putDouble("mLat", addressLatFB);
+        savedInstanceStateDone = true;
+    }
 
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        dateEventET.setText(savedInstanceState.getString("mDate"));
+        timeEventET.setText(savedInstanceState.getString("mTime"));
+        mTimestamp = savedInstanceState.getLong("mTimestamp");
+        nameEventET.setText(savedInstanceState.getString("mEventName"));
+        eventTypeSP.setSelection(getIndexSpinner(eventTypeSP, savedInstanceState.getString("mEventType")));
+        placeEventET.setText(addressLine);
+        addressLineFB = savedInstanceState.getString("mAddressLine");
+        addressLatFB = savedInstanceState.getDouble("mLat");
+        addressLngFB = savedInstanceState.getDouble("mLng");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent googleMaps = getIntent();
+        if(!TextUtils.isEmpty(String.valueOf(addressLine))) {
+            addressLine = googleMaps.getStringExtra("addressLine");
+            addressLat = googleMaps.getDoubleExtra("latitude", 0.0);
+            addressLng = googleMaps.getDoubleExtra("longitude", 0.0);
+            placeEventET.setText(addressLine);
+            Log.i("VALUES RECEIVED FROM THE INTENT", addressLat + " " + addressLng + " " + addressLine);
+        } else {
+            Toast.makeText(UpdateEventActivity.this, "Empty", Toast.LENGTH_LONG).show();
+        }
+        savedInstanceStateDone = false;
+    }
 }

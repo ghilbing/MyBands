@@ -82,6 +82,7 @@
     <string name="adding_musicians_to_band">Adding musicians to band</string>
     <string name="search">Search...</string>
     <string name="select_musician">Select musician...</string>
+    <string name="you_need_to_add_playlists">You need to add playlists</string>
 
     <string name="enter_address_city_or_zip_code">Enter Address, City or Zip Code</string>
 
@@ -624,4 +625,5 @@
     <string name="please_wait">Please, wait ...</string>
     <string name="maps_googleapis">https://maps.googleapis.com/maps/api/geocode/json?address=%s</string>
     <string name="please_select_a_place">Please, select a place</string>
+    <string name="you_need_to_add_songs">You need to add songs</string>
 </resources>

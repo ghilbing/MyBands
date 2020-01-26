@@ -197,9 +197,9 @@ public class CreateEventActivity extends AppCompatActivity  {
         selectPlaylistBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //if(!savedInstanceStateDone) {
+                if(!savedInstanceStateDone) {
                     showPlaylists();
-              //  }
+                }
             }
         });
 
@@ -221,8 +221,6 @@ public class CreateEventActivity extends AppCompatActivity  {
 
                     init();
 
-
-
             }
         });
 
@@ -230,6 +228,7 @@ public class CreateEventActivity extends AppCompatActivity  {
 
     private void init(){
         Intent intent = new Intent(CreateEventActivity.this, MapActivity.class);
+        intent.putExtra("FROM", "CREATE_ACTIVITY");
         startActivity(intent);
     }
 
@@ -240,7 +239,7 @@ public class CreateEventActivity extends AppCompatActivity  {
     }
 
 
-    private class ShowMap extends AsyncTask<String, Void, String>{
+  /*  private class ShowMap extends AsyncTask<String, Void, String>{
 
         @Override
         protected void onPreExecute() {
@@ -291,7 +290,7 @@ public class CreateEventActivity extends AppCompatActivity  {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
 
 
@@ -327,7 +326,10 @@ public class CreateEventActivity extends AppCompatActivity  {
                             }
                         });
                         dialogFragment.show(getSupportFragmentManager(), getString(R.string.add_song_to_playlist));
-                    }
+                    } else {
+                    Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.you_need_to_add_playlists), Toast.LENGTH_LONG).show();
+                    sendUserToMyPlaylistActivity();
+                }
 
 
             }
@@ -337,6 +339,13 @@ public class CreateEventActivity extends AppCompatActivity  {
 
             }
         });
+
+    }
+
+    private void sendUserToMyPlaylistActivity() {
+        Intent playlistIntent = new Intent(CreateEventActivity.this, MyPlaylistsActivity.class);
+        startActivity(playlistIntent);
+        finish();
 
     }
 
@@ -367,10 +376,12 @@ public class CreateEventActivity extends AppCompatActivity  {
         }
 
         if (TextUtils.isEmpty(place))
+            Toast.makeText(CreateEventActivity.this, getResources().getString(R.string.please_select_a_place), Toast.LENGTH_LONG).show();
+            googleMapsIV.requestFocus();
         {
-            placeEventET.setError(getResources().getString(R.string.enter_a_place));
+            /*placeEventET.setError(getResources().getString(R.string.enter_a_place));
             placeEventET.requestFocus();
-            return;
+            return;*/
         }
 
         if(TextUtils.isEmpty(name)){
