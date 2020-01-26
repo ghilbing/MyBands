@@ -626,4 +626,5 @@
     <string name="maps_googleapis">https://maps.googleapis.com/maps/api/geocode/json?address=%s</string>
     <string name="please_select_a_place">Please, select a place</string>
     <string name="you_need_to_add_songs">You need to add songs</string>
+    <string name="event_map">Event map</string>
 </resources>

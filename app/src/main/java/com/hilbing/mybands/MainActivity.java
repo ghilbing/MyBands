@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +48,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hilbing.mybands.adapters.EventAdapter;
 import com.hilbing.mybands.adapters.ExpandableListAdapter;
+import com.hilbing.mybands.fragments.MapDialogFragment;
+import com.hilbing.mybands.fragments.SongsFragmentDialog;
 import com.hilbing.mybands.models.Band;
 import com.hilbing.mybands.models.Event;
 import com.hilbing.mybands.models.MenuModel;
@@ -99,8 +103,7 @@ public class MainActivity extends AppCompatActivity {
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
     List<Band> bands = new ArrayList();
     private List<Event> events = new ArrayList<>();
-
-
+    private boolean savedInstanceStateDone;
 
 
     @SuppressLint("WrongConstant")
@@ -306,6 +309,15 @@ public class MainActivity extends AppCompatActivity {
                     holder.eventTimeTV.setText(getResources().getString(R.string.time) + ": " +model.getmTime());
                     holder.eventPlaylistTV.setText(getString(R.string.playlist_name) + " " + model.getmPlaylistName());
 
+                    holder.eventPlaceTV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(!savedInstanceStateDone) {
+                                showMapEvent(model.getmLat(), model.getmLng());
+                            }
+                        }
+                    });
+
                     String user = model.getmCurrentUser();
                     if(!user.equals(currentUserID)){
                         holder.editionLL.setVisibility(View.INVISIBLE);
@@ -339,6 +351,13 @@ public class MainActivity extends AppCompatActivity {
             {
             Toast.makeText(this, getString(R.string.no_data_available), Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void showMapEvent(double getmLat, double getmLng) {
+
+        DialogFragment dialogFragment = MapDialogFragment.newInstance(getmLat, getmLng);
+        dialogFragment.show(getSupportFragmentManager(), getString(R.string.event_map));
 
     }
 
@@ -630,6 +649,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
+        savedInstanceStateDone = false;
 
         if(null != recyclerAdapter)
         {
@@ -701,7 +721,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        savedInstanceStateDone = false;
+    }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        savedInstanceStateDone = true;
+    }
 
     //Verify Network connection
     public static boolean isNetworkAvailable(Context context) {
