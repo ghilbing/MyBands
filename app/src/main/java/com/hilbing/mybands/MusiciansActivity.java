@@ -26,6 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.common.util.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -177,11 +178,8 @@ public class MusiciansActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View view)
                                 {
-                                    CharSequence options[] = new CharSequence[]
-                                            {
-                                                    userName + " " + getResources().getString(R.string.instruments),
-                                                    getResources().getString(R.string.send_message)
-                                            };
+                                    final String[] options = {getResources().getString(R.string.instruments),
+                                                    getResources().getString(R.string.send_message)};
                                     AlertDialog.Builder builder = new AlertDialog.Builder(MusiciansActivity.this);
                                     builder.setTitle(getResources().getString(R.string.select_option));
                                     builder.setItems(options, new DialogInterface.OnClickListener()
