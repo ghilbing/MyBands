@@ -292,6 +292,14 @@ public class AddBandActivity extends AppCompatActivity {
             String story = bandStoryET.getText().toString();
             String country = countrySP.getSelectedItem().toString();
             boolean available = true;
+            String uriString = downloadUri;
+
+            if(TextUtils.isEmpty(downloadUri)){
+                uriString = "no data";
+            } else {
+                uriString = downloadUri;
+            }
+
 
             if (TextUtils.isEmpty(bandName))
             {
@@ -322,7 +330,7 @@ public class AddBandActivity extends AppCompatActivity {
 
                 HashMap bandMap = new HashMap();
                 bandMap.put("mBandId", currentBandId);
-                bandMap.put("mBandImage", downloadUri);
+                bandMap.put("mBandImage", uriString);
                 bandMap.put("mBandCreator", currentUserId);
                 bandMap.put("mBandName", bandName);
                 bandMap.put("mBandStory", story);

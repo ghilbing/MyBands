@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
+    android:background="@drawable/lightsmoke"
     tools:context=".SetUpActivity">
 
     <include
@@ -100,7 +100,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/inputs"
                 android:entries="@array/countries_array"
-                android:padding="0dp" />
+                android:padding="10dp" />
 
             <TextView
                 android:id="@+id/profile_where_do_you_live_TV"
@@ -109,6 +109,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/where_is_the_band_located"
+                android:textColor="@color/black"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <CheckBox

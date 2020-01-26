@@ -238,6 +238,7 @@ public class SetUpActivity extends AppCompatActivity
         String phone = phoneET.getText().toString();
         String country = countrySP.getSelectedItem().toString();
         String status = "I am musician";
+
         boolean available = true;
         boolean singer = true;
         boolean composer = true;

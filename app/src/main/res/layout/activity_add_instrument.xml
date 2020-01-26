@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddInstrumentActivity"
-    android:background="@drawable/instrumentsvoice">
+    android:background="@drawable/lightsmoke">
 
     <include
         android:id="@+id/update_instrument_toolbar"
@@ -23,6 +23,7 @@
         android:layout_marginTop="36dp"
         android:layout_marginEnd="8dp"
         android:orientation="vertical"
+        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +61,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:padding="10dp"
+        android:layout_margin="10dp"
         android:background="@drawable/inputs"
         android:entries="@array/instruments_array"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -78,6 +81,7 @@
         android:background="@drawable/buttons"
         android:textColor="@color/white"
         android:textStyle="bold"
+        android:layout_margin="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/instruments_SP" />
@@ -89,6 +93,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_margin="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

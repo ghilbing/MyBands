@@ -22,6 +22,7 @@ import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -438,14 +439,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareMenuData() {
 
-        MenuModel menuModel = new MenuModel(getResources().getString(R.string.home), false, true);
-        headerList.add(menuModel);
-        if (!menuModel.hasChildren)
-        {
-            childList.put(menuModel, null);
-        }
 
-        menuModel = new MenuModel(getResources().getString(R.string.user_profile), true, true);
+        MenuModel menuModel = new MenuModel(getResources().getString(R.string.user_profile), true, true);
         headerList.add(menuModel);
         List<MenuModel> childModelList = new ArrayList<>();
         MenuModel childModel = new MenuModel(getResources().getString(R.string.profile), false, false);
@@ -537,10 +532,7 @@ public class MainActivity extends AppCompatActivity {
                 if(headerList.get(i).isGroup){
                     if(!headerList.get(i).hasChildren){
                         String title = headerList.get(i).menuName;
-                        if(title.equals(getResources().getString(R.string.home))){
-                            Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
-                        }
-                        else if(title.equals(getResources().getString(R.string.songs))){
+                        if(title.equals(getResources().getString(R.string.songs))){
                             sendUserToSongActivity();
                         }
                         else if(title.equals(getResources().getString(R.string.playlists))){

@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#77560C</color>
-    <color name="colorPrimaryDark">#C48A15</color>
+<!--    <color name="colorPrimary">#77560C</color>-->
+<!--    <color name="colorPrimaryDark">#C48A15</color>-->
+<!--    <color name="colorAccent">#F44336</color>-->
+    <color name="colorPrimary">#797773</color>
+    <color name="colorPrimaryDark">#C7C5C0</color>
     <color name="colorAccent">#F44336</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="recyclerChat">#DEC5A5</color>
-    <color name="currentUserIdColor">#986464</color>
+    <color name="currentUserIdColor">#716E6E</color>
     <color name="dividerColor">#B0B0B0</color>
     <color name="rehearsal">#F1F0E3</color>
     <color name="concert">#ECB8B8</color>
+    <color name="abc_primary_text_material_light">#FFFFFF</color>
+    <color name="abc_secondary_text_material_light">#B0B0B0</color>
 
 </resources>

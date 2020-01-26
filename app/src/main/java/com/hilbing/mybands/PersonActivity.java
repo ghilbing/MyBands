@@ -295,36 +295,6 @@ public class PersonActivity extends AppCompatActivity
 
     }
 
-    private void quitBand()
-    {
-        bandsMusiciansRef.child(senderUserId).child(currentBandId).child(receiverUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>()
-        {
-            @Override
-            public void onComplete(@NonNull Task<Void> task)
-            {
-                if(task.isSuccessful())
-                {
-                    bandsMusiciansRef.child(receiverUserId).child(currentBandId).child(senderUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task)
-                        {
-                            if(task.isSuccessful())
-                            {
-                                sendRequestBT.setEnabled(true);
-                                CURRENT_STATE = getResources().getString(R.string.not_from_same_band);
-                                sendRequestBT.setText(getResources().getString(R.string.add_to_band_request));
-
-                                declineRequestBT.setVisibility(View.INVISIBLE);
-                                declineRequestBT.setEnabled(false);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-
-    }
 
     private void keepButtonsText()
     {

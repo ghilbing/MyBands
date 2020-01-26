@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/lightsmoke"
     tools:context=".CreateEventActivity">
 
     <include
@@ -30,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:theme="@style/Spinner"
             android:entries="@array/events_array"/>
 
         <LinearLayout
@@ -98,6 +100,7 @@
             android:padding="10dp"/>
 
         <LinearLayout
+            android:layout_marginTop="15dp"
             android:id="@+id/placeLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,6 +128,7 @@
         </LinearLayout>
 
         <Button
+            android:layout_marginTop="15dp"
             android:id="@+id/create_event_select_playlist_BT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
