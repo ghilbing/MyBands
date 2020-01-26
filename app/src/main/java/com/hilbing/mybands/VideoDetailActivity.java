@@ -101,6 +101,7 @@ public class VideoDetailActivity extends YouTubeBaseActivity implements YouTubeP
         songIntent.putExtra("YouTubeURL", videoId);
         songIntent.putExtra("YouTubeTitle", videoTitle);
         startActivity(songIntent);
+        finish();
 
     }
 
