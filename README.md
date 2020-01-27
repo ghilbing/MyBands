@@ -3,7 +3,9 @@
 Hello, I have done this app and I know that this is just a first version.
 The idea is to create an app that allow any type of music band to organize rehearsals, playlists, songs, etc.
 
-# you will need to logout every time you need to change the user in order to keep Firebase database performance.
+----Attention-----
+You will need to logout every time you need to test a particular user in order to keep Firebase database performance.
+------------------
 
 1) To start you can use the user:fer@mana.com passw:123456 and then create your own user and start interacting with the app.
 
