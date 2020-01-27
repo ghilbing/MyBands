@@ -120,14 +120,14 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
         addSongBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!savedInstanceStateDone) {
+                if (!savedInstanceStateDone) {
                     showSongs();
                 }
 
             }
         });
 
-        if(!TextUtils.isEmpty(currentBandIdPref)){
+        if (!TextUtils.isEmpty(currentBandIdPref)) {
             displayMySongsFromPlaylist();
         }
 
@@ -173,13 +173,12 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
     private void sendUserToSongsActivity() {
         Intent songIntent = new Intent(AddSongsToPlaylistActivity.this, SongActivity.class);
         startActivity(songIntent);
-        finish();
     }
 
     private void displayMySongsFromPlaylist() {
 
         Query query = FirebaseDatabase.getInstance().getReference().child("PlaylistsSongs").child(currentBandIdPref).child(currentPlaylistId);
-        if(!TextUtils.isEmpty(query.toString())) {
+        if (!TextUtils.isEmpty(query.toString())) {
 
             FirebaseRecyclerOptions<Song> options = new FirebaseRecyclerOptions.Builder<Song>().setQuery(query,
                     new SnapshotParser<Song>() {
@@ -213,7 +212,7 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
                     holder.songArtistTV.setText(model.getmArtist());
                     holder.youtubeLinkTV.setText(model.getmUrlYoutube());
 
-                    if(!model.getmUrlYoutube().equals(getResources().getString(R.string.no_link_from_youtube))){
+                    if (!model.getmUrlYoutube().equals(getResources().getString(R.string.no_link_from_youtube))) {
                         holder.playSongIV.setVisibility(View.VISIBLE);
                         holder.playSongIV.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -259,8 +258,7 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
     }
 
 
-    public class MySongsViewHolder extends RecyclerView.ViewHolder
-    {
+    public class MySongsViewHolder extends RecyclerView.ViewHolder {
         View mView;
         @BindView(R.id.all_songs_playlist_name_TV)
         TextView songNameTV;
@@ -273,17 +271,14 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
         @BindView(R.id.all_songs_playlist_delete_IV)
         ImageView deleteSongIV;
 
-        public MySongsViewHolder(@NonNull final View itemView)
-        {
+        public MySongsViewHolder(@NonNull final View itemView) {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener()
-            {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public boolean onLongClick(View view)
-                {
+                public boolean onLongClick(View view) {
                     int itemClicked = getAdapterPosition();
                     Toast.makeText(AddSongsToPlaylistActivity.this, String.valueOf(itemClicked), Toast.LENGTH_LONG).show();
 
@@ -296,13 +291,11 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
@@ -327,15 +320,12 @@ public class AddSongsToPlaylistActivity extends AppCompatActivity {
         savedInstanceStateDone = false;
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(AddSongsToPlaylistActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
-
 
 
 }

@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -78,7 +81,10 @@ public class SongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
 
-        if(savedInstanceState != null){
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
+        if (savedInstanceState != null) {
             songNameET.setText(savedInstanceState.getString("Song"));
             songArtistBandET.setText(savedInstanceState.getString("Artist"));
         }
@@ -98,10 +104,9 @@ public class SongActivity extends AppCompatActivity {
 
         actionBar.setTitle(R.string.add_song);
 
-        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
-        currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
-        if(TextUtils.isEmpty(currentBandIdPref)){
+
+        if (TextUtils.isEmpty(currentBandIdPref)) {
             message.setVisibility(View.VISIBLE);
             layout.setVisibility(View.INVISIBLE);
         } else {
@@ -113,9 +118,9 @@ public class SongActivity extends AppCompatActivity {
         databaseSongs.keepSynced(true);
 
 
-       // songYoutubeLinkET.setText(R.string.no_data_available);
+        // songYoutubeLinkET.setText(R.string.no_data_available);
 
-        if(!TextUtils.isEmpty(videoURL)){
+        if (!TextUtils.isEmpty(videoURL)) {
             songYoutubeLinkET.setText(videoURL);
         } else {
             songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
@@ -159,15 +164,13 @@ public class SongActivity extends AppCompatActivity {
         String youtubeTitle = songYoutubeTitleET.getText().toString();
         String youtubeLink = songYoutubeLinkET.getText().toString();
 
-        if (TextUtils.isEmpty(name))
-        {
+        if (TextUtils.isEmpty(name)) {
             songNameET.setError(getResources().getString(R.string.enter_name_of_the_song));
             songNameET.requestFocus();
             return;
         }
 
-        if (TextUtils.isEmpty(artist))
-        {
+        if (TextUtils.isEmpty(artist)) {
             songArtistBandET.setError(getResources().getString(R.string.enter_name_of_the_artist_or_band));
             songArtistBandET.requestFocus();
             return;
@@ -182,11 +185,12 @@ public class SongActivity extends AppCompatActivity {
             songYoutubeTitleET.setText(getResources().getString(R.string.no_title_from_youtube));
             songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
             Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
+            songNameET.requestFocus();
         }
 
     }
 
-    private void showUpdateDialog(final String id, String name, String artist, String youtubeTitle, String youtubeLink){
+    private void showUpdateDialog(final String id, String name, String artist, String youtubeTitle, String youtubeLink) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.update_dialog_song, null);
@@ -243,11 +247,10 @@ public class SongActivity extends AppCompatActivity {
         });
 
 
-
     }
 
 
-    private boolean updateSong(String id, String name, String artist, String youtubeTitle, String youtube, String currentUser){
+    private boolean updateSong(String id, String name, String artist, String youtubeTitle, String youtube, String currentUser) {
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Songs").child(currentBandIdPref).child(id);
         Song song = new Song(id, name, artist, youtubeTitle, youtube, currentUser);
@@ -261,19 +264,27 @@ public class SongActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+       // SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("SHARED_PREFS", Activity.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
         databaseSongs.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                songsList.clear();
+                if (dataSnapshot.exists()) {
+                    songsList.clear();
 
-                for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
-                    Song song = songSnapshot.getValue(Song.class);
-                    songsList.add(song);
+                    for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
+                        Song song = songSnapshot.getValue(Song.class);
+                        songsList.add(song);
+                    }
+
+
+                    SongAdapter adapter = new SongAdapter(SongActivity.this, songsList);
+                    //songsLV.setAdapter(adapter);
+                } else {
+                    Toast.makeText(SongActivity.this, getResources().getString(R.string.you_need_to_add_songs), Toast.LENGTH_SHORT).show();
                 }
-
-
-                SongAdapter adapter = new SongAdapter(SongActivity.this, songsList);
-                //songsLV.setAdapter(adapter);
             }
 
             @Override
@@ -284,13 +295,11 @@ public class SongActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
@@ -308,7 +317,7 @@ public class SongActivity extends AppCompatActivity {
         videoURL = getIntent().getStringExtra("YouTubeURL");
         songTitleYoutube = getIntent().getStringExtra("YouTubeTitle");
 
-        if(!TextUtils.isEmpty(videoURL) && !TextUtils.isEmpty(songTitleYoutube)){
+        if (!TextUtils.isEmpty(videoURL) && !TextUtils.isEmpty(songTitleYoutube)) {
             songYoutubeLinkET.setText(videoURL);
             songYoutubeTitleET.setText(songTitleYoutube);
         } else {
@@ -335,8 +344,7 @@ public class SongActivity extends AppCompatActivity {
         songArtistBandET.setText(savedInstanceState.getString("Artist"));
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(SongActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);

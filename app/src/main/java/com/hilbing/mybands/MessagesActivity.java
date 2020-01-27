@@ -48,8 +48,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MessagesActivity extends AppCompatActivity
-{
+public class MessagesActivity extends AppCompatActivity {
 
     @BindView(R.id.message_toolbar)
     Toolbar toolbar;
@@ -79,8 +78,7 @@ public class MessagesActivity extends AppCompatActivity
     private DatabaseReference rootReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
 
@@ -91,8 +89,7 @@ public class MessagesActivity extends AppCompatActivity
 
         Intent intentGetData = getIntent();
         Bundle bundle = intentGetData.getExtras();
-        if(bundle != null)
-        {
+        if (bundle != null) {
             messageReceiverId = String.valueOf(bundle.get("mUserId"));
             messageReceiverName = String.valueOf(bundle.get("mUserName"));
 
@@ -119,11 +116,9 @@ public class MessagesActivity extends AppCompatActivity
 
         displayReceiverInfo();
 
-        sendTextBT.setOnClickListener(new View.OnClickListener()
-        {
+        sendTextBT.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 sendMessage();
             }
         });
@@ -140,8 +135,7 @@ public class MessagesActivity extends AppCompatActivity
 
     }
 
-    private void fetchMessages()
-    {
+    private void fetchMessages() {
         rootReference.child("Messages").child(messageBandId).child(currentUserId).child(messageReceiverId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -152,8 +146,7 @@ public class MessagesActivity extends AppCompatActivity
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.exists())
-                {
+                if (dataSnapshot.exists()) {
 
                 }
             }
@@ -176,18 +169,14 @@ public class MessagesActivity extends AppCompatActivity
 
     }
 
-    private void sendMessage()
-    {
+    private void sendMessage() {
 
         String messageString = String.valueOf(messageET.getText());
-        if(TextUtils.isEmpty(messageString))
-        {
+        if (TextUtils.isEmpty(messageString)) {
             messageET.setError(getResources().getString(R.string.enter_message));
             messageET.requestFocus();
             return;
-        }
-        else
-        {
+        } else {
             String message_sender_ref = "Messages/" + messageBandId + "/" + currentUserId + "/" + messageReceiverId;
             String message_receiver_ref = "Messages/" + messageBandId + "/" + messageReceiverId + "/" + currentUserId;
 
@@ -217,13 +206,10 @@ public class MessagesActivity extends AppCompatActivity
             rootReference.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful())
-                    {
+                    if (task.isSuccessful()) {
                         Toast.makeText(MessagesActivity.this, getResources().getString(R.string.message_sent_succesfully), Toast.LENGTH_LONG).show();
                         messageET.setText("");
-                    }
-                    else
-                    {
+                    } else {
                         String message = task.getException().getMessage();
                         Toast.makeText(MessagesActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                         messageET.setText("");
@@ -236,16 +222,13 @@ public class MessagesActivity extends AppCompatActivity
 
     }
 
-    private void displayReceiverInfo()
-    {
+    private void displayReceiverInfo() {
         userReceiverTV.setText(messageReceiverName);
-        rootReference.child("Users").child(messageReceiverId).addValueEventListener(new ValueEventListener()
-        {
+        rootReference.child("Users").child(messageReceiverId).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists()){
-                   final String imageString = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    final String imageString = String.valueOf(dataSnapshot.child("mUserProfileImage").getValue());
                     Picasso.get().load(imageString).networkPolicy(NetworkPolicy.OFFLINE).into(userReceiverCIV, new Callback() {
                         @Override
                         public void onSuccess() {
@@ -263,8 +246,7 @@ public class MessagesActivity extends AppCompatActivity
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });

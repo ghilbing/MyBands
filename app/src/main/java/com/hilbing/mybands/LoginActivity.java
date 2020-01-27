@@ -50,8 +50,7 @@ import com.google.firebase.database.ValueEventListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LoginActivity extends AppCompatActivity
-{
+public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.login_email_ET)
     EditText emailET;
@@ -80,8 +79,7 @@ public class LoginActivity extends AppCompatActivity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -147,20 +145,17 @@ public class LoginActivity extends AppCompatActivity
     }
 
 
-
     private void signInGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
 
-        if (requestCode == RC_SIGN_IN)
-        {
+        if (requestCode == RC_SIGN_IN) {
             progressDialog.setTitle(getResources().getString(R.string.google_sign_in));
             progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_allowing_you_to_login_to_your_google_account));
             progressDialog.setCanceledOnTouchOutside(true);
@@ -168,57 +163,47 @@ public class LoginActivity extends AppCompatActivity
 
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if(result.isSuccess())
-            {
+            if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
                 Toast.makeText(LoginActivity.this, getResources().getString(R.string.please_wait_while_we_are_getting_your_google_auth_result), Toast.LENGTH_LONG).show();
-            }
-            else
-            {
+            } else {
                 Toast.makeText(LoginActivity.this, getResources().getString(R.string.cannot_get_google_auth_result), Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
-        }
+        } else {
 
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        if(!TextUtils.isEmpty(mCallbackManager.toString())){
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+            if (!TextUtils.isEmpty(mCallbackManager.toString())) {
 
-            // Pass the activity result back to the Facebook SDK
+                // Pass the activity result back to the Facebook SDK
 
-            progressDialog.setTitle(getResources().getString(R.string.facebook_sign_in));
-            progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_allowing_you_to_login_to_your_facebook_account));
-            progressDialog.setCanceledOnTouchOutside(true);
-            progressDialog.show();
+                progressDialog.setTitle(getResources().getString(R.string.facebook_sign_in));
+                progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_allowing_you_to_login_to_your_facebook_account));
+                progressDialog.setCanceledOnTouchOutside(true);
+                progressDialog.show();
 
-
-
-
+            }
         }
 
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct)
-    {
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
-                {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task)
-                    {
-                        if (task.isSuccessful())
-                        {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             sendUserToMainActivity();
                             Log.d(TAG, mAuth.getUid());
                             progressDialog.dismiss();
 
-                        } else
-                            {
+                        } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             String message = task.getException().getMessage();
@@ -234,42 +219,33 @@ public class LoginActivity extends AppCompatActivity
                 });
     }
 
-    private void sendUserToLoginActivity()
-    {
+    private void sendUserToLoginActivity() {
 
         Intent loginIntent = new Intent(LoginActivity.this, LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
-        finish();
+
     }
 
 
-    private void loginVerification()
-    {
+    private void loginVerification() {
 
         String email = emailET.getText().toString();
         String password = passwordET.getText().toString();
 
-        if(TextUtils.isEmpty(email)){
+        if (TextUtils.isEmpty(email)) {
             emailET.setError(getResources().getString(R.string.enter_email_address));
             emailET.requestFocus();
             return;
-        }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
-        {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailET.setError(getResources().getString(R.string.please_enter_a_valid_email));
             emailET.requestFocus();
             return;
-        }
-
-        else if (TextUtils.isEmpty(password))
-        {
+        } else if (TextUtils.isEmpty(password)) {
             passwordET.setError(getResources().getString(R.string.prompt_password));
             passwordET.requestFocus();
             return;
-        }
-        else
-            {
+        } else {
 
             progressDialog.setTitle(getResources().getString(R.string.login));
             progressDialog.setMessage(getResources().getString(R.string.please_wait_while_we_are_allowing_you_into_your_account));
@@ -277,19 +253,14 @@ public class LoginActivity extends AppCompatActivity
             progressDialog.show();
 
 
-            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>()
-            {
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
-                public void onComplete(@NonNull Task<AuthResult> task)
-                {
-                    if(task.isSuccessful())
-                    {
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
                         sendUserToMainActivity();
                         progressDialog.dismiss();
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.you_are_logged_in), Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                        {
+                    } else {
                         progressDialog.dismiss();
                         String message = task.getException().getMessage();
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
@@ -300,44 +271,39 @@ public class LoginActivity extends AppCompatActivity
 
     }
 
-    private void sendUserToRegisterActivity()
-    {
+    private void sendUserToRegisterActivity() {
 
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
 
     }
 
-    private void sendUserToResetPasswordActivity()
-    {
+    private void sendUserToResetPasswordActivity() {
         Intent resetIntent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
         startActivity(resetIntent);
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            sendUserToMainActivity();
+        if (currentUser != null) {
+          //  sendUserToMainActivity();
         }
 
     }
 
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
 
         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
+
     }
 
 
-
-    private void signInFacebook(){
+    private void signInFacebook() {
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         facebookLoginBT.setReadPermissions("email", "public_profile");

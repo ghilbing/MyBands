@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -65,7 +66,7 @@ public class RehearsalActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if(!TextUtils.isEmpty(currentBandIdPref)) {
+        if (!TextUtils.isEmpty(currentBandIdPref)) {
             Log.d("CURRENT BAND ID PREF FROM REHEARSALS", currentBandIdPref);
             showEvents();
         }
@@ -79,7 +80,7 @@ public class RehearsalActivity extends AppCompatActivity {
 
         Log.d("T O D A Y", String.valueOf(System.currentTimeMillis()));
 
-        if(!TextUtils.isEmpty(query.toString())) {
+        if (!TextUtils.isEmpty(query.toString())) {
             Log.d("QUERY TO STRING SHOW EVENTS INTO REHEARSALS", query.toString());
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
@@ -121,7 +122,7 @@ public class RehearsalActivity extends AppCompatActivity {
                     final String eventKey = getRef(position).getKey();
 
                     holder.eventTypeTV.setText(model.getmEventType());
-                    if(model.getmEventType().equals("Rehearsal")){
+                    if (model.getmEventType().equals("Rehearsal")) {
                         holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.rehearsal));
                     } else {
                         holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.concert));
@@ -145,16 +146,13 @@ public class RehearsalActivity extends AppCompatActivity {
             recyclerView.setAdapter(recyclerAdapter);
             recyclerAdapter.startListening();
             recyclerAdapter.notifyDataSetChanged();
-        }
-        else
-        {
+        } else {
             Toast.makeText(this, getString(R.string.no_data_available), Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    public class EventViewHolder extends RecyclerView.ViewHolder
-    {
+    public class EventViewHolder extends RecyclerView.ViewHolder {
         View mView;
         @BindView(R.id.all_events_cardView_CV)
         CardView cardView;
@@ -171,17 +169,14 @@ public class RehearsalActivity extends AppCompatActivity {
         @BindView(R.id.all_events_playlist_TV)
         TextView eventPlaylistTV;
 
-        public EventViewHolder(@NonNull final View itemView)
-        {
+        public EventViewHolder(@NonNull final View itemView) {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener()
-            {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public boolean onLongClick(View view)
-                {
+                public boolean onLongClick(View view) {
                     int itemClicked = getAdapterPosition();
                     Toast.makeText(RehearsalActivity.this, String.valueOf(itemClicked), Toast.LENGTH_LONG).show();
 
@@ -195,8 +190,7 @@ public class RehearsalActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.stopListening();
         }
     }
@@ -204,32 +198,27 @@ public class RehearsalActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.startListening();
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(RehearsalActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 }

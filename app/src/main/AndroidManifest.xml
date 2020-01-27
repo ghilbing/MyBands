@@ -82,7 +82,6 @@
         <activity android:name=".CreateEventActivity"
             android:launchMode="singleTask"
             android:parentActivityName=".MapActivity"/>
-        <activity android:name=".ConcertActivity" />
         <activity android:name=".RehearsalActivity" />
         <activity android:name=".MyPlaylistsActivity" />
         <activity

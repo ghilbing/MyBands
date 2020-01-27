@@ -1,6 +1,7 @@
 package com.hilbing.mybands.fragments;
 
 import android.os.Bundle;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -27,6 +29,8 @@ public class MapDialogFragment extends DialogFragment implements OnMapReadyCallb
     GoogleMap mMap;
     private double mLat;
     private double mLng;
+    private SupportMapFragment mapFragment;
+    private static View rootView;
 
 
 
@@ -44,17 +48,30 @@ public class MapDialogFragment extends DialogFragment implements OnMapReadyCallb
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_map_dialog, container, false);
 
-        mLat = getArguments().getDouble("lat", 0.0);
-        mLng = getArguments().getDouble("lng", 0.0);
+        if(rootView != null){
+            ViewGroup parent = (ViewGroup) rootView.getParent();
+            if (parent != null){
+                parent.removeView(rootView);
+            }
+        }
+        try{
+            rootView = inflater.inflate(R.layout.fragment_map_dialog, container, false);
+
+            mLat = getArguments().getDouble("lat", 0.0);
+            mLng = getArguments().getDouble("lng", 0.0);
 
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+            mapFragment = new SupportMapFragment();
+            mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map_dialog);
+            mapFragment.getMapAsync(this);
+
+
+        }catch (InflateException e){
+            e.printStackTrace();
+        }
 
         return rootView;
     }
@@ -62,7 +79,7 @@ public class MapDialogFragment extends DialogFragment implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         LatLng latLng = new LatLng(mLat,mLng);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));

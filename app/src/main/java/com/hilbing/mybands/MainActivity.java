@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_events_RV)
     RecyclerView recyclerView;
 
+
     private Toolbar mToolbar;
     private CircleImageView navProfileCIV;
     private TextView navUserNameTV;
@@ -105,17 +106,17 @@ public class MainActivity extends AppCompatActivity {
     List<Band> bands = new ArrayList();
     private List<Event> events = new ArrayList<>();
     private boolean savedInstanceStateDone;
+    private SharedPreferences preferences;
 
 
     @SuppressLint("WrongConstant")
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
 
@@ -138,21 +139,21 @@ public class MainActivity extends AppCompatActivity {
         isNetworkAvailable(this);
 
         Intent intent = getIntent();
-        if(intent != null){
+        if (intent != null) {
             currentBandId = intent.getStringExtra("currentBandId");
 
-            if(currentBandId != null){
+            if (currentBandId != null) {
                 bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()){
-                            if(dataSnapshot.hasChild("mBandName"))
-                            {
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.hasChild("mBandName")) {
                                 String name = dataSnapshot.child("mBandName").getValue().toString();
                                 Log.d("MainActivity", name);
-                            }
-                            else
-                            {
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("SHARED_PREFS", currentBandId);
+                                editor.apply();
+                            } else {
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
                             }
                         }
@@ -165,11 +166,13 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-            if(!TextUtils.isEmpty(currentBandIdPref)) {
+            if (!TextUtils.isEmpty(currentBandIdPref)) {
                 Log.d("CURRENT BAND ID PREF FROM MAIN ACTIVITY", currentBandIdPref);
                 showEvents();
             }
         }
+
+
 
 
         mToolbar = findViewById(R.id.main_page_toolbar);
@@ -189,21 +192,16 @@ public class MainActivity extends AppCompatActivity {
         navProfileCIV = navHeader.findViewById(R.id.nav_header_user_image_CIV);
         navBandNameTV = navHeader.findViewById(R.id.nav_header_current_band_TV);
 
-        usersReference.child(currentUserID).addValueEventListener(new ValueEventListener()
-        {
+        usersReference.child(currentUserID).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
 
-                    if(dataSnapshot.hasChild("mUserName"))
-                    {
+                    if (dataSnapshot.hasChild("mUserName")) {
                         String fullName = dataSnapshot.child("mUserName").getValue().toString();
                         navUserNameTV.setText(fullName);
                     }
-                    if(dataSnapshot.hasChild("mUserProfileImage"))
-                    {
+                    if (dataSnapshot.hasChild("mUserProfileImage")) {
                         final String imagePath = dataSnapshot.child("mUserProfileImage").getValue().toString();
                         Picasso.get().load(imagePath).networkPolicy(NetworkPolicy.OFFLINE).into(navProfileCIV, new Callback() {
                             @Override
@@ -217,11 +215,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-                    }
-                    else
-                        {
+                    } else {
                         Toast.makeText(MainActivity.this, getResources().getString(R.string.profile_name_does_not_exist), Toast.LENGTH_LONG).show();
-                       // sendUserToSetUpActivity();
+                        // sendUserToSetUpActivity();
                     }
 
                 }
@@ -229,27 +225,26 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
 
 
-        navigationViewNV.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener()
-        {
+        navigationViewNV.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
-            {
-              //  userSelector(menuItem);
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                //  userSelector(menuItem);
                 return false;
             }
         });
 
+
+
     }
 
 
-    private void showEvents(){
+    private void showEvents() {
 
         SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
@@ -257,8 +252,8 @@ public class MainActivity extends AppCompatActivity {
         Query query = allEventsReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis());
 
 
+            if(!TextUtils.isEmpty(query.toString())){
 
-        if(!TextUtils.isEmpty(query.toString())) {
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
                     new SnapshotParser<Event>() {
@@ -299,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                     final String eventKey = getRef(position).getKey();
 
                     holder.eventTypeTV.setText(model.getmEventType());
-                    if(model.getmEventType().equals("Rehearsal")){
+                    if (model.getmEventType().equals("Rehearsal")) {
                         holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.rehearsal));
                     } else {
                         holder.cardView.setCardBackgroundColor(getResources().getColor(R.color.concert));
@@ -307,20 +302,20 @@ public class MainActivity extends AppCompatActivity {
                     holder.eventNameTV.setText(model.getmName());
                     holder.eventPlaceTV.setText(getResources().getString(R.string.location) + ": " + model.getmPlace());
                     holder.eventDateTV.setText(getResources().getString(R.string.date) + ": " + model.getmDate());
-                    holder.eventTimeTV.setText(getResources().getString(R.string.time) + ": " +model.getmTime());
+                    holder.eventTimeTV.setText(getResources().getString(R.string.time) + ": " + model.getmTime());
                     holder.eventPlaylistTV.setText(getString(R.string.playlist_name) + " " + model.getmPlaylistName());
 
-                    holder.eventPlaceTV.setOnClickListener(new View.OnClickListener() {
+                    holder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(!savedInstanceStateDone) {
-                              //  showMapEvent(model.getmLat(), model.getmLng());
+                            if (!savedInstanceStateDone) {
+                                showMapEvent(model.getmLat(), model.getmLng());
                             }
                         }
                     });
 
                     String user = model.getmCurrentUser();
-                    if(!user.equals(currentUserID)){
+                    if (!user.equals(currentUserID)) {
                         holder.editionLL.setVisibility(View.INVISIBLE);
                     } else {
                         holder.editionLL.setVisibility(View.VISIBLE);
@@ -330,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
                     holder.editIV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                               sendUserToUpdateEvent(eventKey);
+                            sendUserToUpdateEvent(eventKey);
                         }
                     });
 
@@ -347,9 +342,7 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(recyclerAdapter);
             recyclerAdapter.startListening();
             recyclerAdapter.notifyDataSetChanged();
-        }
-        else
-            {
+        } else {
             Toast.makeText(this, getString(R.string.no_data_available), Toast.LENGTH_SHORT).show();
         }
 
@@ -367,11 +360,9 @@ public class MainActivity extends AppCompatActivity {
         allEventsReference.child(currentBandIdPref).child(eventKey).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.event_deleted_successfully), Toast.LENGTH_LONG).show();
-                }
-                else
-                {
+                } else {
                     String message = task.getException().getMessage();
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                 }
@@ -390,8 +381,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class EventViewHolder extends RecyclerView.ViewHolder
-    {
+    public class EventViewHolder extends RecyclerView.ViewHolder {
         View mView;
         @BindView(R.id.all_events_cardView_CV)
         CardView cardView;
@@ -415,17 +405,14 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout editionLL;
 
 
-        public EventViewHolder(@NonNull final View itemView)
-        {
+        public EventViewHolder(@NonNull final View itemView) {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener()
-            {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public boolean onLongClick(View view)
-                {
+                public boolean onLongClick(View view) {
                     int itemClicked = getAdapterPosition();
                     Toast.makeText(MainActivity.this, String.valueOf(itemClicked), Toast.LENGTH_LONG).show();
 
@@ -448,8 +435,7 @@ public class MainActivity extends AppCompatActivity {
         childModel = new MenuModel(getResources().getString(R.string.instruments), false, false);
         childModelList.add(childModel);
 
-        if(menuModel.hasChildren)
-        {
+        if (menuModel.hasChildren) {
             childList.put(menuModel, childModelList);
         }
 
@@ -468,8 +454,7 @@ public class MainActivity extends AppCompatActivity {
         childModelList.add(childModel);
 
 
-        if(menuModel.hasChildren)
-        {
+        if (menuModel.hasChildren) {
             childList.put(menuModel, childModelList);
         }
 
@@ -481,8 +466,7 @@ public class MainActivity extends AppCompatActivity {
         childModel = new MenuModel(getResources().getString(R.string.my_songs), false, false);
         childModelList.add(childModel);
 
-        if(menuModel.hasChildren)
-        {
+        if (menuModel.hasChildren) {
             childList.put(menuModel, childModelList);
         }
 
@@ -492,8 +476,7 @@ public class MainActivity extends AppCompatActivity {
         childModel = new MenuModel(getResources().getString(R.string.my_playlists), false, false);
         childModelList.add(childModel);
 
-        if (menuModel.hasChildren)
-        {
+        if (menuModel.hasChildren) {
             childList.put(menuModel, childModelList);
         }
 
@@ -502,46 +485,40 @@ public class MainActivity extends AppCompatActivity {
         headerList.add(menuModel);
         childModel = new MenuModel(getResources().getString(R.string.create_event), false, false);
         childModelList.add(childModel);
-        if(menuModel.hasChildren)
-        {
+        if (menuModel.hasChildren) {
             childList.put(menuModel, childModelList);
         }
         childModelList = new ArrayList<>();
         menuModel = new MenuModel(getResources().getString(R.string.settings), false, true);
         headerList.add(menuModel);
-        if (!menuModel.hasChildren)
-        {
+        if (!menuModel.hasChildren) {
             childList.put(menuModel, null);
         }
         menuModel = new MenuModel(getResources().getString(R.string.logout), false, true);
         headerList.add(menuModel);
-        if (!menuModel.hasChildren)
-        {
+        if (!menuModel.hasChildren) {
             childList.put(menuModel, null);
         }
 
     }
 
-    public void populateExpandableList(){
+    public void populateExpandableList() {
         expandableListAdapter = new ExpandableListAdapter(this, headerList, childList);
         expandableListView.setAdapter(expandableListAdapter);
 
         expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
-                if(headerList.get(i).isGroup){
-                    if(!headerList.get(i).hasChildren){
+                if (headerList.get(i).isGroup) {
+                    if (!headerList.get(i).hasChildren) {
                         String title = headerList.get(i).menuName;
-                        if(title.equals(getResources().getString(R.string.songs))){
+                        if (title.equals(getResources().getString(R.string.songs))) {
                             sendUserToSongActivity();
-                        }
-                        else if(title.equals(getResources().getString(R.string.playlists))){
+                        } else if (title.equals(getResources().getString(R.string.playlists))) {
                             Toast.makeText(MainActivity.this, "Playlists", Toast.LENGTH_LONG).show();
-                        }
-                        else if (title.equals(getResources().getString(R.string.settings))){
+                        } else if (title.equals(getResources().getString(R.string.settings))) {
                             sendUserToSettingsActivity();
-                        }
-                        else if(title.equals(getResources().getString(R.string.logout))){
+                        } else if (title.equals(getResources().getString(R.string.logout))) {
                             mAuth.signOut();
                             SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
                             preferences.edit().clear().commit();
@@ -556,52 +533,39 @@ public class MainActivity extends AppCompatActivity {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-                if(childList.get(headerList.get(i))!= null){
+                if (childList.get(headerList.get(i)) != null) {
                     MenuModel menuModel = childList.get(headerList.get(i)).get(i1);
-                    if(menuModel.menuName.length() > 0){
-                       String subTitle = menuModel.menuName;
-                       if(subTitle.equals(getResources().getString(R.string.profile))){
-                           sendUserToProfileActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.instruments))){
-                           sendUserToAddInstrumentActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.create_band))){
-                           sendUserToAddBandActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.find_musicians))){
-                           sendUsertoFindMusicians();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.my_bands))){
-                           sendUserToMyBands();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.band_members))){
-                           sendUserToMusiciansActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.send_message))){
-                           sendUserToMessagesActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.quit_band))){
-                           sendUserToQuitBandActivity(currentBandIdPref, currentUserID);
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.add_song))){
-                           sendUserToSongActivity();
+                    if (menuModel.menuName.length() > 0) {
+                        String subTitle = menuModel.menuName;
+                        if (subTitle.equals(getResources().getString(R.string.profile))) {
+                            sendUserToProfileActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.instruments))) {
+                            sendUserToAddInstrumentActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.create_band))) {
+                            sendUserToAddBandActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.find_musicians))) {
+                            sendUsertoFindMusicians();
+                        } else if (subTitle.equals(getResources().getString(R.string.my_bands))) {
+                            sendUserToMyBands();
+                        } else if (subTitle.equals(getResources().getString(R.string.band_members))) {
+                            sendUserToMusiciansActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.send_message))) {
+                            sendUserToMessagesActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.quit_band))) {
+                            sendUserToQuitBandActivity(currentBandIdPref, currentUserID);
+                        } else if (subTitle.equals(getResources().getString(R.string.add_song))) {
+                            sendUserToSongActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.my_songs))) {
+                            sendUserToMySongsActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.my_playlists))) {
+                            sendUserToMyPlaylistsActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.create_event))) {
+                            sendUserToCreateEventActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.rehearsals))) {
+                            sendUserToRehearsalActivity();
+                        } else if (subTitle.equals(getResources().getString(R.string.concerts))) {
+                            Toast.makeText(MainActivity.this, "Concerts", Toast.LENGTH_LONG).show();
                         }
-                       else if(subTitle.equals(getResources().getString(R.string.my_songs))){
-                           sendUserToMySongsActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.my_playlists))){
-                           sendUserToMyPlaylistsActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.create_event))){
-                           sendUserToCreateEventActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.rehearsals))){
-                           sendUserToRehearsalActivity();
-                       }
-                       else if(subTitle.equals(getResources().getString(R.string.concerts))){
-                           Toast.makeText(MainActivity.this, "Concerts", Toast.LENGTH_LONG).show();
-                       }
                     }
                 }
                 return false;
@@ -612,14 +576,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public void onBackPressed()
-    {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START))
-        {
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else
-            {
+        } else {
 
             super.onBackPressed();
         }
@@ -627,24 +587,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if(actionBarDrawerToggle.onOptionsItemSelected(item))
-        {
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         savedInstanceStateDone = false;
 
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.startListening();
             recyclerAdapter.notifyDataSetChanged();
         }
@@ -653,20 +609,17 @@ public class MainActivity extends AppCompatActivity {
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
         Log.d("MainActivitySharedPreferences................................", currentBandIdPref);
 
-        if(TextUtils.isEmpty(currentBandIdPref)){
+        if (!TextUtils.isEmpty(currentBandIdPref)) {
             bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
-                        if(dataSnapshot.hasChild("mBandName"))
-                        {
+                    if (dataSnapshot.exists()) {
+                        if (dataSnapshot.hasChild("mBandName")) {
                             String name = dataSnapshot.child("mBandName").getValue().toString();
                             Log.d(".......................", name);
                             navBandNameTV.setText(name);
-                        }
-                        else
-                        {
-                           // Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -676,28 +629,26 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+        } else {
+          //  sendUserToAddBandActivity();
         }
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser == null)
-        {
+        if (currentUser == null) {
             sendUserToLoginActivity();
-        }
-        else
-            {
+        } else {
             checkIfUserExists();
             checkIfUserBelongsToBand();
             checkIfUserHasARequest();
             showEvents();
-             }
+        }
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.startListening();
             recyclerAdapter.notifyDataSetChanged();
         }
@@ -706,10 +657,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.stopListening();
-          //  recyclerAdapter.notifyDataSetChanged();
+            //  recyclerAdapter.notifyDataSetChanged();
         }
     }
 
@@ -729,77 +679,65 @@ public class MainActivity extends AppCompatActivity {
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connectivityManager.getActiveNetworkInfo() !=  null
+        return connectivityManager.getActiveNetworkInfo() != null
                 && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
 
-
     private void checkIfUserBelongsToBand() {
 
-        bandsMusiciansReference.addValueEventListener(new ValueEventListener()
-        {
+        bandsMusiciansReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(!dataSnapshot.hasChild(currentUserID))
-                {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(currentUserID)) {
 
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.you_need_to_belong_to_a_band), Toast.LENGTH_LONG).show();
-                  //  checkIfUserHasARequest();
-                }
-                else
-                    {
-                    if (dataSnapshot.hasChild(currentUserID))
-                    {
+                    //  checkIfUserHasARequest();
+                } else {
+                    if (dataSnapshot.hasChild(currentUserID)) {
                         int count = (int) dataSnapshot.child(currentUserID).getChildrenCount();
-                        if (count > 1 && TextUtils.isEmpty(currentBandIdPref)) {
+                        if (count >= 1 && TextUtils.isEmpty(currentBandIdPref)) {
 
                             sendUserToMyBands();
 
                         } else if (count > 1 && !TextUtils.isEmpty(currentBandIdPref)) {
 
-                                bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if(dataSnapshot.exists()){
-                                            if(dataSnapshot.hasChild("mBandName"))
-                                            {
-                                                String name = dataSnapshot.child("mBandName").getValue().toString();
-                                                navBandNameTV.setText(name);
-                                            }
-                                            else
-                                            {
-                                                Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
-                                            }
+                            bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        if (dataSnapshot.hasChild("mBandName")) {
+                                            String name = dataSnapshot.child("mBandName").getValue().toString();
+                                            navBandNameTV.setText(name);
+                                        } else {
+                                            Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
                                         }
                                     }
+                                }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                    }
-                                });
+                                }
+                            });
 
-                    }
+                        } else {
 
-                        else {
-
-                            for(DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()){
+                            for (DataSnapshot ds : dataSnapshot.child(currentUserID).getChildren()) {
                                 currentBandId = ds.getKey();
 
-                                if(currentBandId != null){
+                                if (currentBandId != null) {
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.putString("SHARED_PREFERENCES", currentBandId);
+                                    editor.apply();
                                     bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.exists()){
-                                                if(dataSnapshot.hasChild("mBandName"))
-                                                {
+                                            if (dataSnapshot.exists()) {
+                                                if (dataSnapshot.hasChild("mBandName")) {
                                                     String name = dataSnapshot.child("mBandName").getValue().toString();
                                                     navBandNameTV.setText(name);
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
                                                 }
                                             }
@@ -824,36 +762,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
-    private void checkIfUserHasARequest()
-    {
+    private void checkIfUserHasARequest() {
 
-        bandsRequestReference.child(currentUserID).addValueEventListener(new ValueEventListener()
-        {
+        bandsRequestReference.child(currentUserID).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    for(DataSnapshot dataSnapshot1 :dataSnapshot.getChildren())
-                    {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         final String bandId = dataSnapshot1.getKey();
-                        bandsRequestReference.child(currentUserID).child(bandId).addValueEventListener(new ValueEventListener()
-                        {
+                        bandsRequestReference.child(currentUserID).child(bandId).addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                            {
-                                for(DataSnapshot dataSnapshot2 :dataSnapshot.getChildren())
-                                {
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot dataSnapshot2 : dataSnapshot.getChildren()) {
                                     final String senderId = dataSnapshot2.getKey();
                                     bandsRequestReference.child(currentUserID).child(bandId).child(senderId).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.exists()) {
+                                            if (dataSnapshot.exists()) {
                                                 String request_type = dataSnapshot.child("request_type").getValue().toString();
-                                                if(!TextUtils.isEmpty(request_type) && request_type.equals("received")){
-                                                //if (request_type.equals("received")) {
+                                                if (!TextUtils.isEmpty(request_type) && request_type.equals("received")) {
+                                                    //if (request_type.equals("received")) {
 
                                                     bandsRequestReference.addValueEventListener(new ValueEventListener() {
                                                         @Override
@@ -901,7 +832,6 @@ public class MainActivity extends AppCompatActivity {
                                     });
 
 
-
                                 }
                             }
 
@@ -925,42 +855,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void checkIfUserExists()
-    {
+    private void checkIfUserExists() {
         final String currentUserId = mAuth.getCurrentUser().getUid();
-        usersReference.addValueEventListener(new ValueEventListener()
-        {
+        usersReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(!dataSnapshot.hasChild(currentUserId)){
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(currentUserId)) {
                     Log.e("", "ENTRA");
                     sendUserToSetUpActivity();
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
     }
 
-    private void sendUserToSetUpActivity()
-    {
+    private void sendUserToSetUpActivity() {
         Intent setUpIntent = new Intent(MainActivity.this, SetUpActivity.class);
         setUpIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setUpIntent);
-        finish();
+
     }
 
     private void sendUserToMyBands() {
         Intent myBandsIntent = new Intent(MainActivity.this, MyBandsActivity.class);
         myBandsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(myBandsIntent);
-        finish();
-
 
     }
 
@@ -969,7 +892,6 @@ public class MainActivity extends AppCompatActivity {
         findMusicianIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         findMusicianIntent.putExtra("currentBandId", currentBandIdPref);
         startActivity(findMusicianIntent);
-        finish();
 
     }
 
@@ -978,55 +900,49 @@ public class MainActivity extends AppCompatActivity {
         Intent sendMessageIntent = new Intent(MainActivity.this, MessagesActivity.class);
         sendMessageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(sendMessageIntent);
-        finish();
+
     }
 
-    private void sendUserToLoginActivity()
-    {
+    private void sendUserToLoginActivity() {
 
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
-        finish();
+
     }
 
-    public void sendUserToAddInstrumentActivity()
-    {
+    public void sendUserToAddInstrumentActivity() {
         Intent addInstrumentIntent = new Intent(MainActivity.this, AddInstrumentActivity.class);
         addInstrumentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(addInstrumentIntent);
-        finish();
+
     }
 
-    private void sendUserToSettingsActivity()
-    {
+    private void sendUserToSettingsActivity() {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(settingsIntent);
-        finish();
+
     }
 
-    public void sendUserToProfileActivity()
-    {
+    public void sendUserToProfileActivity() {
         Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
         profileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(profileIntent);
-        finish();
+
     }
 
-    public void sendUserToAddBandActivity()
-    {
+    public void sendUserToAddBandActivity() {
         Intent addBandIntent = new Intent(MainActivity.this, AddBandActivity.class);
         addBandIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(addBandIntent);
-        finish();
+
     }
 
-    private void sendUserToMusiciansActivity()
-    {
+    private void sendUserToMusiciansActivity() {
         Intent musiciansIntent = new Intent(MainActivity.this, MusiciansActivity.class);
         musiciansIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(musiciansIntent);
-        finish();
+
     }
 
     private void sendUserToBandRequestActivity(String idBand, String idSender) {
@@ -1035,7 +951,7 @@ public class MainActivity extends AppCompatActivity {
         bandRequestIntent.putExtra("idBand", idBand);
         bandRequestIntent.putExtra("idSender", idSender);
         startActivity(bandRequestIntent);
-        finish();
+
 
     }
 
@@ -1045,50 +961,50 @@ public class MainActivity extends AppCompatActivity {
         bandQuitIntent.putExtra("idBand", currentBandIdPref);
         bandQuitIntent.putExtra("idUser", currentUserID);
         startActivity(bandQuitIntent);
-        finish();
+
 
     }
 
-    private void sendUserToSongActivity(){
+    private void sendUserToSongActivity() {
         Intent songIntent = new Intent(MainActivity.this, SongActivity.class);
         songIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(songIntent);
-        finish();
+
     }
 
-    private void sendUserToMySongsActivity(){
+    private void sendUserToMySongsActivity() {
         Intent mySongsIntent = new Intent(MainActivity.this, MySongsActivity.class);
         mySongsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mySongsIntent);
-        finish();
+
     }
 
-    private void sendUserToAddPlaylistActivity(){
+    private void sendUserToAddPlaylistActivity() {
         Intent playlistIntent = new Intent(MainActivity.this, PlaylistActivity.class);
         playlistIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(playlistIntent);
-        finish();
+
     }
 
-    private void sendUserToCreateEventActivity(){
+    private void sendUserToCreateEventActivity() {
         Intent createEventIntent = new Intent(MainActivity.this, CreateEventActivity.class);
         createEventIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(createEventIntent);
-        finish();
+
     }
 
-    private void sendUserToMyPlaylistsActivity(){
+    private void sendUserToMyPlaylistsActivity() {
         Intent myPlaylistsIntent = new Intent(MainActivity.this, MyPlaylistsActivity.class);
         myPlaylistsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(myPlaylistsIntent);
-        finish();
+
     }
 
-    private void sendUserToRehearsalActivity(){
+    private void sendUserToRehearsalActivity() {
         Intent rehearsalIntent = new Intent(MainActivity.this, RehearsalActivity.class);
         rehearsalIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(rehearsalIntent);
-        finish();
+
     }
 
 

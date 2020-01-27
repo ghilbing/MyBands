@@ -57,8 +57,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_songs_dialog);
         this.setFinishOnTouchOutside(false);
@@ -83,7 +82,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
         recyclerViewRV.setHasFixedSize(true);
         recyclerViewRV.setLayoutManager(new LinearLayoutManager(this));
 
-        if(currentBandId != null) {
+        if (currentBandId != null) {
 
             showSongs();
 
@@ -119,16 +118,14 @@ public class MySongsDialogActivity extends AppCompatActivity {
 
     }
 
-    private void showSongs(){
+    private void showSongs() {
         Query query = allSongsReference.orderByChild("mName");
 
         FirebaseRecyclerOptions<FindSong> options = new FirebaseRecyclerOptions.Builder<FindSong>().setQuery(query,
-                new SnapshotParser<FindSong>()
-                {
+                new SnapshotParser<FindSong>() {
                     @NonNull
                     @Override
-                    public FindSong parseSnapshot(@NonNull DataSnapshot snapshot)
-                    {
+                    public FindSong parseSnapshot(@NonNull DataSnapshot snapshot) {
                         return new FindSong(
                                 snapshot.child("mArtist").getValue().toString(),
                                 snapshot.child("mCurrentUser").getValue().toString(),
@@ -139,21 +136,17 @@ public class MySongsDialogActivity extends AppCompatActivity {
                 }).build();
 
 
-
-        recyclerAdapter = new FirebaseRecyclerAdapter<FindSong, MySongsDialogActivity.FindSongViewHolder>(options)
-        {
+        recyclerAdapter = new FirebaseRecyclerAdapter<FindSong, MySongsDialogActivity.FindSongViewHolder>(options) {
 
             @NonNull
             @Override
-            public MySongsDialogActivity.FindSongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-            {
+            public MySongsDialogActivity.FindSongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_songs_layout, parent, false);
                 return new MySongsDialogActivity.FindSongViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final MySongsDialogActivity.FindSongViewHolder holder, int position, @NonNull final FindSong model)
-            {
+            protected void onBindViewHolder(@NonNull final MySongsDialogActivity.FindSongViewHolder holder, int position, @NonNull final FindSong model) {
                 final String songKey = getRef(position).getKey();
 
                 holder.songNameTV.setText(model.getmName());
@@ -161,7 +154,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
                 holder.youtubeLinkTV.setText(model.getmUrlYoutube());
                 final String url = model.getmUrlYoutube();
 
-                if(!url.equals(getResources().getString(R.string.no_link_from_youtube))){
+                if (!url.equals(getResources().getString(R.string.no_link_from_youtube))) {
                     holder.playSongIV.setVisibility(View.VISIBLE);
                     holder.playSongIV.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -173,7 +166,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
 
 
                 String user = model.getmCurrentUser();
-                if(!user.equals(currentUserId)){
+                if (!user.equals(currentUserId)) {
                     holder.editionLL.setVisibility(View.INVISIBLE);
                 } else {
                     holder.editionLL.setVisibility(View.VISIBLE);
@@ -194,10 +187,6 @@ public class MySongsDialogActivity extends AppCompatActivity {
                 });
 
 
-
-
-
-
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -214,20 +203,15 @@ public class MySongsDialogActivity extends AppCompatActivity {
     }
 
 
-
-
-    private void searchSongs(String searchString)
-    {
+    private void searchSongs(String searchString) {
 
         Query query = allSongsReference.orderByChild("mName").startAt(searchString).endAt(searchString + "u\uf8ff");
 
         FirebaseRecyclerOptions<FindSong> options = new FirebaseRecyclerOptions.Builder<FindSong>().setQuery(query,
-                new SnapshotParser<FindSong>()
-                {
+                new SnapshotParser<FindSong>() {
                     @NonNull
                     @Override
-                    public FindSong parseSnapshot(@NonNull DataSnapshot snapshot)
-                    {
+                    public FindSong parseSnapshot(@NonNull DataSnapshot snapshot) {
                         return new FindSong(
                                 snapshot.child("mArtist").getValue().toString(),
                                 snapshot.child("mCurrentUser").getValue().toString(),
@@ -238,21 +222,17 @@ public class MySongsDialogActivity extends AppCompatActivity {
                 }).build();
 
 
-
-        recyclerAdapter = new FirebaseRecyclerAdapter<FindSong, MySongsDialogActivity.FindSongViewHolder>(options)
-        {
+        recyclerAdapter = new FirebaseRecyclerAdapter<FindSong, MySongsDialogActivity.FindSongViewHolder>(options) {
 
             @NonNull
             @Override
-            public MySongsDialogActivity.FindSongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-            {
+            public MySongsDialogActivity.FindSongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_songs_layout, parent, false);
                 return new MySongsDialogActivity.FindSongViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final MySongsDialogActivity.FindSongViewHolder holder, int position, @NonNull final FindSong model)
-            {
+            protected void onBindViewHolder(@NonNull final MySongsDialogActivity.FindSongViewHolder holder, int position, @NonNull final FindSong model) {
                 final String songKey = getRef(position).getKey();
 
                 holder.songNameTV.setText(model.getmName());
@@ -260,7 +240,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
                 holder.youtubeLinkTV.setText(model.getmUrlYoutube());
                 final String url = model.getmUrlYoutube();
 
-                if(!url.equals(getResources().getString(R.string.no_link_from_youtube))){
+                if (!url.equals(getResources().getString(R.string.no_link_from_youtube))) {
                     holder.playSongIV.setVisibility(View.VISIBLE);
                     holder.playSongIV.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -271,10 +251,8 @@ public class MySongsDialogActivity extends AppCompatActivity {
                 }
 
 
-
-
                 String user = model.getmCurrentUser();
-                if(!user.equals(currentUserId)){
+                if (!user.equals(currentUserId)) {
                     holder.editionLL.setVisibility(View.INVISIBLE);
                 } else {
                     holder.editionLL.setVisibility(View.VISIBLE);
@@ -286,8 +264,6 @@ public class MySongsDialogActivity extends AppCompatActivity {
                         deleteSong(songKey);
                     }
                 });
-
-
 
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -321,8 +297,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
     }
 
 
-    public class FindSongViewHolder extends RecyclerView.ViewHolder
-    {
+    public class FindSongViewHolder extends RecyclerView.ViewHolder {
         View mView;
         @BindView(R.id.all_songs_name_TV)
         TextView songNameTV;
@@ -341,17 +316,14 @@ public class MySongsDialogActivity extends AppCompatActivity {
         @BindView(R.id.all_songs_edition)
         LinearLayout editionLL;
 
-        public FindSongViewHolder(@NonNull final View itemView)
-        {
+        public FindSongViewHolder(@NonNull final View itemView) {
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener()
-            {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public boolean onLongClick(View view)
-                {
+                public boolean onLongClick(View view) {
                     int itemClicked = getAdapterPosition();
                     Toast.makeText(MySongsDialogActivity.this, String.valueOf(itemClicked), Toast.LENGTH_LONG).show();
 
@@ -363,13 +335,11 @@ public class MySongsDialogActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             sendUserToMainActivity();
         }
 
@@ -380,8 +350,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.stopListening();
         }
     }
@@ -389,8 +358,7 @@ public class MySongsDialogActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(null != recyclerAdapter)
-        {
+        if (null != recyclerAdapter) {
             recyclerAdapter.startListening();
         }
     }
@@ -405,15 +373,12 @@ public class MySongsDialogActivity extends AppCompatActivity {
         });
 
 
-
     }
 
-    private void sendUserToMainActivity()
-    {
+    private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(MySongsDialogActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 }

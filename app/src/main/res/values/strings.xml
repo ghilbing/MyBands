@@ -628,4 +628,8 @@
     <string name="you_need_to_add_songs">You need to add songs</string>
     <string name="event_map">Event map</string>
     <string name="please_click_the_circle_to_add_a_profile_image">Please, click the circle to add a profile image</string>
+    <string name="account_setup">Account Setup</string>
+    <string name="click_band_to_start">Click band to start</string>
+    <string name="please_click_search_view_to_start">Please, click search to start</string>
+    <string name="login_message">Create a band or wait for an invitation</string>
 </resources>

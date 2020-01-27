@@ -44,32 +44,22 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        resetPasswordBT.setOnClickListener(new View.OnClickListener()
-        {
+        resetPasswordBT.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 String emailString = emailET.getText().toString();
-                if(TextUtils.isEmpty(emailString))
-                {
+                if (TextUtils.isEmpty(emailString)) {
                     emailET.setError(getResources().getString(R.string.enter_email_address));
                     emailET.requestFocus();
                     return;
-                }
-                else
-                {
-                    mAuth.sendPasswordResetEmail(emailString).addOnCompleteListener(new OnCompleteListener<Void>()
-                    {
+                } else {
+                    mAuth.sendPasswordResetEmail(emailString).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task)
-                        {
-                            if(task.isSuccessful())
-                            {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
                                 Toast.makeText(ResetPasswordActivity.this, getResources().getString(R.string.please_check_your_email_account), Toast.LENGTH_LONG).show();
                                 sendUserToLoginActivity();
-                            }
-                            else
-                            {
+                            } else {
                                 String message = task.getException().getMessage();
                                 Toast.makeText(ResetPasswordActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
                             }
@@ -80,15 +70,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
         });
 
 
-
-
     }
 
-    private void sendUserToLoginActivity()
-    {
+    private void sendUserToLoginActivity() {
         Intent loginIntent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
-        finish();
     }
 }

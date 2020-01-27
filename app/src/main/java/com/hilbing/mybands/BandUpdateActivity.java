@@ -107,9 +107,7 @@ public class BandUpdateActivity extends AppCompatActivity {
         currentBandId = intent.getStringExtra("bandIdSelected");
 
 
-
-        if(!TextUtils.isEmpty(currentBandId))
-        {
+        if (!TextUtils.isEmpty(currentBandId)) {
             Log.d("CURRENT BAND ID FROM MY BANDS", currentBandId);
             SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -167,7 +165,6 @@ public class BandUpdateActivity extends AppCompatActivity {
                 }
             });
         }
-
 
 
         imageCIV.setOnClickListener(new View.OnClickListener() {
@@ -233,10 +230,9 @@ public class BandUpdateActivity extends AppCompatActivity {
 
             HashMap bandMap = new HashMap();
             bandMap.put("mBandId", currentBandId);
-            if(!TextUtils.isEmpty(downloadUri)){
+            if (!TextUtils.isEmpty(downloadUri)) {
                 bandMap.put("mBandImage", downloadUri);
-            }
-            else {
+            } else {
                 bandMap.put("mBandImage", bandProfileImage);
             }
             bandMap.put("mBandCreator", currentUserId);
@@ -307,7 +303,7 @@ public class BandUpdateActivity extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
                                 downloadUri = uri.toString();
                                 progressDialog.dismiss();
-                                if(!TextUtils.isEmpty(downloadUri)){
+                                if (!TextUtils.isEmpty(downloadUri)) {
                                     HashMap bandMap = new HashMap();
                                     bandMap.put("mBandImage", downloadUri);
                                     bandsReference.updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
@@ -369,7 +365,6 @@ public class BandUpdateActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(BandUpdateActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
 
     }
 
@@ -377,7 +372,7 @@ public class BandUpdateActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(BandUpdateActivity.this, MyBandsActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
+
 
     }
 
