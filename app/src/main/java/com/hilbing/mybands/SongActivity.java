@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,6 +81,9 @@ public class SongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
 
+        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
         if (savedInstanceState != null) {
             songNameET.setText(savedInstanceState.getString("Song"));
             songArtistBandET.setText(savedInstanceState.getString("Artist"));
@@ -99,8 +104,7 @@ public class SongActivity extends AppCompatActivity {
 
         actionBar.setTitle(R.string.add_song);
 
-        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
-        currentBandIdPref = preferences.getString("currentBandIdPref", "");
+
 
         if (TextUtils.isEmpty(currentBandIdPref)) {
             message.setVisibility(View.VISIBLE);
@@ -181,6 +185,7 @@ public class SongActivity extends AppCompatActivity {
             songYoutubeTitleET.setText(getResources().getString(R.string.no_title_from_youtube));
             songYoutubeLinkET.setText(getResources().getString(R.string.no_link_from_youtube));
             Toast.makeText(SongActivity.this, getResources().getString(R.string.song_added), Toast.LENGTH_LONG).show();
+            songNameET.requestFocus();
         }
 
     }
@@ -259,19 +264,27 @@ public class SongActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+       // SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("SHARED_PREFS", Activity.MODE_PRIVATE);
+        currentBandIdPref = preferences.getString("currentBandIdPref", "");
         databaseSongs.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                songsList.clear();
+                if (dataSnapshot.exists()) {
+                    songsList.clear();
 
-                for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
-                    Song song = songSnapshot.getValue(Song.class);
-                    songsList.add(song);
+                    for (DataSnapshot songSnapshot : dataSnapshot.getChildren()) {
+                        Song song = songSnapshot.getValue(Song.class);
+                        songsList.add(song);
+                    }
+
+
+                    SongAdapter adapter = new SongAdapter(SongActivity.this, songsList);
+                    //songsLV.setAdapter(adapter);
+                } else {
+                    Toast.makeText(SongActivity.this, getResources().getString(R.string.you_need_to_add_songs), Toast.LENGTH_SHORT).show();
                 }
-
-
-                SongAdapter adapter = new SongAdapter(SongActivity.this, songsList);
-                //songsLV.setAdapter(adapter);
             }
 
             @Override

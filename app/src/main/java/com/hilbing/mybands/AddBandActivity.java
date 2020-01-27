@@ -93,6 +93,7 @@ public class AddBandActivity extends AppCompatActivity {
     private String downloadUri;
     private String uriString;
     private String currentBandIdPref;
+    private boolean clicked = false;
 
 
     @Override
@@ -114,7 +115,7 @@ public class AddBandActivity extends AppCompatActivity {
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
         Intent intent = getIntent();
-        currentBandId = currentBandIdPref;
+        currentBandId = intent.getStringExtra("currentBandId");
         downloadUri = intent.getStringExtra("uri");
 
         userDataReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
@@ -207,6 +208,7 @@ public class AddBandActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        clicked = true;
         if (requestCode == GALLERY && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1, 1).start(this);
@@ -244,6 +246,7 @@ public class AddBandActivity extends AppCompatActivity {
                         SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("SHARED_PREFS", currentBandId);
+                        editor.apply();
                         taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
@@ -319,38 +322,76 @@ public class AddBandActivity extends AppCompatActivity {
             progressDialog.show();
             progressDialog.setCanceledOnTouchOutside(true);
 
-            HashMap bandMap = new HashMap();
-            bandMap.put("mBandId", currentBandId);
-            bandMap.put("mBandImage", uriString);
-            bandMap.put("mBandCreator", currentUserId);
-            bandMap.put("mBandName", bandName);
-            bandMap.put("mBandStory", story);
-            bandMap.put("mAvailable", available);
-            bandMap.put("mCountry", country);
-            bandDataReference.child(currentBandIdPref).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        //  sendUserToMainActivity();
-                        Toast.makeText(AddBandActivity.this, getResources().getString(R.string.your_band_is_created_succesfully), Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
-                    } else {
-                        String message = task.getException().getMessage();
-                        Toast.makeText(AddBandActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
+            if(clicked) {
+                HashMap bandMap = new HashMap();
+                bandMap.put("mBandId", currentBandId);
+                bandMap.put("mBandImage", uriString);
+                bandMap.put("mBandCreator", currentUserId);
+                bandMap.put("mBandName", bandName);
+                bandMap.put("mBandStory", story);
+                bandMap.put("mAvailable", available);
+                bandMap.put("mCountry", country);
+                bandDataReference.child(currentBandId).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            //  sendUserToMainActivity();
+                            Toast.makeText(AddBandActivity.this, getResources().getString(R.string.your_band_is_created_succesfully), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        } else {
+                            String message = task.getException().getMessage();
+                            Toast.makeText(AddBandActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+                saveCurrentDate = currentDate.format(calForDate.getTime());
+                Calendar calForTime = Calendar.getInstance();
+                SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+                saveCurrentTime = currentTime.format(calForTime.getTime());
+
+                final String bandRandomId = saveCurrentDate + saveCurrentTime;
+
+                currentBandId = currentUserId + bandRandomId;
+
+                HashMap bandMap = new HashMap();
+                bandMap.put("mBandId", currentBandId);
+                bandMap.put("mBandImage", uriString);
+                bandMap.put("mBandCreator", currentUserId);
+                bandMap.put("mBandName", bandName);
+                bandMap.put("mBandStory", story);
+                bandMap.put("mAvailable", available);
+                bandMap.put("mCountry", country);
+                bandMap.put("mBandImage", "No data");
+                bandDataReference.child(currentBandId).updateChildren(bandMap).addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            //  sendUserToMainActivity();
+                            Toast.makeText(AddBandActivity.this, getResources().getString(R.string.your_band_is_created_succesfully), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        } else {
+                            String message = task.getException().getMessage();
+                            Toast.makeText(AddBandActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
+                    }
+                });
+            }
 
             Calendar calForDate = Calendar.getInstance();
             SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
             saveCurrentDate = currentDate.format(calForDate.getTime());
 
-            bandsMusiciansRef.child(currentUserId).child(currentBandIdPref).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+            bandsMusiciansRef.child(currentUserId).child(currentBandId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        bandsMusiciansRef.child(currentBandIdPref).child(currentUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        bandsMusiciansRef.child(currentBandId).child(currentUserId).child("date").setValue(saveCurrentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
@@ -406,7 +447,7 @@ public class AddBandActivity extends AppCompatActivity {
     private void sendUserToAddBandActivity() {
 
         Intent selfIntent = new Intent(AddBandActivity.this, AddBandActivity.class);
-        selfIntent.putExtra("currentBandId", currentBandIdPref);
+        selfIntent.putExtra("currentBandId", currentBandId);
         selfIntent.putExtra("uri", downloadUri);
         selfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(selfIntent);

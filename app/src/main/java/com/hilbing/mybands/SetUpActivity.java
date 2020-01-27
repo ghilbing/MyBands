@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -56,6 +58,8 @@ public class SetUpActivity extends AppCompatActivity {
     @BindView(R.id.setup_save_BT)
     Button saveBT;
     private ProgressDialog progressDialog;
+    @BindView(R.id.setup_toolbar)
+    Toolbar toolbar;
 
     private FirebaseAuth mAuth;
     private DatabaseReference usersReference;
@@ -66,6 +70,7 @@ public class SetUpActivity extends AppCompatActivity {
     private String uriString;
     private String intentString;
     final static int GALLERY = 1;
+    private boolean clicked = false;
 
 
     @Override
@@ -80,6 +85,12 @@ public class SetUpActivity extends AppCompatActivity {
         if (bundle != null) {
             intentString = bundle.getString("downloadUri");
         }
+
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getResources().getString(R.string.account_setup));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
@@ -181,6 +192,7 @@ public class SetUpActivity extends AppCompatActivity {
                                 downloadUri = uri.toString();
                                 if(!TextUtils.isEmpty(downloadUri)){
                                     uriString = downloadUri;
+                                    clicked = true;
                                 } else {
                                     uriString = "No data";
                                 }
@@ -254,28 +266,68 @@ public class SetUpActivity extends AppCompatActivity {
             progressDialog.setCanceledOnTouchOutside(true);
 
             HashMap userMap = new HashMap();
-            userMap.put("mUserName", fullName);
-            userMap.put("mUserPhone", phone);
-            userMap.put("mUserCountry", country);
-            userMap.put("mUserStatus", status);
-            userMap.put("mUserAvailable", available);
-            userMap.put("mUserSinger", singer);
-            userMap.put("mUserComposer", composer);
-            usersReference.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        sendUserToMainActivity();
-                        Toast.makeText(SetUpActivity.this, getResources().getString(R.string.your_user_account_is_created_succesfully), Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
-                    } else {
-                        String message = task.getException().getMessage();
-                        Toast.makeText(SetUpActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
+            if (clicked) {
+                userMap.put("mUserName", fullName);
+                userMap.put("mUserPhone", phone);
+                userMap.put("mUserCountry", country);
+                userMap.put("mUserStatus", status);
+                userMap.put("mUserAvailable", available);
+                userMap.put("mUserSinger", singer);
+                userMap.put("mUserComposer", composer);
+                usersReference.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            sendUserToMainActivity();
+                            Toast.makeText(SetUpActivity.this, getResources().getString(R.string.your_user_account_is_created_succesfully), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        } else {
+                            String message = task.getException().getMessage();
+                            Toast.makeText(SetUpActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+
+                userMap.put("mUserName", fullName);
+                userMap.put("mUserPhone", phone);
+                userMap.put("mUserCountry", country);
+                userMap.put("mUserStatus", status);
+                userMap.put("mUserAvailable", available);
+                userMap.put("mUserSinger", singer);
+                userMap.put("mUserComposer", composer);
+                userMap.put("mUserProfileImage", "No data");
+                usersReference.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            sendUserToMainActivity();
+                            Toast.makeText(SetUpActivity.this, getResources().getString(R.string.your_user_account_is_created_succesfully), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        } else {
+                            String message = task.getException().getMessage();
+                            Toast.makeText(SetUpActivity.this, getResources().getString(R.string.error_occurred) + ": " + message, Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
+                    }
+                });
+
+            }
         }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            sendUserToMainActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 

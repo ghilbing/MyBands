@@ -77,6 +77,13 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:text="@string/please_click_search_view_to_start"/>
+
 
             <SearchView
                 android:id="@+id/my_songs_searchView_SV"

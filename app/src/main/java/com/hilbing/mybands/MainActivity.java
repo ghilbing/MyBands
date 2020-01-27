@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     List<Band> bands = new ArrayList();
     private List<Event> events = new ArrayList<>();
     private boolean savedInstanceStateDone;
+    private SharedPreferences preferences;
 
 
     @SuppressLint("WrongConstant")
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        SharedPreferences preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE);
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
 
 
@@ -148,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
                             if (dataSnapshot.hasChild("mBandName")) {
                                 String name = dataSnapshot.child("mBandName").getValue().toString();
                                 Log.d("MainActivity", name);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("SHARED_PREFS", currentBandId);
+                                editor.apply();
                             } else {
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.band_does_not_exist), Toast.LENGTH_LONG).show();
                             }
@@ -599,7 +603,7 @@ public class MainActivity extends AppCompatActivity {
         currentBandIdPref = preferences.getString("currentBandIdPref", "");
         Log.d("MainActivitySharedPreferences................................", currentBandIdPref);
 
-        if (TextUtils.isEmpty(currentBandIdPref)) {
+        if (!TextUtils.isEmpty(currentBandIdPref)) {
             bandsReference.child(currentBandIdPref).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -619,6 +623,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+        } else {
+          //  sendUserToAddBandActivity();
         }
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -684,7 +690,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if (dataSnapshot.hasChild(currentUserID)) {
                         int count = (int) dataSnapshot.child(currentUserID).getChildrenCount();
-                        if (count > 1 && TextUtils.isEmpty(currentBandIdPref)) {
+                        if (count >= 1 && TextUtils.isEmpty(currentBandIdPref)) {
 
                             sendUserToMyBands();
 
@@ -715,6 +721,9 @@ public class MainActivity extends AppCompatActivity {
                                 currentBandId = ds.getKey();
 
                                 if (currentBandId != null) {
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.putString("SHARED_PREFERENCES", currentBandId);
+                                    editor.apply();
                                     bandsReference.child(currentBandId).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
