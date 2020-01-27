@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_events_RV)
     RecyclerView recyclerView;
 
+
     private Toolbar mToolbar;
     private CircleImageView navProfileCIV;
     private TextView navUserNameTV;
@@ -172,6 +173,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+
+
         mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
@@ -236,6 +239,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
 
@@ -247,7 +252,8 @@ public class MainActivity extends AppCompatActivity {
         Query query = allEventsReference.child(currentBandIdPref).orderByChild("mTimestamp").startAt(System.currentTimeMillis());
 
 
-        if (!TextUtils.isEmpty(query.toString())) {
+            if(!TextUtils.isEmpty(query.toString())){
+
 
             FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().setQuery(query,
                     new SnapshotParser<Event>() {
